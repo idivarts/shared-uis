@@ -4,7 +4,9 @@
         "composite": true
     },
     "include": [
-        "**/*"
+        "**/*",
+        "../shared-libs/**/*",
+        "../shared-constants/**/*"
     ],
     "references": []
 }
