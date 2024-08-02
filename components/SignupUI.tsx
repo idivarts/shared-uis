@@ -17,7 +17,6 @@ type styles = {
   input: any;
   error: any;
   link: any;
-  linksContainer: any;
 };
 
 interface SignupUIProps {
