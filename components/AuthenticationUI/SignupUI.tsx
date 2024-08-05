@@ -73,7 +73,9 @@ const signupSchema = z.object({
 
 const SignupUIWithValidation = withValidation(SignupUI);
 
-export default (props: Omit<SignupUIProps, "styles">) => (
+export default (
+  props: Omit<SignupUIProps, "styles"> & { styles?: SignupStyles }
+) => (
   <SignupUIWithValidation
     {...props}
     schema={signupSchema}

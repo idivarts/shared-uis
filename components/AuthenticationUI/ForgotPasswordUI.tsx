@@ -54,7 +54,11 @@ const forgotPasswordSchema = z.object({
 
 const ForgotPasswordUIWithValidation = withValidation(ForgotPasswordUI);
 
-export default (props: Omit<ForgotPasswordUIProps, "styles">) => (
+export default (
+  props: Omit<ForgotPasswordUIProps, "styles"> & {
+    styles?: ForgotPasswordStyles;
+  }
+) => (
   <ForgotPasswordUIWithValidation
     {...props}
     schema={forgotPasswordSchema}

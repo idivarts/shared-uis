@@ -65,7 +65,9 @@ const loginSchema = z.object({
 
 const LoginUIWithValidation = withValidation(LoginUI);
 
-export default (props: Omit<LoginUIProps, "styles">) => (
+export default (
+  props: Omit<LoginUIProps, "styles"> & { styles?: LoginStyles }
+) => (
   <LoginUIWithValidation
     {...props}
     schema={loginSchema}
