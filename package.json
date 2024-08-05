@@ -1,5 +1,8 @@
 {
     "name": "shared-uis",
     "version": "1.0.0",
-    "dependencies": {}
+    "dependencies": {
+        "react-toastify": "^10.0.5",
+        "zod": "^3.23.8"
+    }
 }
