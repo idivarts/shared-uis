@@ -1,9 +1,8 @@
 import React from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { Link, router, Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { SignupStyles } from "../../interfaces/StyleInterface";
 import withValidation from "../FormValidation";
-import { toast } from "react-toastify";
 import { z } from "zod";
 
 interface SignupUIProps {
@@ -11,7 +10,7 @@ interface SignupUIProps {
   formData: { [key: string]: any };
   error: string;
   handleChange: (field: string, value: any) => void;
-  handleSubmit: () => void;
+  handleSubmit: (data: any) => void;
 }
 
 const SignupUI: React.FC<SignupUIProps> = ({
@@ -80,10 +79,6 @@ export default (
     {...props}
     schema={signupSchema}
     initialData={{ email: "", password: "" }}
-    onSubmit={(data) => {
-      toast.success("Account created!");
-      console.log("Signup data:", data);
-      router.replace("/Dashboard");
-    }}
+    onSubmit={props.handleSubmit}
   />
 );

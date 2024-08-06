@@ -1,17 +1,16 @@
 import React from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { Link, router, Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { LoginStyles } from "../../interfaces/StyleInterface";
 import withValidation from "../FormValidation";
 import { z } from "zod";
-import { toast } from "react-toastify";
 
 interface LoginUIProps {
   styles: LoginStyles;
   formData: { [key: string]: any };
   error: string;
   handleChange: (field: string, value: any) => void;
-  handleSubmit: () => void;
+  handleSubmit: (data: any) => void;
 }
 
 const LoginUI: React.FC<LoginUIProps> = ({
@@ -72,10 +71,6 @@ export default (
     {...props}
     schema={loginSchema}
     initialData={{ emailOrUsername: "", password: "" }}
-    onSubmit={(data) => {
-      toast.success("Login successful!");
-      console.log("Login data:", data);
-      router.replace("/dashboard/Campaign");
-    }}
+    onSubmit={props.handleSubmit}
   />
 );
