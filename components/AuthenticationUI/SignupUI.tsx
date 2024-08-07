@@ -44,7 +44,7 @@ const SignupUI: React.FC<SignupUIProps> = ({
           accessibilityLabel="Password Input"
         />
         <Button title="Sign Up" onPress={handleSubmit} />
-        <Link href={"/Login"} style={styles.link}>
+        <Link href={"/login"} style={styles.link}>
           <Text style={styles.link}>Already have an account? Login</Text>
         </Link>
       </View>
