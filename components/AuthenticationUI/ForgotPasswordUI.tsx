@@ -36,7 +36,7 @@ const ForgotPasswordUI: React.FC<ForgotPasswordUIProps> = ({
         />
         {error ? <Text style={styles.error}>{error}</Text> : null}
         <Button title="Reset Password" onPress={handleSubmit} />
-        <Link href={"/Login"} style={styles.link}>
+        <Link href={"/login"} style={styles.link}>
           <Text>Back to Login</Text>
         </Link>
       </View>

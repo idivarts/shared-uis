@@ -45,10 +45,10 @@ const LoginUI: React.FC<LoginUIProps> = ({
         />
         <Button title="Login" onPress={handleSubmit} />
         <View style={styles.linksContainer}>
-          <Link href={"/Signup"}>
+          <Link href={"/signup"}>
             <Text style={styles.link}>Don't have an account? Signup</Text>
           </Link>
-          <Link href={"/ForgotPassword"} style={styles.link}>
+          <Link href={"/forgot-password"} style={styles.link}>
             <Text>Forgot Password?</Text>
           </Link>
         </View>
