@@ -4,15 +4,15 @@ import { Pressable, Text } from "react-native";
 import styles from "../../styles/dropdown/Dropdown.styles";
 
 interface DropdownButtonProps {
-  onPress: () => void;
-  title: string;
   hoverInColor?: string;
+  onPress?: () => void;
+  title: string;
 }
 
 const DropdownButton: React.FC<DropdownButtonProps> = ({
+  hoverInColor,
   onPress,
   title,
-  hoverInColor,
 }) => {
   const [isHovered, setIsHovered] = useState(false);
 
