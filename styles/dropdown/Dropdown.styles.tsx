@@ -8,8 +8,6 @@ const styles = StyleSheet.create({
   },
   dropdownOptions: {
     position: 'absolute',
-    top: '100%',
-    right: 0,
     backgroundColor: 'lightgray',
     borderWidth: 1,
     borderColor: 'lightgray',
