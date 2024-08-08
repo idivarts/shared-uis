@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
   },
   dropdownOverlay: {
     position: 'relative',
-    backgroundColor: 'red',
+    backgroundColor: 'transparent',
     zIndex: 9999,
     top: 0,
     bottom: 0,

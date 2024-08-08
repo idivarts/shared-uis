@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from "react-native";
+import { Pressable, View } from "react-native";
 import React, { PropsWithChildren, useState, ReactElement, ReactNode } from "react";
 import DropdownTrigger from "./DropdownTrigger";
 import DropdownOptions from "./DropdownOptions";
@@ -40,7 +40,7 @@ const Dropdown: React.FC<DropdownProps> = ({ children }: DropdownProps) => {
         {modifiedChildren}
       </View>
       <Pressable onPress={() => setShowDropdown(false)}>
-        <View style={styles.dropdownOverlay}><Text>Overlay</Text></View>
+        <View style={styles.dropdownOverlay}></View>
       </Pressable>
     </>
   );
