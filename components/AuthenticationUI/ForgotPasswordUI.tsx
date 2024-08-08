@@ -1,10 +1,9 @@
 import React from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { Link, router, Stack } from "expo-router";
+import { Link, Stack } from "expo-router";
 import { ForgotPasswordStyles } from "../../interfaces/StyleInterface";
 import withValidation from "../FormValidation";
 import { z } from "zod";
-import { toast } from "react-toastify";
 
 interface ForgotPasswordUIProps {
   styles: ForgotPasswordStyles;
@@ -63,10 +62,6 @@ export default (
     {...props}
     schema={forgotPasswordSchema}
     initialData={{ email: "" }}
-    onSubmit={(data) => {
-      toast.success("Password reset link sent!");
-      console.log("Forgot Password data:", data);
-      router.replace("/login");
-    }}
+    onSubmit={props.handleSubmit}
   />
 );
