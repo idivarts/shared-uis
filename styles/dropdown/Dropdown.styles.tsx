@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   },
   dropdownOptions: {
     position: 'absolute',
+    zIndex: 3,
     backgroundColor: 'lightgray',
     borderWidth: 1,
     borderColor: 'lightgray',
@@ -18,7 +19,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 5,
-    zIndex: 10000,
     marginTop: 4,
     minWidth: 140,
   },
@@ -38,14 +38,16 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   dropdownOverlay: {
-    position: 'relative',
-    backgroundColor: 'transparent',
-    zIndex: 9999,
+    position: 'absolute',
+    zIndex: 2,
     top: 0,
     bottom: 0,
     right: 0,
     left: 0,
-  }
+    width: 4000,
+    height: 4000,
+    transform: [{ translateY: '-50%' }, { translateX: '-50%' }],
+  },
 });
 
 export default styles;

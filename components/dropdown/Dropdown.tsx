@@ -38,10 +38,16 @@ const Dropdown: React.FC<DropdownProps> = ({ children }: DropdownProps) => {
     <>
       <View style={styles.dropdownContainer}>
         {modifiedChildren}
+        <Pressable
+          onPress={() => setShowDropdown(false)}
+          style={[
+            styles.dropdownOverlay,
+            {
+              display: showDropdown ? 'flex' : 'none',
+            }
+          ]}
+        />
       </View>
-      <Pressable onPress={() => setShowDropdown(false)}>
-        <View style={styles.dropdownOverlay}></View>
-      </Pressable>
     </>
   );
 };
