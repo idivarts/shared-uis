@@ -17,6 +17,8 @@ const styles = StyleSheet.create({
     width: '100%',
     color: 'black',
     fontSize: 16,
+    // @ts-ignore
+    outlineStyle: 'none',
   },
 });
 
