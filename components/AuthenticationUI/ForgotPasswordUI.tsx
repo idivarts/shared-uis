@@ -10,7 +10,7 @@ interface ForgotPasswordUIProps {
   formData: { [key: string]: any };
   error: string;
   handleChange: (field: string, value: any) => void;
-  handleSubmit: () => void;
+  handleSubmit: (data: any) => void;
 }
 
 const ForgotPasswordUI: React.FC<ForgotPasswordUIProps> = ({
