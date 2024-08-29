@@ -9,18 +9,19 @@ import styles from "@/shared-uis/styles/image-picker/ImagePicker.styles";
 
 interface ImagePickerProps {
   editable?: boolean;
-  initialImage?: string;
+  image: string;
   onUploadImage: (image: string) => void;
+  setImage: React.Dispatch<React.SetStateAction<string>>;
 }
 
 const placeholderImage = "https://via.placeholder.com/300";
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
   editable = true,
-  initialImage = placeholderImage,
+  image,
   onUploadImage,
+  setImage,
 }) => {
-  const [image, setImage] = useState<string>(initialImage);
   const [openModal, setOpenModal] = useState(false);
 
   const uploadImage = async () => {
