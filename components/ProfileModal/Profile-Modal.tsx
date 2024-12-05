@@ -1,13 +1,13 @@
 import React from "react";
-import { View, Image, Pressable, Platform } from "react-native";
+import { View, Pressable } from "react-native";
 import { Text, Chip, Card, Title, Paragraph } from "react-native-paper";
 import Swiper from "react-native-swiper";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { Video } from "expo-av";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import Colors from "@/shared-uis/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMessage } from "@fortawesome/free-solid-svg-icons";
+import RenderMediaItem from "../carousel/render-media-item";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
@@ -30,39 +30,30 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const funFactAboutYou = influencer.profile?.content?.funFactAboutUser || "";
   const profileImages = influencer.profile?.attachments || [];
   const styles = stylesFn(theme);
+  const swiperRef = React.useRef<Swiper>(null);
 
   return (
     <View style={styles.container}>
       <View style={styles.carouselContainer}>
         <Swiper
           style={styles.carousel}
+          ref={swiperRef}
           showsButtons={false}
           dot={<View style={styles.dot} />}
           activeDot={<View style={styles.activeDot} />}
           loop={true}
-          autoplay={false}
+          autoplay={true}
+          removeClippedSubviews={false}
           paginationStyle={styles.pagination}
         >
           {profileImages &&
             profileImages.map((media, index) => (
-              <View key={index} style={styles.slide}>
-                {media.type === "image" ? (
-                  <Image
-                    source={{ uri: media.imageUrl }}
-                    style={styles.profileImage}
-                  />
-                ) : (
-                  <Video
-                    source={{
-                      //@ts-ignore
-                      uri:
-                        Platform.OS === "ios" ? media.appleUrl : media.playUrl,
-                    }}
-                    useNativeControls
-                    style={styles.profileImage}
-                  />
-                )}
-              </View>
+              <RenderMediaItem
+                key={index}
+                item={media}
+                index={index}
+                handleImagePress={() => {}}
+              />
             ))}
         </Swiper>
         {isBrandsApp && (

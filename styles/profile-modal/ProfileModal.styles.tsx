@@ -72,7 +72,7 @@ export const stylesFn = (theme: any) =>
       marginRight: 3,
     },
     activeDot: {
-      backgroundColor: Colors(theme).white,
+      backgroundColor: Colors(theme).gray100,
       width: 8,
       height: 8,
       borderRadius: 4,
