@@ -10,10 +10,8 @@ import { useState } from "react";
 import { View } from "../theme/Themed";
 
 export interface MediaItem {
-  type: "image" | "video";
-  appleUrl?: string;
-  playUrl?: string;
-  imageUrl?: string;
+  type: string;
+  url?: string;
 }
 
 interface RenderMediaItemProps {
@@ -62,7 +60,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             {isLoading && <ActivityIndicator />}
           </View>
           <Image
-            source={imageUrl(item.imageUrl)}
+            source={imageUrl(item.url)}
             style={[
               styles.media,
               {
@@ -87,9 +85,9 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         }
       }}
       source={
-        item.appleUrl
+        item.url
           ? {
-              uri: Platform.OS === "ios" ? item.appleUrl : item.playUrl,
+              uri: item.url,
             }
           : require("@/assets/videos/ForBiggerJoyrides.mp4")
       }

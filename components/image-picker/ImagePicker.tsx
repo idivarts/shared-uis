@@ -7,6 +7,8 @@ import Colors from "@/shared-uis/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import fnStyles from "@/shared-uis/styles/image-picker/ImagePicker.styles";
 import { useTheme } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
 interface ImagePickerProps {
   editable?: boolean;
@@ -66,7 +68,11 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
           onPress={() => setOpenModal(true)}
           style={styles.cameraButton}
         >
-          <Ionicons name="camera" color={Colors(theme).white} size={28} />
+          <FontAwesomeIcon
+            icon={faCamera}
+            size={24}
+            color={Colors(theme).white}
+          />
         </Pressable>
       )}
       <Modal animationType="fade" transparent={true} visible={openModal}>

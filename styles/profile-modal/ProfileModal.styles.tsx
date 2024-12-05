@@ -36,6 +36,7 @@ export const stylesFn = (theme: any) =>
     name: {
       fontSize: 24,
       fontWeight: "bold",
+      color: Colors(theme).text,
     },
     subText: {
       color: Colors(theme).text,
@@ -45,6 +46,9 @@ export const stylesFn = (theme: any) =>
       borderBottomColor: "black",
       borderBottomWidth: StyleSheet.hairlineWidth,
       marginVertical: 10,
+    },
+    cardColor: {
+      color: Colors(theme).text,
     },
     chipContainer: {
       flexDirection: "row",
@@ -61,7 +65,7 @@ export const stylesFn = (theme: any) =>
     aboutCard: {
       marginHorizontal: 20,
       marginVertical: 10,
-      backgroundColor: Colors(theme).background,
+      backgroundColor: Colors(theme).card,
     },
     dot: {
       backgroundColor: Colors(theme).primary,

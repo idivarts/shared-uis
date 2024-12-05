@@ -8,10 +8,12 @@ import Colors from "@/shared-uis/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import RenderMediaItem from "../carousel/render-media-item";
+import { Theme, useTheme } from "@react-navigation/native";
+import { processRawAttachment } from "@/shared-uis/utils/attachments";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
-  theme: any;
+  theme: Theme;
   isBrandsApp: boolean;
 }
 
@@ -20,17 +22,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   theme,
   isBrandsApp,
 }) => {
-  const interests = influencer.profile?.category || [];
-  const aboutMe = influencer.profile?.content?.about || "";
-  const socialMediaHighlight =
-    influencer.profile?.content?.socialMediaHighlight || "";
-  const collaborationGoals =
-    influencer.profile?.content?.collaborationGoals || "";
-  const audienceInsights = influencer.profile?.content?.audienceInsights || "";
-  const funFactAboutYou = influencer.profile?.content?.funFactAboutUser || "";
-  const profileImages = influencer.profile?.attachments || [];
   const styles = stylesFn(theme);
   const swiperRef = React.useRef<Swiper>(null);
+
+  const mediaProcessing = influencer.profile?.attachments?.map((media) =>
+    processRawAttachment(media)
+  );
 
   return (
     <View style={styles.container}>
@@ -46,8 +43,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           removeClippedSubviews={false}
           paginationStyle={styles.pagination}
         >
-          {profileImages &&
-            profileImages.map((media, index) => (
+          {mediaProcessing &&
+            mediaProcessing.map((media, index) => (
               <RenderMediaItem
                 key={index}
                 item={media}
@@ -94,8 +91,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
       </View>
 
       <View style={styles.chipContainer}>
-        {interests &&
-          interests.map((interest, index) => (
+        {influencer.profile?.category &&
+          influencer.profile?.category.map((interest, index) => (
             <Chip key={index} style={styles.chip} mode="outlined">
               {interest}
             </Chip>
@@ -105,32 +102,42 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
       <View style={styles.aboutContainer}>
         <Card style={styles.aboutCard}>
           <Card.Content>
-            <Title>About Me</Title>
-            <Paragraph>{aboutMe}</Paragraph>
+            <Title style={styles.cardColor}>About Me</Title>
+            <Paragraph style={styles.cardColor}>
+              {influencer.profile?.content?.about || ""}
+            </Paragraph>
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
-            <Title>Social Media Highlight</Title>
-            <Paragraph>{socialMediaHighlight}</Paragraph>
+            <Title style={styles.cardColor}>Social Media Highlight</Title>
+            <Paragraph style={styles.cardColor}>
+              {influencer.profile?.content?.socialMediaHighlight || ""}
+            </Paragraph>
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
-            <Title>Campaign Goals</Title>
-            <Paragraph>{collaborationGoals}</Paragraph>
+            <Title style={styles.cardColor}>Campaign Goals</Title>
+            <Paragraph style={styles.cardColor}>
+              {influencer.profile?.content?.collaborationGoals || ""}
+            </Paragraph>
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
-            <Title>Audience Insights</Title>
-            <Paragraph>{audienceInsights}</Paragraph>
+            <Title style={styles.cardColor}>Audience Insights</Title>
+            <Paragraph style={styles.cardColor}>
+              {influencer.profile?.content?.audienceInsights || ""}
+            </Paragraph>
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
-            <Title>Fun Fact About You</Title>
-            <Paragraph>{funFactAboutYou}</Paragraph>
+            <Title style={styles.cardColor}>Fun Fact About You</Title>
+            <Paragraph style={styles.cardColor}>
+              {influencer.profile?.content?.funFactAboutUser || ""}
+            </Paragraph>
           </Card.Content>
         </Card>
       </View>
