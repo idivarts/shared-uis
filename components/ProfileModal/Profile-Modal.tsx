@@ -80,7 +80,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
       <View style={styles.header}>
         <View style={styles.profileInfo}>
           <Title style={styles.name}>{influencer.name}</Title>
-          {/* <Text style={styles.subText}>Insta: {influencer.socials}</Text> */}
           <Text style={styles.subText}>Email: {influencer.email}</Text>
           <Text style={styles.subText}>Phone: {influencer.phoneNumber}</Text>
           <View style={styles.divider} />
