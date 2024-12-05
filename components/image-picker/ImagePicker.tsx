@@ -5,7 +5,8 @@ import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "@/shared-uis/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import styles from "@/shared-uis/styles/image-picker/ImagePicker.styles";
+import fnStyles from "@/shared-uis/styles/image-picker/ImagePicker.styles";
+import { useTheme } from "@react-navigation/native";
 
 interface ImagePickerProps {
   editable?: boolean;
@@ -23,6 +24,8 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   setImage,
 }) => {
   const [openModal, setOpenModal] = useState(false);
+  const theme = useTheme();
+  const styles = fnStyles(theme);
 
   const uploadImage = async () => {
     try {
@@ -58,13 +61,14 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
         }}
         style={styles.image}
       />
-      {
-        editable && (
-          <Pressable onPress={() => setOpenModal(true)} style={styles.cameraButton}>
-            <Ionicons name="camera" color={Colors.regular.white} size={28} />
-          </Pressable>
-        )
-      }
+      {editable && (
+        <Pressable
+          onPress={() => setOpenModal(true)}
+          style={styles.cameraButton}
+        >
+          <Ionicons name="camera" color={Colors(theme).white} size={28} />
+        </Pressable>
+      )}
       <Modal animationType="fade" transparent={true} visible={openModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
