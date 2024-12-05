@@ -2,19 +2,18 @@ import { StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   dropdownContainer: {
-    position: 'relative',
+    position: "relative",
   },
-  dropdownTrigger: {
-  },
+  dropdownTrigger: {},
   dropdownOptions: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: 3,
-    backgroundColor: 'lightgray',
+    backgroundColor: "lightgray",
     borderWidth: 1,
-    borderColor: 'lightgray',
-    overflow: 'hidden',
+    borderColor: "lightgray",
+    overflow: "hidden",
     borderRadius: 5,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 2,
@@ -23,22 +22,22 @@ const styles = StyleSheet.create({
     minWidth: 140,
   },
   dropdownOption: {
-    alignItems: 'center',
-    textAlign: 'center',
+    alignItems: "center",
+    textAlign: "center",
   },
   dropdownButton: {
     padding: 10,
-    width: '100%',
-    backgroundColor: 'white',
+    width: "100%",
+    backgroundColor: "white",
   },
   dropdownButtonText: {
-    color: 'black',
+    color: "black",
     fontSize: 16,
     fontWeight: 500,
-    textAlign: 'center',
+    textAlign: "center",
   },
   dropdownOverlay: {
-    position: 'absolute',
+    position: "absolute",
     zIndex: 2,
     top: 0,
     bottom: 0,
@@ -46,7 +45,7 @@ const styles = StyleSheet.create({
     left: 0,
     width: 4000,
     height: 4000,
-    transform: [{ translateY: '-50%' }, { translateX: '-50%' }],
+    transform: [{ translateY: "-50%" }, { translateX: "-50%" }],
   },
 });
 
