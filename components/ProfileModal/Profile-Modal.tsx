@@ -12,6 +12,7 @@ import { Theme, useTheme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import RenderHTML from "react-native-render-html";
 import { Pressable } from "react-native-gesture-handler";
+import { Image, FlatList } from "react-native";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
@@ -182,6 +183,49 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 p: { color: Colors(theme).text, fontSize: 16 },
               }}
             />
+          </Card.Content>
+        </Card>
+        <Card style={styles.aboutCard}>
+          <Card.Content>
+            <Title style={styles.cardColor}>Other Instagram Posts</Title>
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={{ flexDirection: "column" }}>
+                <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                  {mediaProcessing &&
+                    mediaProcessing
+                      .filter((_, index) => index % 2 === 0)
+                      .map((item, index) => (
+                        <Image
+                          key={`top-${index}`}
+                          source={{ uri: item.url }}
+                          style={{
+                            width: 100,
+                            height: 100,
+                            borderRadius: 10,
+                            marginRight: 10,
+                          }}
+                        />
+                      ))}
+                </View>
+                <View style={{ flexDirection: "row" }}>
+                  {mediaProcessing &&
+                    mediaProcessing
+                      .filter((_, index) => index % 2 !== 0)
+                      .map((item, index) => (
+                        <Image
+                          key={`bottom-${index}`}
+                          source={{ uri: item.url }}
+                          style={{
+                            width: 100,
+                            height: 100,
+                            borderRadius: 10,
+                            marginRight: 10,
+                          }}
+                        />
+                      ))}
+                </View>
+              </View>
+            </ScrollView>
           </Card.Content>
         </Card>
       </View>
