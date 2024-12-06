@@ -1,6 +1,6 @@
 import React from "react";
-import { View, Pressable } from "react-native";
-import { Text, Chip, Card, Title, Paragraph } from "react-native-paper";
+import { View, Dimensions, ScrollView } from "react-native";
+import { Text, Chip, Card, Title } from "react-native-paper";
 import Swiper from "react-native-swiper";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
@@ -10,6 +10,8 @@ import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import RenderMediaItem from "../carousel/render-media-item";
 import { Theme, useTheme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
+import RenderHTML from "react-native-render-html";
+import { Pressable } from "react-native-gesture-handler";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
@@ -29,8 +31,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     processRawAttachment(media)
   );
 
+  const screenWidth = Dimensions.get("window").width;
+
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.carouselContainer}>
         <Swiper
           style={styles.carousel}
@@ -62,7 +66,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               zIndex: 10,
               backgroundColor: Colors(theme).primary,
               padding: 10,
-              borderRadius: 50,
+              borderRadius: 20,
             }}
           >
             <FontAwesomeIcon
@@ -103,45 +107,85 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         <Card style={styles.aboutCard}>
           <Card.Content>
             <Title style={styles.cardColor}>About Me</Title>
-            <Paragraph style={styles.cardColor}>
-              {influencer.profile?.content?.about || ""}
-            </Paragraph>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer.profile?.content?.about ||
+                  "<p>No content available.</p>",
+              }}
+              tagsStyles={{
+                p: { color: Colors(theme).text, fontSize: 16 },
+              }}
+            />
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
             <Title style={styles.cardColor}>Social Media Highlight</Title>
-            <Paragraph style={styles.cardColor}>
-              {influencer.profile?.content?.socialMediaHighlight || ""}
-            </Paragraph>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer.profile?.content?.socialMediaHighlight ||
+                  "<p>No content available.</p>",
+              }}
+              tagsStyles={{
+                p: { color: Colors(theme).text, fontSize: 16 },
+              }}
+            />
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
             <Title style={styles.cardColor}>Campaign Goals</Title>
-            <Paragraph style={styles.cardColor}>
-              {influencer.profile?.content?.collaborationGoals || ""}
-            </Paragraph>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer.profile?.content?.collaborationGoals ||
+                  "<p>No content available.</p>",
+              }}
+              tagsStyles={{
+                p: { color: Colors(theme).text, fontSize: 16 },
+              }}
+            />
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
             <Title style={styles.cardColor}>Audience Insights</Title>
-            <Paragraph style={styles.cardColor}>
-              {influencer.profile?.content?.audienceInsights || ""}
-            </Paragraph>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer.profile?.content?.audienceInsights ||
+                  "<p>No content available.</p>",
+              }}
+              tagsStyles={{
+                p: { color: Colors(theme).text, fontSize: 16 },
+              }}
+            />
           </Card.Content>
         </Card>
         <Card style={styles.aboutCard}>
           <Card.Content>
             <Title style={styles.cardColor}>Fun Fact About You</Title>
-            <Paragraph style={styles.cardColor}>
-              {influencer.profile?.content?.funFactAboutUser || ""}
-            </Paragraph>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer.profile?.content?.funFactAboutUser ||
+                  "<p>No content available.</p>",
+              }}
+              tagsStyles={{
+                p: { color: Colors(theme).text, fontSize: 16 },
+              }}
+            />
           </Card.Content>
         </Card>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 

@@ -64,11 +64,12 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             style={[
               styles.media,
               {
-                height: height || 250,
+                height: height || 350,
                 width: width || "100%",
               },
             ]}
-            resizeMode="stretch"
+            resizeMode="cover"
+            resizeMethod="resize"
             onLoadStart={() => setIsLoading(true)}
             onLoad={() => setIsLoading(false)}
           />
