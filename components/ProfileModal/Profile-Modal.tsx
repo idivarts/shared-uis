@@ -8,11 +8,10 @@ import Colors from "@/shared-uis/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faMessage } from "@fortawesome/free-solid-svg-icons";
 import RenderMediaItem from "../carousel/render-media-item";
-import { Theme, useTheme } from "@react-navigation/native";
+import { Theme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import RenderHTML from "react-native-render-html";
-import { Pressable } from "react-native-gesture-handler";
-import { Image } from "react-native";
+import { Image, Pressable } from "react-native";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
@@ -28,7 +27,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const styles = stylesFn(theme);
   const swiperRef = React.useRef<Swiper>(null);
 
-  const mediaProcessing = influencer.profile?.attachments?.map((media) =>
+  const mediaProcessing = influencer?.profile?.attachments?.map((media) =>
     processRawAttachment(media)
   );
 
@@ -54,7 +53,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 key={index}
                 item={media}
                 index={index}
-                handleImagePress={() => {}}
+                handleImagePress={() => { }}
               />
             ))}
         </Swiper>
@@ -81,23 +80,23 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
       <View style={styles.header}>
         <View style={styles.profileInfo}>
-          <Title style={styles.name}>{influencer.name}</Title>
-          <Text style={styles.subText}>Email: {influencer.email}</Text>
-          <Text style={styles.subText}>Phone: {influencer.phoneNumber}</Text>
+          <Title style={styles.name}>{influencer?.name}</Title>
+          <Text style={styles.subText}>Email: {influencer?.email}</Text>
+          <Text style={styles.subText}>Phone: {influencer?.phoneNumber}</Text>
           <View style={styles.divider} />
-          <Text style={styles.subText}>Reach: {influencer.backend?.reach}</Text>
+          <Text style={styles.subText}>Reach: {influencer?.backend?.reach}</Text>
           <Text style={styles.subText}>
-            Engagement: {influencer.backend?.engagement}
+            Engagement: {influencer?.backend?.engagement}
           </Text>
           <Text style={styles.subText}>
-            Rating: {influencer.backend?.rating}
+            Rating: {influencer?.backend?.rating}
           </Text>
         </View>
       </View>
 
       <View style={styles.chipContainer}>
-        {influencer.profile?.category &&
-          influencer.profile?.category.map((interest, index) => (
+        {influencer?.profile?.category &&
+          influencer?.profile?.category.map((interest, index) => (
             <Chip key={index} style={styles.chip} mode="outlined">
               {interest}
             </Chip>
@@ -112,7 +111,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               contentWidth={screenWidth}
               source={{
                 html:
-                  influencer.profile?.content?.about ||
+                  influencer?.profile?.content?.about ||
                   "<p>No content available.</p>",
               }}
               tagsStyles={{
@@ -128,7 +127,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               contentWidth={screenWidth}
               source={{
                 html:
-                  influencer.profile?.content?.socialMediaHighlight ||
+                  influencer?.profile?.content?.socialMediaHighlight ||
                   "<p>No content available.</p>",
               }}
               tagsStyles={{
@@ -144,7 +143,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               contentWidth={screenWidth}
               source={{
                 html:
-                  influencer.profile?.content?.collaborationGoals ||
+                  influencer?.profile?.content?.collaborationGoals ||
                   "<p>No content available.</p>",
               }}
               tagsStyles={{
@@ -160,7 +159,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               contentWidth={screenWidth}
               source={{
                 html:
-                  influencer.profile?.content?.audienceInsights ||
+                  influencer?.profile?.content?.audienceInsights ||
                   "<p>No content available.</p>",
               }}
               tagsStyles={{
@@ -176,7 +175,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               contentWidth={screenWidth}
               source={{
                 html:
-                  influencer.profile?.content?.funFactAboutUser ||
+                  influencer?.profile?.content?.funFactAboutUser ||
                   "<p>No content available.</p>",
               }}
               tagsStyles={{
