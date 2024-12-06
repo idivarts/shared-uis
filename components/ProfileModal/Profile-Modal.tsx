@@ -12,7 +12,7 @@ import { Theme, useTheme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import RenderHTML from "react-native-render-html";
 import { Pressable } from "react-native-gesture-handler";
-import { Image, FlatList } from "react-native";
+import { Image } from "react-native";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
