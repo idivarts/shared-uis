@@ -11,8 +11,7 @@ import RenderMediaItem from "../carousel/render-media-item";
 import { Theme, useTheme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import RenderHTML from "react-native-render-html";
-import { Pressable } from "react-native-gesture-handler";
-import { Image } from "react-native";
+import { Image, Pressable } from "react-native";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
@@ -54,7 +53,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 key={index}
                 item={media}
                 index={index}
-                handleImagePress={() => {}}
+                handleImagePress={() => { }}
               />
             ))}
         </Swiper>
