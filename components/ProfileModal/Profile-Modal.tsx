@@ -187,11 +187,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 influencer?.profile?.content?.about ||
                 "<p>No content available.</p>",
             }}
-            tagsStyles={{
-              p: { color: Colors(theme).text, fontSize: 16 },
-            }}
-            baseStyle={{
-              fontSize: 16,
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
             }}
           />
         </View>
@@ -205,11 +202,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 influencer?.profile?.content?.socialMediaHighlight ||
                 "<p>No content available.</p>",
             }}
-            tagsStyles={{
-              p: { color: Colors(theme).text, fontSize: 16 },
-            }}
-            baseStyle={{
-              fontSize: 16,
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
             }}
           />
         </View>
@@ -222,11 +216,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 influencer?.profile?.content?.collaborationGoals ||
                 "<p>No content available.</p>",
             }}
-            tagsStyles={{
-              p: { color: Colors(theme).text, fontSize: 16 },
-            }}
-            baseStyle={{
-              fontSize: 16,
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
             }}
           />
         </View>
@@ -239,11 +230,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 influencer?.profile?.content?.audienceInsights ||
                 "<p>No content available.</p>",
             }}
-            tagsStyles={{
-              p: { color: Colors(theme).text, fontSize: 16 },
-            }}
-            baseStyle={{
-              fontSize: 16,
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
             }}
           />
         </View>
@@ -256,11 +244,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 influencer?.profile?.content?.funFactAboutUser ||
                 "<p>No content available.</p>",
             }}
-            tagsStyles={{
-              p: { color: Colors(theme).text, fontSize: 16 },
-            }}
-            baseStyle={{
-              fontSize: 16,
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
             }}
           />
         </View>

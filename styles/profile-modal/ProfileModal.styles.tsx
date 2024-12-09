@@ -96,7 +96,7 @@ export const stylesFn = (theme: any) =>
     aboutCard: {
       marginHorizontal: 20,
       marginVertical: 10,
-      backgroundColor: Colors(theme).card,
+      backgroundColor: Colors(theme).background,
     },
     dot: {
       backgroundColor: Colors(theme).primary,
