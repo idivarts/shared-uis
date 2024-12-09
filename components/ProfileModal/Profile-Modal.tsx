@@ -1,12 +1,20 @@
 import React from "react";
-import { View, Dimensions, ScrollView } from "react-native";
-import { Text, Chip, Card, Title } from "react-native-paper";
+import { View, Dimensions, ScrollView, Text } from "react-native";
+import { Chip, Card, Title } from "react-native-paper";
 import Swiper from "react-native-swiper";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import Colors from "@/shared-uis/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faMessage } from "@fortawesome/free-solid-svg-icons";
+import { faInstagram } from "@fortawesome/free-brands-svg-icons";
+import {
+  faChartBar,
+  faEnvelope,
+  faFaceSmile,
+  faMessage,
+  faPhone,
+  faUsers,
+} from "@fortawesome/free-solid-svg-icons";
 import RenderMediaItem from "../carousel/render-media-item";
 import { Theme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
@@ -53,7 +61,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 key={index}
                 item={media}
                 index={index}
-                handleImagePress={() => { }}
+                handleImagePress={() => {}}
               />
             ))}
         </Swiper>
@@ -80,20 +88,86 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
       <View style={styles.header}>
         <View style={styles.profileInfo}>
-          <Title style={styles.name}>{influencer?.name}</Title>
-          <Text style={styles.subText}>Email: {influencer?.email}</Text>
-          <Text style={styles.subText}>Phone: {influencer?.phoneNumber}</Text>
+          <Text style={styles.name}>{influencer?.name}</Text>
+
+          <View style={styles.row}>
+            <FontAwesomeIcon
+              icon={faInstagram}
+              size={16}
+              color={Colors(theme).primary}
+              style={styles.icon}
+            />
+            <Text style={styles.subTextHeading}>Instagram: @John.Doe</Text>
+          </View>
+
+          {/* Email */}
+          <View style={styles.row}>
+            <FontAwesomeIcon
+              icon={faEnvelope}
+              size={16}
+              color={Colors(theme).primary}
+              style={styles.icon}
+            />
+            <Text style={styles.subTextHeading}>
+              Email: {influencer?.email}
+            </Text>
+          </View>
+
+          {/* Phone */}
+          <View style={styles.row}>
+            <FontAwesomeIcon
+              icon={faPhone}
+              size={16}
+              color={Colors(theme).primary}
+              style={styles.icon}
+            />
+            <Text style={styles.subTextHeading}>
+              Phone: {influencer?.phoneNumber}
+            </Text>
+          </View>
+
           <View style={styles.divider} />
-          <Text style={styles.subText}>Reach: {influencer?.backend?.reach}</Text>
-          <Text style={styles.subText}>
-            Engagement: {influencer?.backend?.engagement}
-          </Text>
-          <Text style={styles.subText}>
-            Rating: {influencer?.backend?.rating}
-          </Text>
+
+          {/* Reach */}
+          <View style={styles.row}>
+            <FontAwesomeIcon
+              icon={faUsers}
+              size={16}
+              color={Colors(theme).primary}
+              style={styles.icon}
+            />
+            <Text style={styles.subTextHeading}>
+              Reach: {influencer?.backend?.reach}
+            </Text>
+          </View>
+
+          {/* Engagement */}
+          <View style={styles.row}>
+            <FontAwesomeIcon
+              icon={faChartBar}
+              size={16}
+              color={Colors(theme).primary}
+              style={styles.icon}
+            />
+            <Text style={styles.subTextHeading}>
+              Engagement: {influencer?.backend?.engagement}
+            </Text>
+          </View>
+
+          {/* Rating */}
+          <View style={styles.row}>
+            <FontAwesomeIcon
+              icon={faFaceSmile}
+              size={16}
+              color={Colors(theme).primary}
+              style={styles.icon}
+            />
+            <Text style={styles.subTextHeading}>
+              Rating: {influencer?.backend?.rating}
+            </Text>
+          </View>
         </View>
       </View>
-
       <View style={styles.chipContainer}>
         {influencer?.profile?.category &&
           influencer?.profile?.category.map((interest, index) => (
@@ -104,129 +178,118 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
       </View>
 
       <View style={styles.aboutContainer}>
-        <Card style={styles.aboutCard}>
-          <Card.Content>
-            <Title style={styles.cardColor}>About Me</Title>
-            <RenderHTML
-              contentWidth={screenWidth}
-              source={{
-                html:
-                  influencer?.profile?.content?.about ||
-                  "<p>No content available.</p>",
-              }}
-              tagsStyles={{
-                p: { color: Colors(theme).text, fontSize: 16 },
-              }}
-            />
-          </Card.Content>
-        </Card>
-        <Card style={styles.aboutCard}>
-          <Card.Content>
-            <Title style={styles.cardColor}>Social Media Highlight</Title>
-            <RenderHTML
-              contentWidth={screenWidth}
-              source={{
-                html:
-                  influencer?.profile?.content?.socialMediaHighlight ||
-                  "<p>No content available.</p>",
-              }}
-              tagsStyles={{
-                p: { color: Colors(theme).text, fontSize: 16 },
-              }}
-            />
-          </Card.Content>
-        </Card>
-        <Card style={styles.aboutCard}>
-          <Card.Content>
-            <Title style={styles.cardColor}>Campaign Goals</Title>
-            <RenderHTML
-              contentWidth={screenWidth}
-              source={{
-                html:
-                  influencer?.profile?.content?.collaborationGoals ||
-                  "<p>No content available.</p>",
-              }}
-              tagsStyles={{
-                p: { color: Colors(theme).text, fontSize: 16 },
-              }}
-            />
-          </Card.Content>
-        </Card>
-        <Card style={styles.aboutCard}>
-          <Card.Content>
-            <Title style={styles.cardColor}>Audience Insights</Title>
-            <RenderHTML
-              contentWidth={screenWidth}
-              source={{
-                html:
-                  influencer?.profile?.content?.audienceInsights ||
-                  "<p>No content available.</p>",
-              }}
-              tagsStyles={{
-                p: { color: Colors(theme).text, fontSize: 16 },
-              }}
-            />
-          </Card.Content>
-        </Card>
-        <Card style={styles.aboutCard}>
-          <Card.Content>
-            <Title style={styles.cardColor}>Fun Fact About You</Title>
-            <RenderHTML
-              contentWidth={screenWidth}
-              source={{
-                html:
-                  influencer?.profile?.content?.funFactAboutUser ||
-                  "<p>No content available.</p>",
-              }}
-              tagsStyles={{
-                p: { color: Colors(theme).text, fontSize: 16 },
-              }}
-            />
-          </Card.Content>
-        </Card>
-        <Card style={styles.aboutCard}>
-          <Card.Content>
-            <Title style={styles.cardColor}>Other Instagram Posts</Title>
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-              <View style={{ flexDirection: "column" }}>
-                <View style={{ flexDirection: "row", marginBottom: 10 }}>
-                  {mediaProcessing &&
-                    mediaProcessing
-                      .filter((_, index) => index % 2 === 0)
-                      .map((item, index) => (
-                        <Image
-                          key={`top-${index}`}
-                          source={{ uri: item.url }}
-                          style={{
-                            width: 100,
-                            height: 100,
-                            borderRadius: 10,
-                            marginRight: 10,
-                          }}
-                        />
-                      ))}
-                </View>
-                <View style={{ flexDirection: "row" }}>
-                  {mediaProcessing &&
-                    mediaProcessing
-                      .filter((_, index) => index % 2 !== 0)
-                      .map((item, index) => (
-                        <Image
-                          key={`bottom-${index}`}
-                          source={{ uri: item.url }}
-                          style={{
-                            width: 100,
-                            height: 100,
-                            borderRadius: 10,
-                            marginRight: 10,
-                          }}
-                        />
-                      ))}
-                </View>
+        <View style={styles.aboutCard}>
+          <Title style={styles.cardColor}>About Me</Title>
+          <RenderHTML
+            contentWidth={screenWidth}
+            source={{
+              html:
+                influencer?.profile?.content?.about ||
+                "<p>No content available.</p>",
+            }}
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
+            }}
+          />
+        </View>
+
+        <View style={styles.aboutCard}>
+          <Title style={styles.cardColor}>Social Media Highlight</Title>
+          <RenderHTML
+            contentWidth={screenWidth}
+            source={{
+              html:
+                influencer?.profile?.content?.socialMediaHighlight ||
+                "<p>No content available.</p>",
+            }}
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
+            }}
+          />
+        </View>
+        <View style={styles.aboutCard}>
+          <Title style={styles.cardColor}>Campaign Goals</Title>
+          <RenderHTML
+            contentWidth={screenWidth}
+            source={{
+              html:
+                influencer?.profile?.content?.collaborationGoals ||
+                "<p>No content available.</p>",
+            }}
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
+            }}
+          />
+        </View>
+        <View style={styles.aboutCard}>
+          <Title style={styles.cardColor}>Audience Insights</Title>
+          <RenderHTML
+            contentWidth={screenWidth}
+            source={{
+              html:
+                influencer?.profile?.content?.audienceInsights ||
+                "<p>No content available.</p>",
+            }}
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
+            }}
+          />
+        </View>
+        <View style={styles.aboutCard}>
+          <Title style={styles.cardColor}>Fun Fact About You</Title>
+          <RenderHTML
+            contentWidth={screenWidth}
+            source={{
+              html:
+                influencer?.profile?.content?.funFactAboutUser ||
+                "<p>No content available.</p>",
+            }}
+            defaultTextProps={{
+              style: { fontSize: 16, color: Colors(theme).text },
+            }}
+          />
+        </View>
+        <View style={styles.aboutCard}>
+          <Title style={styles.cardColor}>Other Instagram Posts</Title>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <View style={{ flexDirection: "column" }}>
+              <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                {mediaProcessing &&
+                  mediaProcessing
+                    .filter((_, index) => index % 2 === 0)
+                    .map((item, index) => (
+                      <Image
+                        key={`top-${index}`}
+                        source={{ uri: item.url }}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          borderRadius: 10,
+                          marginRight: 10,
+                        }}
+                      />
+                    ))}
               </View>
-            </ScrollView>
-          </Card.Content>
-        </Card>
+              <View style={{ flexDirection: "row" }}>
+                {mediaProcessing &&
+                  mediaProcessing
+                    .filter((_, index) => index % 2 !== 0)
+                    .map((item, index) => (
+                      <Image
+                        key={`bottom-${index}`}
+                        source={{ uri: item.url }}
+                        style={{
+                          width: 100,
+                          height: 100,
+                          borderRadius: 10,
+                          marginRight: 10,
+                        }}
+                      />
+                    ))}
+              </View>
+            </View>
+          </ScrollView>
+        </View>
       </View>
     </ScrollView>
   );

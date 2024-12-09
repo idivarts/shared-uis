@@ -34,21 +34,52 @@ export const stylesFn = (theme: any) =>
       flex: 1,
     },
     name: {
-      fontSize: 24,
+      fontSize: 26,
       fontWeight: "bold",
       color: Colors(theme).text,
+      marginBottom: 5,
     },
     subText: {
       color: Colors(theme).text,
       marginVertical: 2,
+      fontSize: 16,
+    },
+    subTextHeading: {
+      color: Colors(theme).text,
+      fontSize: 20,
+    },
+    row: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 8,
+    },
+    icon: {
+      marginRight: 8,
+      color: Colors(theme).primary,
+    },
+    statItem: {
+      flex: 1,
+      alignItems: "center",
+      flexDirection: "row",
+    },
+    statsText: {
+      color: Colors(theme).text,
+      fontSize: 16,
     },
     divider: {
       borderBottomColor: "black",
       borderBottomWidth: StyleSheet.hairlineWidth,
       marginVertical: 10,
     },
+    dividerCard: {
+      borderBottomColor: "black",
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      marginVertical: 10,
+      marginHorizontal: 20,
+    },
     cardColor: {
       color: Colors(theme).text,
+      fontSize: 20,
     },
     chipContainer: {
       flexDirection: "row",
@@ -65,7 +96,7 @@ export const stylesFn = (theme: any) =>
     aboutCard: {
       marginHorizontal: 20,
       marginVertical: 10,
-      backgroundColor: Colors(theme).card,
+      backgroundColor: Colors(theme).background,
     },
     dot: {
       backgroundColor: Colors(theme).primary,
