@@ -51,7 +51,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           dot={<View style={styles.dot} />}
           activeDot={<View style={styles.activeDot} />}
           loop={true}
-          autoplay={true}
+          autoplay={false}
           removeClippedSubviews={false}
           paginationStyle={styles.pagination}
         >
