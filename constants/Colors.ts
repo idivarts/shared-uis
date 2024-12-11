@@ -52,6 +52,8 @@ export default (theme: Theme) => ({
   red: "red",
   notificationDot: "red",
   gray100: "#555",
+  gray200: "#f9f9f9",
+  gray300: "#757575",
   onPrimary: "#ffffff",
   secondary: "#054463",
   secondaryContainer: "#538BA6",
