@@ -3,17 +3,15 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Text,
   TextInput,
-  View,
 } from 'react-native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCheck, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { Theme } from '@react-navigation/native';
 import Colors from "@/shared-uis/constants/Colors";
-import { BottomSheetBackdrop, BottomSheetModal, BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import { BottomSheetBackdrop, BottomSheetModal } from "@gorhom/bottom-sheet";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useSharedValue } from 'react-native-reanimated';
+import { Text, View } from '../theme/Themed';
 
 export interface SearchAddProps {
   buttonLabel?: string;
@@ -31,7 +29,6 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
   theme,
 }) => {
   const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
-  // const [isBottomSheetVisible, setIsBottomSheetVisible] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState<string[]>(itemsList);
   const searchInputRef = useRef<TextInput>(null);
@@ -83,12 +80,6 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
 
   const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
   const insets = useSafeAreaInsets();
-  const containerOffset = useSharedValue({
-    top: insets.top,
-    bottom: insets.bottom,
-    left: insets.left,
-    right: insets.right,
-  });
 
   const renderBackdrop = (props: any) => {
     return (
@@ -116,7 +107,6 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
                   color={Colors(theme).white}
                   size={16}
                 />
-                {/* <Text style={styles.removeButtonText}>×</Text> */}
               </Pressable>
             </View>
           ))}
@@ -136,53 +126,19 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
         </Pressable>
       </View>
 
-      {/* <BottomSheet
-        visible={isBottomSheetVisible}
-        onClose={() => setIsBottomSheetVisible(false)}
-      >
-        <View style={styles.bottomSheetContent}>
-          <TextInput
-            ref={searchInputRef}
-            style={styles.searchInput}
-            value={searchText}
-            onChangeText={setSearchText}
-            placeholder="Search"
-            autoCapitalize="none"
-          />
-          <ScrollView style={styles.itemsList}>
-            {isItemNotFound ? (
-              <Pressable
-                style={styles.addButton}
-                onPress={handleAddItem}
-              >
-                <Text style={styles.addButtonText}>+ Add {searchText}</Text>
-              </Pressable>
-            ) : (
-              filteredItems.map(item => (
-                <Pressable
-                  key={item}
-                  style={styles.item}
-                  onPress={() => handleSelectItem(item)}
-                >
-                  <Text style={styles.itemText}>{item}</Text>
-                  {selectedItems.includes(item) && (
-                    <Text style={styles.selectedMark}>✓</Text>
-                  )}
-                </Pressable>
-              ))
-            )}
-          </ScrollView>
-        </View>
-      </BottomSheet> */}
       <BottomSheetModal
         ref={bottomSheetModalRef}
         index={2}
+        backgroundStyle={{
+          backgroundColor: Colors(theme).background,
+        }}
+        handleIndicatorStyle={{
+          backgroundColor: Colors(theme).primary,
+        }}
         snapPoints={snapPoints}
         backdropComponent={renderBackdrop}
         enablePanDownToClose={true}
-        containerOffset={containerOffset}
         topInset={insets.top}
-        bottomInset={insets.bottom}
       >
         <View style={styles.bottomSheetContent}>
           <TextInput
@@ -192,6 +148,7 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
             onChangeText={setSearchText}
             placeholder="Search"
             autoCapitalize="none"
+            placeholderTextColor={Colors(theme).gray300}
           />
           <ScrollView style={styles.itemsList}>
             {isItemNotFound ? (
@@ -278,9 +235,11 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   bottomSheetContent: {
     padding: 16,
     paddingBottom: 20,
+    backgroundColor: Colors(theme).background,
   },
   searchInput: {
     borderWidth: 1,
+    color: Colors(theme).text,
     borderColor: Colors(theme).primary,
     borderRadius: 10,
     paddingHorizontal: 16,
@@ -288,7 +247,7 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     marginBottom: 16,
   },
   itemsList: {
-    maxHeight: 300,
+    maxHeight: 320,
     borderRadius: 10,
   },
   item: {
@@ -298,10 +257,11 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     padding: 16,
     borderBottomWidth: 1,
     borderBottomColor: Colors(theme).platinum,
-    backgroundColor: Colors(theme).gray200,
+    backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).gray200,
   },
   itemText: {
     fontSize: 16,
+    color: Colors(theme).text,
   },
   addButton: {
     backgroundColor: Colors(theme).primary,
@@ -313,7 +273,7 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     justifyContent: 'center',
   },
   addButtonText: {
-    color: 'white',
+    color: Colors(theme).white,
     fontSize: 16,
     fontWeight: '600',
   },
