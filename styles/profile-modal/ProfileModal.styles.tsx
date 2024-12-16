@@ -91,7 +91,7 @@ export const stylesFn = (theme: any) =>
       marginBottom: 10,
     },
     aboutContainer: {
-      marginVertical: 10,
+      marginBottom: 10,
     },
     aboutCard: {
       marginHorizontal: 20,

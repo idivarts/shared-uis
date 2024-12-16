@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
   faChartBar,
+  faClock,
   faEnvelope,
   faFaceSmile,
   faMessage,
@@ -101,30 +102,48 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           </View>
 
           {/* Email */}
-          <View style={styles.row}>
-            <FontAwesomeIcon
-              icon={faEnvelope}
-              size={16}
-              color={Colors(theme).primary}
-              style={styles.icon}
-            />
-            <Text style={styles.subTextHeading}>
-              Email: {influencer?.email}
-            </Text>
-          </View>
+          {influencer?.email && (
+            <View style={styles.row}>
+              <FontAwesomeIcon
+                icon={faEnvelope}
+                size={16}
+                color={Colors(theme).primary}
+                style={styles.icon}
+              />
+              <Text style={styles.subTextHeading}>
+                Email: {influencer?.email}
+              </Text>
+            </View>
+          )}
 
           {/* Phone */}
-          <View style={styles.row}>
-            <FontAwesomeIcon
-              icon={faPhone}
-              size={16}
-              color={Colors(theme).primary}
-              style={styles.icon}
-            />
-            <Text style={styles.subTextHeading}>
-              Phone: {influencer?.phoneNumber}
-            </Text>
-          </View>
+          {influencer?.phoneNumber && (
+            <View style={styles.row}>
+              <FontAwesomeIcon
+                icon={faPhone}
+                size={16}
+                color={Colors(theme).primary}
+                style={styles.icon}
+              />
+              <Text style={styles.subTextHeading}>
+                Phone: {influencer?.phoneNumber}
+              </Text>
+            </View>
+          )}
+
+          {influencer?.profile?.timeCommitment && (
+            <View style={styles.row}>
+              <FontAwesomeIcon
+                icon={faClock}
+                size={16}
+                color={Colors(theme).primary}
+                style={styles.icon}
+              />
+              <Text style={styles.subTextHeading}>
+                Time Commitment: {influencer?.profile?.timeCommitment}
+              </Text>
+            </View>
+          )}
 
           <View style={styles.divider} />
 
@@ -178,77 +197,87 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
       </View>
 
       <View style={styles.aboutContainer}>
-        <View style={styles.aboutCard}>
-          <Title style={styles.cardColor}>About Me</Title>
-          <RenderHTML
-            contentWidth={screenWidth}
-            source={{
-              html:
-                influencer?.profile?.content?.about ||
-                "<p>No content available.</p>",
-            }}
-            defaultTextProps={{
-              style: { fontSize: 16, color: Colors(theme).text },
-            }}
-          />
-        </View>
+        {influencer?.profile?.content?.about && (
+          <View style={styles.aboutCard}>
+            <Title style={styles.cardColor}>About Me</Title>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer?.profile?.content?.about ||
+                  "<p>No content available.</p>",
+              }}
+              defaultTextProps={{
+                style: { fontSize: 16, color: Colors(theme).text },
+              }}
+            />
+          </View>
+        )}
 
-        <View style={styles.aboutCard}>
-          <Title style={styles.cardColor}>Social Media Highlight</Title>
-          <RenderHTML
-            contentWidth={screenWidth}
-            source={{
-              html:
-                influencer?.profile?.content?.socialMediaHighlight ||
-                "<p>No content available.</p>",
-            }}
-            defaultTextProps={{
-              style: { fontSize: 16, color: Colors(theme).text },
-            }}
-          />
-        </View>
-        <View style={styles.aboutCard}>
-          <Title style={styles.cardColor}>Campaign Goals</Title>
-          <RenderHTML
-            contentWidth={screenWidth}
-            source={{
-              html:
-                influencer?.profile?.content?.collaborationGoals ||
-                "<p>No content available.</p>",
-            }}
-            defaultTextProps={{
-              style: { fontSize: 16, color: Colors(theme).text },
-            }}
-          />
-        </View>
-        <View style={styles.aboutCard}>
-          <Title style={styles.cardColor}>Audience Insights</Title>
-          <RenderHTML
-            contentWidth={screenWidth}
-            source={{
-              html:
-                influencer?.profile?.content?.audienceInsights ||
-                "<p>No content available.</p>",
-            }}
-            defaultTextProps={{
-              style: { fontSize: 16, color: Colors(theme).text },
-            }}
-          />
-        </View>
-        <View style={styles.aboutCard}>
-          <Title style={styles.cardColor}>Fun Fact About You</Title>
-          <RenderHTML
-            contentWidth={screenWidth}
-            source={{
-              html:
-                influencer?.profile?.content?.funFactAboutUser ||
-                "<p>No content available.</p>",
-            }}
-            defaultTextProps={{
-              style: { fontSize: 16, color: Colors(theme).text },
-            }}
-          />
-        </View>
+        {influencer?.profile?.content?.socialMediaHighlight && (
+          <View style={styles.aboutCard}>
+            <Title style={styles.cardColor}>Social Media Highlight</Title>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer?.profile?.content?.socialMediaHighlight ||
+                  "<p>No content available.</p>",
+              }}
+              defaultTextProps={{
+                style: { fontSize: 16, color: Colors(theme).text },
+              }}
+            />
+          </View>
+        )}
+        {influencer?.profile?.content?.collaborationGoals && (
+          <View style={styles.aboutCard}>
+            <Title style={styles.cardColor}>Campaign Goals</Title>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer?.profile?.content?.collaborationGoals ||
+                  "<p>No content available.</p>",
+              }}
+              defaultTextProps={{
+                style: { fontSize: 16, color: Colors(theme).text },
+              }}
+            />
+          </View>
+        )}
+        {influencer?.profile?.content?.audienceInsights && (
+          <View style={styles.aboutCard}>
+            <Title style={styles.cardColor}>Audience Insights</Title>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer?.profile?.content?.audienceInsights ||
+                  "<p>No content available.</p>",
+              }}
+              defaultTextProps={{
+                style: { fontSize: 16, color: Colors(theme).text },
+              }}
+            />
+          </View>
+        )}
+        {influencer?.profile?.content?.funFactAboutUser && (
+          <View style={styles.aboutCard}>
+            <Title style={styles.cardColor}>Fun Fact About You</Title>
+            <RenderHTML
+              contentWidth={screenWidth}
+              source={{
+                html:
+                  influencer?.profile?.content?.funFactAboutUser ||
+                  "<p>No content available.</p>",
+              }}
+              defaultTextProps={{
+                style: { fontSize: 16, color: Colors(theme).text },
+              }}
+            />
+          </View>
+        )}
         <View style={styles.aboutCard}>
           <Title style={styles.cardColor}>Other Instagram Posts</Title>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
