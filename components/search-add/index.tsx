@@ -35,7 +35,7 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
   const searchInputRef = useRef<TextInput>(null);
   const [isVisible, setIsVisible] = useState(false);
 
-  const bottomSheetModalRef = useRef<BottomSheet>(null);
+  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const styles = stylesFn(theme);
 
@@ -73,13 +73,12 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
 
   const openBottomSheet = () => {
     setIsVisible(true);
-    bottomSheetModalRef.current?.expand();
     searchInputRef.current?.focus();
   };
 
   const isItemNotFound = searchText.trim() !== '' && filteredItems.length === 0;
 
-  const snapPoints = useMemo(() => ["25%", "50%", "90%"], []);
+  const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
   const insets = useSafeAreaInsets();
 
   const renderBackdrop = (props: any) => {
@@ -94,47 +93,48 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.selectedItemsContainer}>
-        <View style={styles.chipContainer}>
-          {selectedItems.map(item => (
-            <View key={item} style={styles.chip}>
-              <Text style={styles.chipText}>{item}</Text>
-              <Pressable
-                onPress={() => handleRemoveItem(item)}
-                style={styles.removeButton}
-              >
-                <FontAwesomeIcon
-                  icon={faClose}
-                  color={Colors(theme).white}
-                  size={16}
-                />
-              </Pressable>
-            </View>
-          ))}
+    <>
+      <View style={styles.container}>
+        <View style={styles.selectedItemsContainer}>
+          <View style={styles.chipContainer}>
+            {selectedItems.map(item => (
+              <View key={item} style={styles.chip}>
+                <Text style={styles.chipText}>{item}</Text>
+                <Pressable
+                  onPress={() => handleRemoveItem(item)}
+                  style={styles.removeButton}
+                >
+                  <FontAwesomeIcon
+                    icon={faClose}
+                    color={Colors(theme).white}
+                    size={16}
+                  />
+                </Pressable>
+              </View>
+            ))}
+          </View>
+          <Pressable
+            style={styles.addLanguageButton}
+            onPress={openBottomSheet}
+          >
+            <Text style={styles.addLanguageText}>
+              {buttonLabel || 'Add'}
+            </Text>
+            <FontAwesomeIcon
+              icon={faPlus}
+              color={Colors(theme).primary}
+              size={14}
+            />
+          </Pressable>
         </View>
-        <Pressable
-          style={styles.addLanguageButton}
-          onPress={openBottomSheet}
-        >
-          <Text style={styles.addLanguageText}>
-            {buttonLabel || 'Add'}
-          </Text>
-          <FontAwesomeIcon
-            icon={faPlus}
-            color={Colors(theme).primary}
-            size={14}
-          />
-        </Pressable>
       </View>
-
       <Modal
         visible={isVisible}
         transparent
-        animationType="none"
+        animationType="fade"
       >
         <BottomSheet
-          ref={bottomSheetModalRef}
+          ref={bottomSheetRef}
           index={isVisible ? 1 : -1}
           backgroundStyle={{
             backgroundColor: Colors(theme).background,
@@ -142,9 +142,10 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
           handleIndicatorStyle={{
             backgroundColor: Colors(theme).primary,
           }}
+          onClose={() => setIsVisible(false)}
           snapPoints={snapPoints}
           backdropComponent={renderBackdrop}
-          enablePanDownToClose={true}
+          enablePanDownToClose
           topInset={insets.top}
         >
           <View style={styles.bottomSheetContent}>
@@ -152,9 +153,9 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
               style={styles.closeButton}
               onPress={() => {
                 setIsVisible(false);
-                setTimeout(() => {
-                  bottomSheetModalRef.current?.close();
-                }, 200);
+                if (bottomSheetRef.current) {
+                  bottomSheetRef.current?.close();
+                }
               }}
             >
               <FontAwesomeIcon
@@ -207,7 +208,7 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
           </View>
         </BottomSheet>
       </Modal>
-    </View>
+    </>
   );
 };
 
