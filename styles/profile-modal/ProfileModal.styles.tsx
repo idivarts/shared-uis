@@ -4,7 +4,7 @@ import { Dimensions, StyleSheet } from "react-native";
 export const stylesFn = (theme: any) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      height: "80%",
       backgroundColor: Colors(theme).background,
     },
     contentContainer: {
@@ -97,6 +97,15 @@ export const stylesFn = (theme: any) =>
       marginHorizontal: 20,
       marginVertical: 10,
       backgroundColor: Colors(theme).background,
+    },
+    stickyBottom: {
+      position: "absolute",
+      bottom: 0,
+      width: "100%",
+      backgroundColor: "#fff",
+      borderTopWidth: 1,
+      borderTopColor: "#ccc",
+      padding: 10,
     },
     dot: {
       backgroundColor: Colors(theme).primary,
