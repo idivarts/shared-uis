@@ -363,7 +363,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 rating: influencer?.backend?.rating || 4,
                 followers: influencer?.backend?.reach || 1234,
                 jobsCompleted: 10,
-                handle: "john.doe",
+                handle: "",
                 successRate: 90,
                 media: mediaProcessing || [],
                 reach: influencer?.backend?.reach || 0,
