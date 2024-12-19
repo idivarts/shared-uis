@@ -1,13 +1,14 @@
 import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
 import Colors from "../../constants/Colors";
+import { Platform } from "react-native";
 
 export const stylesFn = (theme: Theme) => StyleSheet.create({
   carouselContainer: {
     backgroundColor: Colors(theme).card,
   },
   pagination: {
-    bottom: 0,
+    bottom: Platform.OS === 'web' ? -30 : 0,
   },
   buttonWrapper: {
     backgroundColor: Colors(theme).white,

@@ -42,6 +42,7 @@ const Carousel: React.FC<CarouselProps> = ({
     <View
       style={{
         height: containerHeight ? containerHeight : (Platform.OS === 'web' ? 560 : 320),
+        paddingBottom: Platform.OS === 'web' ? 40 : 0,
       }}
     >
       <Swiper
