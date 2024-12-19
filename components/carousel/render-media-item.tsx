@@ -1,17 +1,23 @@
-import { ActivityIndicator, Image, Platform } from "react-native";
+import { useState } from "react";
+import {
+  ActivityIndicator,
+  Image,
+} from "react-native";
 import Animated from "react-native-reanimated";
 import { ResizeMode, Video } from "expo-av";
-import { TapGestureHandler, State } from "react-native-gesture-handler";
-
-import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
+import {
+  TapGestureHandler,
+  State,
+} from "react-native-gesture-handler";
 import { useTheme } from "@react-navigation/native";
-import { imageUrl } from "@/shared-uis/utils/url";
-import { useState } from "react";
+
+import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
+import { imageUrl } from "../../utils/url";
 import { View } from "../theme/Themed";
 
 export interface MediaItem {
   type: string;
-  url?: string;
+  url: string;
 }
 
 interface RenderMediaItemProps {
@@ -39,7 +45,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     return (
       <TapGestureHandler
         onHandlerStateChange={({ nativeEvent }) => {
-          if (nativeEvent.state === State.ACTIVE) {
+          if (nativeEvent.state === State.ACTIVE && handleImagePress) {
             handleImagePress(item);
           }
         }}
@@ -54,7 +60,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
               styles.loadingIndicatorContainer,
               {
                 display: isLoading ? "flex" : "none",
-              },
+              }
             ]}
           >
             {isLoading && <ActivityIndicator />}
@@ -64,9 +70,9 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             style={[
               styles.media,
               {
-                height: height || 350,
+                height: height || 250,
                 width: width || "100%",
-              },
+              }
             ]}
             resizeMode="cover"
             resizeMethod="resize"
@@ -88,8 +94,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       source={
         item.url
           ? {
-              uri: item.url,
-            }
+            uri: item.url,
+          }
           : require("@/assets/videos/ForBiggerJoyrides.mp4")
       }
       style={[
@@ -97,12 +103,14 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         {
           height: height || 250,
           width: width || "100%",
-        },
+        }
       ]}
       resizeMode={ResizeMode.COVER}
-      isLooping={false}
-      shouldPlay={false}
+      isLooping={true}
+      shouldPlay
       useNativeControls
+      usePoster
+      posterSource={imageUrl(require("@/assets/images/placeholder-image.jpg"))}
       onError={(error) => console.error("Video Error:", error)}
       onLoadStart={() => setIsLoading(true)}
       onLoad={() => setIsLoading(false)}
