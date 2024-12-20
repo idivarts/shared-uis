@@ -80,6 +80,7 @@ export const stylesFn = (theme: any) =>
     cardColor: {
       color: Colors(theme).text,
       fontSize: 20,
+      fontWeight: "bold",
     },
     chipContainer: {
       flexDirection: "row",
@@ -92,6 +93,7 @@ export const stylesFn = (theme: any) =>
     },
     aboutContainer: {
       marginBottom: 10,
+      gap: 32,
     },
     aboutCard: {
       marginHorizontal: 20,

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Dimensions, ScrollView, Text } from "react-native";
 import { Chip, Card, Title } from "react-native-paper";
 import Swiper from "react-native-swiper";
@@ -6,7 +6,7 @@ import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import Colors from "@/shared-uis/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faInstagram } from "@fortawesome/free-brands-svg-icons";
+import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
   faChartBar,
   faClock,
@@ -23,20 +23,25 @@ import RenderHTML from "react-native-render-html";
 import { Image, Pressable } from "react-native";
 import SelectGroup from "../select/select-group";
 import InfluencerCard from "../InfluencerCard";
+import { collection, doc, Firestore, getDoc } from "firebase/firestore";
+import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 
 interface ProfileBottomSheetProps {
   influencer: IUsers;
   theme: Theme;
   isBrandsApp: boolean;
+  FireStoreDB: Firestore;
 }
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   influencer,
   theme,
   isBrandsApp,
+  FireStoreDB: FirestoreDB,
 }) => {
   const styles = stylesFn(theme);
   const swiperRef = React.useRef<Swiper>(null);
+  const [primarySocial, setPrimarySocial] = useState<ISocials>();
 
   const mediaProcessing = influencer?.profile?.attachments?.map((media) =>
     processRawAttachment(media)
@@ -48,6 +53,35 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   });
 
   const screenWidth = Dimensions.get("window").width;
+
+  const fetchPrimarySocialMedia = async () => {
+    try {
+      const userPrimaryID = influencer.primarySocial;
+      if (!userPrimaryID) {
+        return;
+      }
+      const fetchSocialRef = doc(
+        FirestoreDB,
+        "users",
+        //@ts-ignore
+        influencer.id,
+        "socials",
+        userPrimaryID
+      );
+
+      const socialData = await getDoc(fetchSocialRef);
+
+      const data = socialData.data() as ISocials;
+
+      setPrimarySocial(data);
+    } catch (error) {
+      console.log("Error fetching primary social media", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchPrimarySocialMedia();
+  }, []);
 
   return (
     <View
@@ -119,13 +153,16 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
                 <View style={styles.row}>
                   <FontAwesomeIcon
-                    icon={faInstagram}
+                    icon={primarySocial?.isInstagram ? faInstagram : faFacebook}
                     size={16}
                     color={Colors(theme).primary}
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    Instagram: @John.Doe
+                    {primarySocial?.isInstagram ? "Instagram" : "Facebook"}:{" "}
+                    {primarySocial?.isInstagram
+                      ? "@" + primarySocial?.instaProfile?.username
+                      : primarySocial?.fbProfile?.name}
                   </Text>
                 </View>
 
@@ -215,15 +252,16 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 </View>
               </View>
             </View>
-            <View style={styles.chipContainer}>
-              {influencer?.profile?.category &&
-                influencer?.profile?.category.map((interest, index) => (
-                  <Chip key={index} style={styles.chip} mode="outlined">
-                    {interest}
-                  </Chip>
-                ))}
-            </View>
-
+            {influencer?.profile?.category?.length !== 0 && (
+              <View style={styles.chipContainer}>
+                {influencer?.profile?.category &&
+                  influencer?.profile?.category.map((interest, index) => (
+                    <Chip key={index} style={styles.chip} mode="outlined">
+                      {interest}
+                    </Chip>
+                  ))}
+              </View>
+            )}
             <View style={styles.aboutContainer}>
               {influencer?.profile?.content?.about && (
                 <View style={styles.aboutCard}>
@@ -236,7 +274,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         "<p>No content available.</p>",
                     }}
                     defaultTextProps={{
-                      style: { fontSize: 16, color: Colors(theme).text },
+                      style: {
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
+                      },
                     }}
                   />
                 </View>
@@ -253,7 +297,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         "<p>No content available.</p>",
                     }}
                     defaultTextProps={{
-                      style: { fontSize: 16, color: Colors(theme).text },
+                      style: {
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
+                      },
                     }}
                   />
                 </View>
@@ -269,7 +319,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         "<p>No content available.</p>",
                     }}
                     defaultTextProps={{
-                      style: { fontSize: 16, color: Colors(theme).text },
+                      style: {
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
+                      },
                     }}
                   />
                 </View>
@@ -285,7 +341,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         "<p>No content available.</p>",
                     }}
                     defaultTextProps={{
-                      style: { fontSize: 16, color: Colors(theme).text },
+                      style: {
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
+                      },
                     }}
                   />
                 </View>
@@ -301,13 +363,28 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         "<p>No content available.</p>",
                     }}
                     defaultTextProps={{
-                      style: { fontSize: 16, color: Colors(theme).text },
+                      style: {
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
+                      },
                     }}
                   />
                 </View>
               )}
               <View style={styles.aboutCard}>
-                <Title style={styles.cardColor}>Other Instagram Posts</Title>
+                <Title
+                  style={[
+                    styles.cardColor,
+                    {
+                      marginBottom: 20,
+                    },
+                  ]}
+                >
+                  Other Instagram Posts
+                </Title>
                 <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                   <View style={{ flexDirection: "column" }}>
                     <View style={{ flexDirection: "row", marginBottom: 10 }}>
@@ -382,7 +459,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             borderTopWidth: 1,
             borderTopColor: Colors(theme).border,
             position: "absolute",
-            bottom: 0,
+            bottom: 30,
             left: 0,
             right: 0,
             zIndex: 1000,
