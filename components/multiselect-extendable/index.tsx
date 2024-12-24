@@ -1,18 +1,17 @@
-import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
 } from 'react-native';
+import { Modal, Portal } from 'react-native-paper';
+import { Theme } from '@react-navigation/native';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCheck, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Theme } from '@react-navigation/native';
+
 import Colors from "@/shared-uis/constants/Colors";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text, View } from '../theme/Themed';
-import { Platform, Modal } from 'react-native';
 
 export interface MultiSelectExtendableProps {
   buttonLabel?: string;
@@ -39,8 +38,6 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
   const [filteredItems, setFilteredItems] = useState<string[]>(itemsList);
   const searchInputRef = useRef<TextInput>(null);
   const [isVisible, setIsVisible] = useState(false);
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const styles = stylesFn(theme);
 
@@ -98,24 +95,9 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
 
   const openBottomSheet = () => {
     setIsVisible(true);
-    searchInputRef.current?.focus();
   };
 
   const isItemNotFound = searchText.trim() !== '' && filteredItems.length === 0;
-
-  const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
-  const insets = useSafeAreaInsets();
-
-  const renderBackdrop = (props: any) => {
-    return (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={1}
-        pressBehavior="close"
-      />
-    );
-  };
 
   return (
     <>
@@ -174,86 +156,87 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
           </Pressable>
         </View>
       </View>
+      {/* <Portal> */}
       <Modal
+        contentContainerStyle={styles.modalContainer}
+        onDismiss={() => {
+          setIsVisible(false);
+        }}
         visible={isVisible}
-        transparent
-        animationType="fade"
       >
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={isVisible ? 1 : -1}
-          backgroundStyle={{
-            backgroundColor: Colors(theme).background,
+        <View
+          style={{
+            alignItems: 'center',
+            flexDirection: 'row',
+            gap: 16,
+            justifyContent: 'space-between',
           }}
-          handleIndicatorStyle={{
-            backgroundColor: Colors(theme).primary,
-          }}
-          onClose={() => setIsVisible(false)}
-          snapPoints={snapPoints}
-          backdropComponent={renderBackdrop}
-          enablePanDownToClose
-          topInset={insets.top}
         >
-          <View style={styles.bottomSheetContent}>
+          <Text
+            style={{
+              color: Colors(theme).text,
+              fontSize: 16,
+              fontWeight: '500',
+            }}
+          >
+            Search and add items
+          </Text>
+          <Pressable
+            style={styles.closeButton}
+            onPress={() => {
+              setIsVisible(false);
+            }}
+          >
+            <FontAwesomeIcon
+              icon={faClose}
+              color={Colors(theme).primary}
+              size={24}
+            />
+          </Pressable>
+        </View>
+        <TextInput
+          ref={searchInputRef}
+          style={styles.searchInput}
+          value={searchText}
+          onChangeText={setSearchText}
+          placeholder="Search"
+          autoCapitalize="none"
+          placeholderTextColor={Colors(theme).gray300}
+        />
+        <ScrollView style={styles.itemsList}>
+          {isItemNotFound ? (
             <Pressable
-              style={styles.closeButton}
-              onPress={() => {
-                setIsVisible(false);
-                if (bottomSheetRef.current) {
-                  bottomSheetRef.current?.close();
-                }
-              }}
+              style={styles.addButton}
+              onPress={handleAddItem}
             >
               <FontAwesomeIcon
-                icon={faClose}
-                color={Colors(theme).primary}
-                size={24}
+                icon={faPlus}
+                color={Colors(theme).white}
+                size={14}
               />
+              <Text style={styles.addButtonText}>Add {searchText}</Text>
             </Pressable>
-            <TextInput
-              ref={searchInputRef}
-              style={styles.searchInput}
-              value={searchText}
-              onChangeText={setSearchText}
-              placeholder="Search"
-              autoCapitalize="none"
-              placeholderTextColor={Colors(theme).gray300}
-            />
-            <ScrollView style={styles.itemsList}>
-              {isItemNotFound ? (
-                <Pressable
-                  style={styles.addButton}
-                  onPress={handleAddItem}
-                >
+          ) : (
+            filteredItems.map(item => (
+              <Pressable
+                key={item}
+                style={styles.item}
+                onPress={() => handleSelectItem(item)}
+              >
+                <Text style={styles.itemText}>{item}</Text>
+                {selectedMultiselectItems.includes(item) && (
                   <FontAwesomeIcon
-                    icon={faPlus}
-                    color={Colors(theme).white}
-                    size={14}
+                    icon={faCheck}
+                    color={Colors(theme).primary}
+                    size={16}
                   />
-                  <Text style={styles.addButtonText}>Add {searchText}</Text>
-                </Pressable>
-              ) : (
-                filteredItems.map(item => (
-                  <Pressable
-                    key={item}
-                    style={styles.item}
-                    onPress={() => handleSelectItem(item)}
-                  >
-                    <Text style={styles.itemText}>{item}</Text>
-                    {selectedMultiselectItems.includes(item) && (
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        color={Colors(theme).primary}
-                        size={16}
-                      />
-                    )}
-                  </Pressable>
-                ))
-              )}
-            </ScrollView>
-          </View>
-        </BottomSheet>
+                )}
+              </Pressable>
+            ))
+          )}
+        </ScrollView>
       </Modal>
+      {/* </Portal> */}
     </>
   );
 };
@@ -302,19 +285,17 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   removeButton: {
     marginLeft: 8,
   },
-  bottomSheetContent: {
-    padding: 16,
-    paddingTop: Platform.OS === 'web' ? 30 : 16,
-    paddingBottom: 20,
+  modalContainer: {
     backgroundColor: Colors(theme).background,
-    position: 'relative',
+    borderRadius: 8,
+    gap: 16,
+    marginBottom: -160,
+    padding: 20,
+    paddingBottom: 240,
+    zIndex: 10000,
   },
   closeButton: {
-    display: Platform.OS === 'web' ? 'flex' : 'none',
-    position: 'absolute',
-    right: 16,
-    top: 0,
-    zIndex: Platform.OS === 'web' ? 100 : -10,
+    // zIndex: Platform.OS === 'web' ? 100 : -10,
   },
   searchInput: {
     borderWidth: 1,
@@ -323,7 +304,6 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 12,
-    marginBottom: 16,
   },
   itemsList: {
     maxHeight: 320,
