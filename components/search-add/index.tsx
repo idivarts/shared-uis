@@ -1,18 +1,19 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
 } from 'react-native';
+import { Theme } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCheck, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { Theme } from '@react-navigation/native';
+
 import Colors from "@/shared-uis/constants/Colors";
-import BottomSheet, { BottomSheetBackdrop } from "@gorhom/bottom-sheet";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Text, View } from '../theme/Themed';
-import { Platform, Modal } from 'react-native';
+import BottomSheetContainer from '../bottom-sheet';
 
 export interface SearchAddProps {
   buttonLabel?: string;
@@ -32,10 +33,8 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
   const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState<string[]>(itemsList);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  const bottomSheetRef = useRef<BottomSheet>(null);
 
   const styles = stylesFn(theme);
 
@@ -72,7 +71,7 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
   };
 
   const openBottomSheet = () => {
-    setIsVisible(true);
+    setIsModalVisible(true);
     searchInputRef.current?.focus();
   };
 
@@ -80,17 +79,6 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
 
   const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
   const insets = useSafeAreaInsets();
-
-  const renderBackdrop = (props: any) => {
-    return (
-      <BottomSheetBackdrop
-        {...props}
-        disappearsOnIndex={-1}
-        appearsOnIndex={1}
-        pressBehavior="close"
-      />
-    );
-  };
 
   return (
     <>
@@ -128,86 +116,80 @@ export const SearchAdd: React.FC<SearchAddProps> = ({
           </Pressable>
         </View>
       </View>
-      <Modal
-        visible={isVisible}
-        transparent
-        animationType="fade"
-      >
-        <BottomSheet
-          ref={bottomSheetRef}
-          index={isVisible ? 1 : -1}
-          backgroundStyle={{
-            backgroundColor: Colors(theme).background,
-          }}
-          handleIndicatorStyle={{
-            backgroundColor: Colors(theme).primary,
-          }}
-          onClose={() => setIsVisible(false)}
-          snapPoints={snapPoints}
-          backdropComponent={renderBackdrop}
-          enablePanDownToClose
-          topInset={insets.top}
-        >
-          <View style={styles.bottomSheetContent}>
-            <Pressable
-              style={styles.closeButton}
-              onPress={() => {
-                setIsVisible(false);
-                if (bottomSheetRef.current) {
-                  bottomSheetRef.current?.close();
-                }
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faClose}
-                color={Colors(theme).primary}
-                size={24}
+      {
+        isModalVisible && (
+          <BottomSheetContainer
+            backgroundStyle={{
+              backgroundColor: Colors(theme).background,
+            }}
+            enablePanDownToClose
+            handleIndicatorStyle={{
+              backgroundColor: Colors(theme).primary,
+            }}
+            index={2}
+            isVisible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            snapPoints={snapPoints}
+            topInset={insets.top}
+          >
+            <View style={styles.bottomSheetContent}>
+              <Pressable
+                style={styles.closeButton}
+                onPress={() => {
+                  setIsModalVisible(false);
+                }}
+              >
+                <FontAwesomeIcon
+                  icon={faClose}
+                  color={Colors(theme).primary}
+                  size={24}
+                />
+              </Pressable>
+              <TextInput
+                ref={searchInputRef}
+                style={styles.searchInput}
+                value={searchText}
+                onChangeText={setSearchText}
+                placeholder="Search"
+                autoCapitalize="none"
+                placeholderTextColor={Colors(theme).gray300}
               />
-            </Pressable>
-            <TextInput
-              ref={searchInputRef}
-              style={styles.searchInput}
-              value={searchText}
-              onChangeText={setSearchText}
-              placeholder="Search"
-              autoCapitalize="none"
-              placeholderTextColor={Colors(theme).gray300}
-            />
-            <ScrollView style={styles.itemsList}>
-              {isItemNotFound ? (
-                <Pressable
-                  style={styles.addButton}
-                  onPress={handleAddItem}
-                >
-                  <FontAwesomeIcon
-                    icon={faPlus}
-                    color={Colors(theme).white}
-                    size={14}
-                  />
-                  <Text style={styles.addButtonText}>Add {searchText}</Text>
-                </Pressable>
-              ) : (
-                filteredItems.map(item => (
+              <ScrollView style={styles.itemsList}>
+                {isItemNotFound ? (
                   <Pressable
-                    key={item}
-                    style={styles.item}
-                    onPress={() => handleSelectItem(item)}
+                    style={styles.addButton}
+                    onPress={handleAddItem}
                   >
-                    <Text style={styles.itemText}>{item}</Text>
-                    {selectedItems.includes(item) && (
-                      <FontAwesomeIcon
-                        icon={faCheck}
-                        color={Colors(theme).primary}
-                        size={16}
-                      />
-                    )}
+                    <FontAwesomeIcon
+                      icon={faPlus}
+                      color={Colors(theme).white}
+                      size={14}
+                    />
+                    <Text style={styles.addButtonText}>Add {searchText}</Text>
                   </Pressable>
-                ))
-              )}
-            </ScrollView>
-          </View>
-        </BottomSheet>
-      </Modal>
+                ) : (
+                  filteredItems.map(item => (
+                    <Pressable
+                      key={item}
+                      style={styles.item}
+                      onPress={() => handleSelectItem(item)}
+                    >
+                      <Text style={styles.itemText}>{item}</Text>
+                      {selectedItems.includes(item) && (
+                        <FontAwesomeIcon
+                          icon={faCheck}
+                          color={Colors(theme).primary}
+                          size={16}
+                        />
+                      )}
+                    </Pressable>
+                  ))
+                )}
+              </ScrollView>
+            </View>
+          </BottomSheetContainer>
+        )
+      }
     </>
   );
 };

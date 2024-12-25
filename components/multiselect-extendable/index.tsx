@@ -1,19 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
+  Platform,
   Pressable,
   ScrollView,
   StyleSheet,
   TextInput,
 } from 'react-native';
-import { Modal, Portal } from 'react-native-paper';
 import { Theme } from '@react-navigation/native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { faCheck, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 import Colors from "@/shared-uis/constants/Colors";
 import { Text, View } from '../theme/Themed';
+import BottomSheetContainer from '../bottom-sheet';
 
 export interface MultiSelectExtendableProps {
+  buttonIcon?: React.ReactNode;
   buttonLabel?: string;
   initialItemsList: string[];
   initialMultiselectItemsList: string[];
@@ -23,6 +26,7 @@ export interface MultiSelectExtendableProps {
 }
 
 export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
+  buttonIcon,
   buttonLabel,
   initialItemsList,
   initialMultiselectItemsList,
@@ -36,8 +40,8 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
 
   const [searchText, setSearchText] = useState('');
   const [filteredItems, setFilteredItems] = useState<string[]>(itemsList);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const searchInputRef = useRef<TextInput>(null);
-  const [isVisible, setIsVisible] = useState(false);
 
   const styles = stylesFn(theme);
 
@@ -65,11 +69,6 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
     setSearchText('');
   };
 
-  // const handleRemoveItem = (itemToRemove: string) => {
-  //   const updatedItems = selectedItems.filter(item => item !== itemToRemove);
-  //   onSelectedItemsChange(updatedItems);
-  // };
-
   const toggleSelection = (item: string) => {
     if (selectedMultiselectItems.includes(item)) {
       setSelectedMultiselectItems(selectedMultiselectItems.filter(i => i !== item));
@@ -81,23 +80,28 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
   }
 
   const handleSelectItem = (item: string) => {
-    if (!selectedMultiselectItems.includes(item)) {
-      onSelectedItemsChange([...selectedMultiselectItems, item]);
+    // Add item to selected items if it's not already selected
+    // Remove item from selected items if it's already selected
+    // Add item to total items if it's not already in the list
+    // Send updated selected items to parent component
+
+    toggleSelection(item);
+    if (!totalMultiselectItems.includes(item)) {
       setTotalMultiselectItems([...totalMultiselectItems, item]);
-      setSelectedMultiselectItems([...selectedMultiselectItems, item]);
-    } else {
-      onSelectedItemsChange(selectedMultiselectItems.filter(i => i !== item));
-      setTotalMultiselectItems(totalMultiselectItems.filter(i => i !== item));
-      setSelectedMultiselectItems(selectedMultiselectItems.filter(i => i !== item));
     }
+
     setSearchText('');
   };
 
   const openBottomSheet = () => {
-    setIsVisible(true);
+    setIsModalVisible(true);
+    searchInputRef.current?.focus();
   };
 
   const isItemNotFound = searchText.trim() !== '' && filteredItems.length === 0;
+
+  const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
+  const insets = useSafeAreaInsets();
 
   return (
     <>
@@ -148,95 +152,92 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
             <Text style={styles.addLanguageText}>
               {buttonLabel || 'Add'}
             </Text>
-            <FontAwesomeIcon
-              icon={faPlus}
-              color={Colors(theme).primary}
-              size={14}
-            />
+            {
+              buttonIcon ? buttonIcon : (
+                <FontAwesomeIcon
+                  icon={faPlus}
+                  color={Colors(theme).primary}
+                  size={14}
+                />
+              )
+            }
           </Pressable>
         </View>
       </View>
-      {/* <Portal> */}
-      <Modal
-        contentContainerStyle={styles.modalContainer}
-        onDismiss={() => {
-          setIsVisible(false);
-        }}
-        visible={isVisible}
-      >
-        <View
-          style={{
-            alignItems: 'center',
-            flexDirection: 'row',
-            gap: 16,
-            justifyContent: 'space-between',
-          }}
-        >
-          <Text
-            style={{
-              color: Colors(theme).text,
-              fontSize: 16,
-              fontWeight: '500',
+      {
+        isModalVisible && (
+          <BottomSheetContainer
+            backgroundStyle={{
+              backgroundColor: Colors(theme).background,
             }}
-          >
-            Search and add items
-          </Text>
-          <Pressable
-            style={styles.closeButton}
-            onPress={() => {
-              setIsVisible(false);
+            enablePanDownToClose
+            handleIndicatorStyle={{
+              backgroundColor: Colors(theme).primary,
             }}
+            index={2}
+            isVisible={isModalVisible}
+            onClose={() => setIsModalVisible(false)}
+            snapPoints={snapPoints}
+            topInset={insets.top}
           >
-            <FontAwesomeIcon
-              icon={faClose}
-              color={Colors(theme).primary}
-              size={24}
-            />
-          </Pressable>
-        </View>
-        <TextInput
-          ref={searchInputRef}
-          style={styles.searchInput}
-          value={searchText}
-          onChangeText={setSearchText}
-          placeholder="Search"
-          autoCapitalize="none"
-          placeholderTextColor={Colors(theme).gray300}
-        />
-        <ScrollView style={styles.itemsList}>
-          {isItemNotFound ? (
-            <Pressable
-              style={styles.addButton}
-              onPress={handleAddItem}
-            >
-              <FontAwesomeIcon
-                icon={faPlus}
-                color={Colors(theme).white}
-                size={14}
-              />
-              <Text style={styles.addButtonText}>Add {searchText}</Text>
-            </Pressable>
-          ) : (
-            filteredItems.map(item => (
+            <View style={styles.bottomSheetContent}>
               <Pressable
-                key={item}
-                style={styles.item}
-                onPress={() => handleSelectItem(item)}
+                style={styles.closeButton}
+                onPress={() => {
+                  setIsModalVisible(false);
+                }}
               >
-                <Text style={styles.itemText}>{item}</Text>
-                {selectedMultiselectItems.includes(item) && (
-                  <FontAwesomeIcon
-                    icon={faCheck}
-                    color={Colors(theme).primary}
-                    size={16}
-                  />
-                )}
+                <FontAwesomeIcon
+                  icon={faClose}
+                  color={Colors(theme).primary}
+                  size={24}
+                />
               </Pressable>
-            ))
-          )}
-        </ScrollView>
-      </Modal>
-      {/* </Portal> */}
+              <TextInput
+                ref={searchInputRef}
+                style={styles.searchInput}
+                value={searchText}
+                onChangeText={setSearchText}
+                placeholder="Search"
+                autoCapitalize="none"
+                placeholderTextColor={Colors(theme).gray300}
+              />
+              <ScrollView style={styles.itemsList}>
+                {isItemNotFound ? (
+                  <Pressable
+                    style={styles.addButton}
+                    onPress={handleAddItem}
+                  >
+                    <FontAwesomeIcon
+                      icon={faPlus}
+                      color={Colors(theme).white}
+                      size={14}
+                    />
+                    <Text style={styles.addButtonText}>Add {searchText}</Text>
+                  </Pressable>
+                ) : (
+                  filteredItems.map(item => (
+                    <Pressable
+                      key={item}
+                      style={styles.item}
+                      onPress={() => handleSelectItem(item)}
+                    >
+                      <Text style={styles.itemText}>{item}</Text>
+                      {selectedMultiselectItems.includes(item) && (
+                        <FontAwesomeIcon
+                          icon={faCheck}
+                          color={Colors(theme).primary}
+                          size={16}
+                        />
+                      )}
+                    </Pressable>
+                  ))
+                )}
+              </ScrollView>
+            </View>
+          </BottomSheetContainer>
+        )
+      }
     </>
   );
 };
@@ -285,17 +286,19 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   removeButton: {
     marginLeft: 8,
   },
-  modalContainer: {
+  bottomSheetContent: {
+    padding: 16,
+    paddingTop: Platform.OS === 'web' ? 30 : 16,
+    paddingBottom: 20,
     backgroundColor: Colors(theme).background,
-    borderRadius: 8,
-    gap: 16,
-    marginBottom: -160,
-    padding: 20,
-    paddingBottom: 240,
-    zIndex: 10000,
+    position: 'relative',
   },
   closeButton: {
-    // zIndex: Platform.OS === 'web' ? 100 : -10,
+    display: Platform.OS === 'web' ? 'flex' : 'none',
+    position: 'absolute',
+    right: 16,
+    top: 0,
+    zIndex: Platform.OS === 'web' ? 100 : -10,
   },
   searchInput: {
     borderWidth: 1,
@@ -304,6 +307,7 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     borderRadius: 10,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    marginBottom: 16,
   },
   itemsList: {
     maxHeight: 320,
