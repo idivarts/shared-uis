@@ -1,22 +1,28 @@
-import { PropsWithChildren } from "react";
+import React, { PropsWithChildren } from "react";
 import { Theme } from "@react-navigation/native";
 
 import { Text, View } from "../theme/Themed";
 import Colors from "../../constants/Colors";
+import { StyleProp } from "react-native";
+import { TextStyle } from "react-native";
 
 interface ContentWrapperProps extends PropsWithChildren {
   description?: string;
+  rightAction?: React.ReactNode;
   rightText?: string;
-  title?: string;
   theme: Theme;
+  title?: string;
+  titleStyle?: StyleProp<TextStyle>;
 }
 
 const ContentWrapper: React.FC<ContentWrapperProps> = ({
   children,
   description,
+  rightAction = null,
   rightText,
-  title,
   theme,
+  title,
+  titleStyle,
 }) => {
   return (
     <View
@@ -28,23 +34,29 @@ const ContentWrapper: React.FC<ContentWrapperProps> = ({
         style={{
           flexDirection: 'row',
           justifyContent: 'space-between',
+          gap: 10,
           alignItems: 'center',
         }}
       >
         {
           title && (
             <Text
-              style={{
-                fontSize: 20,
-                fontWeight: 'bold',
-              }}
+              style={[
+                {
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                },
+                titleStyle,
+              ]}
             >
               {title}
             </Text>
           )
         }
         {
-          rightText && (
+          rightAction ? (
+            rightAction
+          ) : (
             <Text>
               {rightText}
             </Text>
