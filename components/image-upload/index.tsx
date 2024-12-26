@@ -25,7 +25,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   rounded = false,
   theme,
 }) => {
-  const [image, setImage] = useState<string>("");
+  const [image, setImage] = useState<string>(initialImage || "");
   const [openModal, setOpenModal] = useState(false);
   const styles = stylesFn(theme);
 
