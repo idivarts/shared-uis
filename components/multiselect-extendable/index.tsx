@@ -119,7 +119,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                   style={[
                     styles.chip,
                     {
-                      backgroundColor: selectedMultiselectItems.includes(item) ? Colors(theme).primary : Colors(theme).platinum,
+                      backgroundColor: selectedMultiselectItems.includes(item) ? Colors(theme).primary : Colors(theme).tag,
                     },
                   ]}
                 >
