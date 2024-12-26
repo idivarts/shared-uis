@@ -49,7 +49,7 @@ const BottomSheetContainer: React.FC<BottomSheetContainerProps> = ({
           {...props}
         >
           <BottomSheetView>
-            {children}
+            {children as React.ReactNode}
           </BottomSheetView>
         </BottomSheet>
       </View>
