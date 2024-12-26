@@ -9,11 +9,11 @@ export const draggableGridStylesFn = (
   container: {
     width: SIZE - MARGIN - 8,
     height: SIZE - MARGIN - 8,
-    margin: 0,
+    margin: -4,
     borderRadius: 10,
     borderWidth: 4,
     borderColor: Colors(theme).white,
-    backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).platinum,
+    backgroundColor: theme.dark ? Colors(theme).transparent : Colors(theme).platinum,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -59,7 +59,7 @@ export const gridStylesFn = (
   container: {
     flex: 1,
     minHeight: 340,
-    backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).white,
+    backgroundColor: theme.dark ? Colors(theme).transparent : Colors(theme).white,
   },
   wrapper: {
     flexDirection: 'row',
