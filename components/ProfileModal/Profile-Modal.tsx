@@ -16,7 +16,7 @@ import {
   faPhone,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import RenderMediaItem from "../carousel/render-media-item";
+import RenderMediaItem, { MediaItem } from "../carousel/render-media-item";
 import { Theme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import RenderHTML from "react-native-render-html";
@@ -28,6 +28,7 @@ import InfluencerCard from "../InfluencerCard";
 
 interface ProfileBottomSheetProps {
   actionCard?: React.ReactNode;
+  carouselMedia?: MediaItem[];
   FireStoreDB: Firestore;
   influencer: IUsers;
   isBrandsApp: boolean;
@@ -36,6 +37,7 @@ interface ProfileBottomSheetProps {
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   actionCard,
+  carouselMedia,
   FireStoreDB: FirestoreDB,
   influencer,
   isBrandsApp,
@@ -45,7 +47,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const swiperRef = React.useRef<Swiper>(null);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
 
-  const mediaProcessing = influencer?.profile?.attachments?.map((media) =>
+  const mediaProcessing = carouselMedia ? carouselMedia : influencer?.profile?.attachments?.map((media) =>
     processRawAttachment(media)
   );
 
