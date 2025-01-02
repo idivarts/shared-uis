@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { View, Dimensions, ScrollView, Text } from "react-native";
-import { Chip, Card, Title } from "react-native-paper";
+import { Chip, Title } from "react-native-paper";
 import Swiper from "react-native-swiper";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
@@ -16,34 +16,38 @@ import {
   faPhone,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import RenderMediaItem from "../carousel/render-media-item";
+import RenderMediaItem, { MediaItem } from "../carousel/render-media-item";
 import { Theme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import RenderHTML from "react-native-render-html";
 import { Image, Pressable } from "react-native";
 import SelectGroup from "../select/select-group";
-import { collection, doc, Firestore, getDoc } from "firebase/firestore";
+import { doc, Firestore, getDoc } from "firebase/firestore";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import InfluencerCard from "../InfluencerCard";
 
 interface ProfileBottomSheetProps {
-  influencer: IUsers;
-  theme: Theme;
-  isBrandsApp: boolean;
+  actionCard?: React.ReactNode;
+  carouselMedia?: MediaItem[];
   FireStoreDB: Firestore;
+  influencer: IUsers;
+  isBrandsApp: boolean;
+  theme: Theme;
 }
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
-  influencer,
-  theme,
-  isBrandsApp,
+  actionCard,
+  carouselMedia,
   FireStoreDB: FirestoreDB,
+  influencer,
+  isBrandsApp,
+  theme,
 }) => {
   const styles = stylesFn(theme);
   const swiperRef = React.useRef<Swiper>(null);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
 
-  const mediaProcessing = influencer?.profile?.attachments?.map((media) =>
+  const mediaProcessing = carouselMedia ? carouselMedia : influencer?.profile?.attachments?.map((media) =>
     processRawAttachment(media)
   );
 
@@ -122,7 +126,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       key={index}
                       item={media}
                       index={index}
-                      handleImagePress={() => {}}
+                      handleImagePress={() => { }}
                     />
                   ))}
               </Swiper>
@@ -252,6 +256,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 </View>
               </View>
             </View>
+
+            {actionCard}
+
             {influencer?.profile?.category?.length !== 0 && (
               <View style={styles.chipContainer}>
                 {influencer?.profile?.category &&
@@ -434,7 +441,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           >
             <InfluencerCard
               influencer={influencer}
-              ToggleModal={() => {}}
+              ToggleModal={() => { }}
               type="explore"
             />
           </View>
