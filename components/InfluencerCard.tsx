@@ -222,14 +222,6 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               />
             </Text>
           </Pressable>
-
-          <TouchableOpacity onPress={() => {}}>
-            <Text style={styles.jobHistory}>
-              {/* {influencer.jobsCompleted} Jobs completed ({influencer.successRate}{" "}
-              success rate) */}
-              10 Jobs completed 100% success rate
-            </Text>
-          </TouchableOpacity>
         </View>
       </Card>
 
