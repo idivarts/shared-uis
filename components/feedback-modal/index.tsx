@@ -39,6 +39,8 @@ const FeedbackModal: React.FC<FeedbackModalProps> = ({
 
   const handleSubmit = () => {
     onSubmit(rating, feedback);
+    setRating(0);
+    setFeedback('');
   };
 
   return (
