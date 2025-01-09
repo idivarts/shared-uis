@@ -25,6 +25,7 @@ import SelectGroup from "../select/select-group";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import InfluencerCard from "../InfluencerCard";
+import Carousel from "../carousel/carousel";
 
 interface ProfileBottomSheetProps {
   actionCard?: React.ReactNode;
@@ -47,9 +48,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const swiperRef = React.useRef<Swiper>(null);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
 
-  const mediaProcessing = carouselMedia ? carouselMedia : influencer?.profile?.attachments?.map((media) =>
-    processRawAttachment(media)
-  );
+  const mediaProcessing = carouselMedia
+    ? carouselMedia
+    : influencer?.profile?.attachments?.map((media) =>
+        processRawAttachment(media)
+      );
 
   const [previewType, setPreviewType] = useState({
     label: "Preview",
@@ -109,27 +112,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         {previewType.value === "Preview" ? (
           <>
             <View style={styles.carouselContainer}>
-              <Swiper
-                style={styles.carousel}
-                ref={swiperRef}
-                showsButtons={false}
-                dot={<View style={styles.dot} />}
-                activeDot={<View style={styles.activeDot} />}
-                loop={true}
-                autoplay={false}
-                removeClippedSubviews={false}
-                paginationStyle={styles.pagination}
-              >
-                {mediaProcessing &&
-                  mediaProcessing.map((media, index) => (
-                    <RenderMediaItem
-                      key={index}
-                      item={media}
-                      index={index}
-                      handleImagePress={() => { }}
-                    />
-                  ))}
-              </Swiper>
+              <Carousel data={mediaProcessing!} theme={theme} />
               {isBrandsApp && (
                 <Pressable
                   style={{
@@ -441,7 +424,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           >
             <InfluencerCard
               influencer={influencer}
-              ToggleModal={() => { }}
+              ToggleModal={() => {}}
               type="explore"
             />
           </View>

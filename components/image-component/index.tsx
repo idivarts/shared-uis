@@ -6,6 +6,7 @@ import {
 import { imageUrl } from "@/shared-uis/utils/url";
 import React, { FC } from "react";
 import { Image, ImageProps } from "react-native";
+import { Text, View } from "../theme/Themed";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
   shape?: "circle" | "square";
@@ -13,6 +14,8 @@ interface ImageComponentProps extends Omit<ImageProps, "source"> {
   url: string;
   altText: string;
   placeholder?: string;
+  initials?: string;
+  initialsSize?: number;
 }
 
 const ImageComponent: FC<ImageComponentProps> = ({
@@ -22,6 +25,8 @@ const ImageComponent: FC<ImageComponentProps> = ({
   altText,
   style,
   placeholder,
+  initials,
+  initialsSize = 16,
   ...imageProps
 }) => {
   const dimensions = {
@@ -50,7 +55,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
     );
   };
 
-  if (!url) {
+  if (!url && !initials) {
     return (
       <Image
         source={imageUrl(placeholder)}
@@ -65,6 +70,31 @@ const ImageComponent: FC<ImageComponentProps> = ({
       />
     );
   }
+
+  if (!url && initials) {
+    return (
+      <View
+        style={[
+          //@ts-ignore
+          containerStyle,
+          style,
+          {
+            backgroundColor: "grey",
+            justifyContent: "center",
+            alignItems: "center",
+          },
+        ]}
+      >
+        <Text style={{ color: "white", fontSize: initialsSize }}>
+          {initials
+            ?.split(" ")
+            .map((word) => word[0])
+            .join("")}
+        </Text>
+      </View>
+    );
+  }
+
   return renderContent();
 };
 
