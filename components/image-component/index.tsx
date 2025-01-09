@@ -7,6 +7,8 @@ import { imageUrl } from "@/shared-uis/utils/url";
 import React, { FC } from "react";
 import { Image, ImageProps } from "react-native";
 import { Text, View } from "../theme/Themed";
+import Colors from "@/shared-uis/constants/Colors";
+import { useTheme } from "@react-navigation/native";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
   shape?: "circle" | "square";
@@ -43,6 +45,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
   };
 
   const [loadFailed, setLoadFailed] = React.useState(false);
+  const theme = useTheme();
 
   const renderContent = () => {
     return (
@@ -79,7 +82,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
           containerStyle,
           style,
           {
-            backgroundColor: "grey",
+            backgroundColor: Colors(theme).primary,
             justifyContent: "center",
             alignItems: "center",
           },
