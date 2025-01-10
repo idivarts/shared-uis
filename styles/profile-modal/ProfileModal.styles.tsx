@@ -11,7 +11,6 @@ export const stylesFn = (theme: any) =>
       flexGrow: 1,
     },
     carouselContainer: {
-      height: Dimensions.get("window").height * 0.4,
       backgroundColor: Colors(theme).background,
     },
     carousel: {},
@@ -27,6 +26,7 @@ export const stylesFn = (theme: any) =>
     },
     header: {
       padding: 20,
+      paddingTop: 0,
       flexDirection: "row",
       alignItems: "center",
     },
