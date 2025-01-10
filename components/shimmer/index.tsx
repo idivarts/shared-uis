@@ -3,7 +3,7 @@ import { Animated, StyleSheet, Dimensions, Easing, DimensionValue } from 'react-
 import { Theme, useTheme } from '@react-navigation/native';
 
 import { View } from '../theme/Themed';
-import Colors from '@/shared-uis/constants/Colors';
+import Colors from '../../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
