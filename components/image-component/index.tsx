@@ -9,6 +9,7 @@ import { Image, ImageProps } from "react-native";
 import { Text, View } from "../theme/Themed";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
+import { ImageStyle } from "react-native";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
   shape?: "circle" | "square";
@@ -37,7 +38,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
     large: IMAGE_LARGE,
   };
 
-  const containerStyle = {
+  const containerStyle: ImageStyle = {
     width: size !== "large" ? dimensions[size] : "100%",
     height: dimensions[size],
     borderRadius: shape === "circle" ? dimensions[size] / 2 : 0,
@@ -50,10 +51,9 @@ const ImageComponent: FC<ImageComponentProps> = ({
   const renderContent = () => {
     return (
       <Image
-        {...imageProps}
         source={imageUrl(url)}
-        //@ts-ignore
         style={[containerStyle, style]}
+        {...imageProps}
       />
     );
   };
@@ -62,7 +62,6 @@ const ImageComponent: FC<ImageComponentProps> = ({
     return (
       <Image
         source={imageUrl(placeholder)}
-        //@ts-ignore
         style={[containerStyle, style]}
         onError={() => {
           console.log("Image load failed");
@@ -78,7 +77,6 @@ const ImageComponent: FC<ImageComponentProps> = ({
     return (
       <View
         style={[
-          //@ts-ignore
           containerStyle,
           style,
           {
