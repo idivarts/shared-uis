@@ -78,7 +78,7 @@ const RatingSection: React.FC<RatingSectionProps> = ({
   }, [feedbacks]);
 
   const calculateReviews = () => {
-    return feedbacks.filter((feedback) => feedback.review);
+    return feedbacks.map((feedback) => feedback.review);
   }
 
   const formattedAvgRatingsText = (
@@ -120,7 +120,7 @@ const RatingSection: React.FC<RatingSectionProps> = ({
               fontWeight: 'medium',
             }}
           >
-            ({calculateReviews().length} Reviews)
+            ({calculateReviews().length} Review{calculateReviews().length > 1 ? 's' : ''})
           </Text>
         )}
       </View>
