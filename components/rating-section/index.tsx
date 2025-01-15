@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import Colors from "@/shared-uis/constants/Colors";
 import { Text, View } from "../theme/Themed";
+import { useMemo } from "react";
 
 interface RatingSectionProps {
   feedbacks: {
@@ -65,7 +66,7 @@ const Stars: React.FC<{
 const RatingSection: React.FC<RatingSectionProps> = ({
   feedbacks,
 }) => {
-  const calculateAvgRatings = () => {
+  const avgRatings = useMemo(() => {
     const ratings = feedbacks.map((feedback) => feedback.ratings || 0).filter((rating) => rating > 0);
     const sum = ratings.reduce((acc, curr) => acc + curr, 0);
 
@@ -74,7 +75,7 @@ const RatingSection: React.FC<RatingSectionProps> = ({
     }
 
     return sum / ratings.length;
-  }
+  }, [feedbacks]);
 
   const calculateReviews = () => {
     return feedbacks.filter((feedback) => feedback.review);
@@ -93,7 +94,7 @@ const RatingSection: React.FC<RatingSectionProps> = ({
     }
   }
 
-  if (calculateAvgRatings() > 0) {
+  if (avgRatings > 0) {
     return (
       <View
         style={{
@@ -103,14 +104,14 @@ const RatingSection: React.FC<RatingSectionProps> = ({
           marginBottom: 16,
         }}
       >
-        <Stars rating={calculateAvgRatings()} />
+        <Stars rating={avgRatings} />
         <Text
           style={{
             fontSize: 14,
             fontWeight: 'medium',
           }}
         >
-          {formattedAvgRatingsText(calculateAvgRatings())}
+          {formattedAvgRatingsText(avgRatings)}
         </Text>
         {calculateReviews().length > 0 && (
           <Text
