@@ -32,9 +32,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
 
   const uploadImage = async () => {
     try {
-      const { status } = await ImagePickerExpo.requestMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        alert('We need camera permissions');
+      const { status } =
+        await ImagePickerExpo.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert("We need camera permissions");
         return;
       }
 
@@ -62,8 +63,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   };
 
   return (
-    <View
+    <Pressable
       style={styles.container}
+      onPress={() => {
+        if (image) {
+          setOpenModal(true);
+        } else {
+          uploadImage();
+        }
+      }}
     >
       <View style={styles.innerContainer}>
         <Image
@@ -72,17 +80,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
             styles.image,
             {
               borderRadius: rounded ? 75 : 10,
-            }
+            },
           ]}
         />
         {editable && (
           <Pressable
-            onPress={() => setOpenModal(true)}
+            onPress={() => {
+              if (image) {
+                setOpenModal(true);
+              } else {
+                uploadImage();
+              }
+            }}
             style={[
               styles.cameraButton,
               {
                 borderRadius: rounded ? 24 : 10,
-              }
+              },
             ]}
           >
             <FontAwesomeIcon
@@ -103,9 +117,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           <View style={styles.modalContent}>
             <View style={styles.modalHeader}>
               <Text style={styles.modalTitle}>Upload Image</Text>
-              <Pressable
-                onPress={() => setOpenModal(false)}
-              >
+              <Pressable onPress={() => setOpenModal(false)}>
                 <FontAwesomeIcon
                   icon={faClose}
                   size={20}
@@ -124,7 +136,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           </View>
         </View>
       </Modal>
-    </View>
+    </Pressable>
   );
 };
 
