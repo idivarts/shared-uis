@@ -84,7 +84,7 @@ export const stylesFn = (theme: any) =>
     },
     chipContainer: {
       flexDirection: "row",
-      padding: 20,
+      paddingHorizontal: 20,
       flexWrap: "wrap",
     },
     chip: {
@@ -93,7 +93,6 @@ export const stylesFn = (theme: any) =>
     },
     aboutContainer: {
       marginBottom: 10,
-      gap: 32,
     },
     aboutCard: {
       marginHorizontal: 20,

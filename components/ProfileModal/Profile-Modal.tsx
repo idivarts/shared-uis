@@ -151,7 +151,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    {primarySocial?.isInstagram ? "Instagram" : "Facebook"}:{" "}
                     {primarySocial?.isInstagram
                       ? "@" + primarySocial?.instaProfile?.username
                       : primarySocial?.fbProfile?.name}
@@ -168,7 +167,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       style={styles.icon}
                     />
                     <Text style={styles.subTextHeading}>
-                      Email: {influencer?.email}
+                      {influencer?.email}
                     </Text>
                   </View>
                 )}
@@ -183,7 +182,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       style={styles.icon}
                     />
                     <Text style={styles.subTextHeading}>
-                      Phone: {influencer?.phoneNumber}
+                      {influencer?.phoneNumber}
                     </Text>
                   </View>
                 )}
@@ -197,7 +196,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       style={styles.icon}
                     />
                     <Text style={styles.subTextHeading}>
-                      Time Commitment: {influencer?.profile?.timeCommitment}
+                      {influencer?.profile?.timeCommitment}
                     </Text>
                   </View>
                 )}
@@ -213,7 +212,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    Reach: {influencer?.backend?.reach}
+                    {influencer?.backend?.reach || 0} Reach
                   </Text>
                 </View>
 
@@ -226,7 +225,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    Engagement: {influencer?.backend?.engagement}
+                    {influencer?.backend?.engagement || 0} Engagement
                   </Text>
                 </View>
 
@@ -239,7 +238,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    Rating: {influencer?.backend?.rating}
+                    {influencer?.backend?.rating || 0} Rating
                   </Text>
                 </View>
               </View>
@@ -281,7 +280,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 </View>
               ) : null}
 
-              {influencer?.profile?.content?.socialMediaHighlight && (
+              {influencer?.profile?.content?.socialMediaHighlight ? (
                 <View style={styles.aboutCard}>
                   <Title style={styles.cardColor}>Social Media Highlight</Title>
                   <RenderHTML
@@ -302,8 +301,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     }}
                   />
                 </View>
-              )}
-              {influencer?.profile?.content?.collaborationGoals && (
+              ) : null}
+              {influencer?.profile?.content?.collaborationGoals ? (
                 <View style={styles.aboutCard}>
                   <Title style={styles.cardColor}>Campaign Goals</Title>
                   <RenderHTML
@@ -324,8 +323,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     }}
                   />
                 </View>
-              )}
-              {influencer?.profile?.content?.audienceInsights && (
+              ) : null}
+              {influencer?.profile?.content?.audienceInsights ? (
                 <View style={styles.aboutCard}>
                   <Title style={styles.cardColor}>Audience Insights</Title>
                   <RenderHTML
@@ -346,8 +345,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     }}
                   />
                 </View>
-              )}
-              {influencer?.profile?.content?.funFactAboutUser && (
+              ) : null}
+              {influencer?.profile?.content?.funFactAboutUser ? (
                 <View style={styles.aboutCard}>
                   <Title style={styles.cardColor}>Fun Fact About You</Title>
                   <RenderHTML
@@ -368,7 +367,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     }}
                   />
                 </View>
-              )}
+              ) : null}
               <View style={styles.aboutCard}>
                 <Title
                   style={[
