@@ -8,7 +8,9 @@ import Colors from "@/shared-uis/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
+  faArrowDownWideShort,
   faChartBar,
+  faChartLine,
   faClock,
   faEnvelope,
   faFaceSmile,
@@ -26,6 +28,7 @@ import { doc, Firestore, getDoc } from "firebase/firestore";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
+import { faComment } from "@fortawesome/free-regular-svg-icons";
 
 interface ProfileBottomSheetProps {
   actionCard?: React.ReactNode;
@@ -112,7 +115,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         {previewType.value === "Preview" ? (
           <>
             <View style={styles.carouselContainer}>
-              <Carousel data={mediaProcessing!} theme={theme} />
+              {mediaProcessing && mediaProcessing.length > 0 && (
+                <Carousel data={mediaProcessing || []} theme={theme} />
+              )}
               {isBrandsApp && (
                 <Pressable
                   style={{
@@ -126,7 +131,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                   }}
                 >
                   <FontAwesomeIcon
-                    icon={faMessage}
+                    icon={faComment}
                     size={24}
                     color={Colors(theme).white}
                   />
@@ -146,6 +151,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
+                    {primarySocial?.isInstagram ? "Instagram" : "Facebook"}:{" "}
                     {primarySocial?.isInstagram
                       ? "@" + primarySocial?.instaProfile?.username
                       : primarySocial?.fbProfile?.name}
@@ -162,7 +168,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       style={styles.icon}
                     />
                     <Text style={styles.subTextHeading}>
-                      {influencer?.email}
+                      Email: {influencer?.email}
                     </Text>
                   </View>
                 )}
@@ -177,7 +183,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       style={styles.icon}
                     />
                     <Text style={styles.subTextHeading}>
-                      {influencer?.phoneNumber}
+                      Phone: {influencer?.phoneNumber}
                     </Text>
                   </View>
                 )}
@@ -191,7 +197,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       style={styles.icon}
                     />
                     <Text style={styles.subTextHeading}>
-                      {influencer?.profile?.timeCommitment}
+                      Time Commitment: {influencer?.profile?.timeCommitment}
                     </Text>
                   </View>
                 )}
@@ -201,26 +207,26 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 {/* Reach */}
                 <View style={styles.row}>
                   <FontAwesomeIcon
-                    icon={faUsers}
+                    icon={faChartLine}
                     size={16}
                     color={Colors(theme).primary}
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    {influencer?.backend?.reach || 0} Reach
+                    Reach: {influencer?.backend?.reach}
                   </Text>
                 </View>
 
                 {/* Engagement */}
                 <View style={styles.row}>
                   <FontAwesomeIcon
-                    icon={faChartBar}
+                    icon={faArrowDownWideShort}
                     size={16}
                     color={Colors(theme).primary}
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    {influencer?.backend?.engagement || 0} Engagement
+                    Engagement: {influencer?.backend?.engagement}
                   </Text>
                 </View>
 
@@ -233,7 +239,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     style={styles.icon}
                   />
                   <Text style={styles.subTextHeading}>
-                    {influencer?.backend?.rating || 0} Rating
+                    Rating: {influencer?.backend?.rating}
                   </Text>
                 </View>
               </View>
@@ -252,7 +258,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               </View>
             )}
             <View style={styles.aboutContainer}>
-              {influencer?.profile?.content?.about && (
+              {influencer?.profile?.content?.about ? (
                 <View style={styles.aboutCard}>
                   <Title style={styles.cardColor}>About Me</Title>
                   <RenderHTML
@@ -273,7 +279,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     }}
                   />
                 </View>
-              )}
+              ) : null}
 
               {influencer?.profile?.content?.socialMediaHighlight && (
                 <View style={styles.aboutCard}>
