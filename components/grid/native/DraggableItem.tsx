@@ -2,11 +2,12 @@ import React, { useState } from 'react';
 import { Pressable, View } from 'react-native';
 import * as MediaPicker from "expo-image-picker";
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
+import { faPlus } from '@fortawesome/free-solid-svg-icons';
 import Colors from '../../../constants/Colors';
 import { useTheme } from '@react-navigation/native';
 import { draggableGridStylesFn } from '../../../styles/draggable-grid/DraggableGrid.styles';
 import AssetRender from './AssetRender';
+import { faCircleXmark } from '@fortawesome/free-regular-svg-icons';
 
 export type AssetItem = {
   id: number;
@@ -119,7 +120,7 @@ const DraggableItem: React.FC<DraggableItemProps> = ({
             onPress={handleRemoveAsset}
           >
             <FontAwesomeIcon
-              icon={faClose}
+              icon={faCircleXmark}
               color={Colors(theme).white}
               size={16}
             />
