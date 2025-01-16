@@ -29,6 +29,9 @@ import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
 import { faComment } from "@fortawesome/free-regular-svg-icons";
+import axios from "axios";
+import { ActivityIndicator } from "react-native";
+import { Linking } from "react-native";
 
 interface ProfileBottomSheetProps {
   actionCard?: React.ReactNode;
@@ -50,6 +53,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const styles = stylesFn(theme);
   const swiperRef = React.useRef<Swiper>(null);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
+  const [loadingPosts, setLoadingPosts] = useState(false);
 
   const mediaProcessing = carouselMedia
     ? carouselMedia
@@ -61,6 +65,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     label: "Preview",
     value: "Preview",
   });
+
+  const [posts, setPosts] = useState([]);
+  const [isInstagram, setIsInstagram] = useState(false);
 
   const screenWidth = Dimensions.get("window").width;
 
@@ -89,8 +96,33 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     }
   };
 
+  const fetchPosts = async () => {
+    setLoadingPosts(true);
+    const response = await axios.post(
+      "https://be.trendly.pro/api/v1/socials/medias",
+      {},
+      {
+        headers: {
+          //@ts-ignore
+          Authorization: `Bearer ${influencer.id}`,
+        },
+      }
+    );
+
+    if (response.data.data.isInstagram) {
+      setIsInstagram(true);
+      setPosts(response.data.data.medias);
+      setLoadingPosts(false);
+    } else {
+      setIsInstagram(false);
+      setPosts(response.data.data.posts);
+      setLoadingPosts(false);
+    }
+  };
+
   useEffect(() => {
     fetchPrimarySocialMedia();
+    fetchPosts();
   }, []);
 
   return (
@@ -368,56 +400,94 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                   />
                 </View>
               ) : null}
-              <View style={styles.aboutCard}>
-                <Title
-                  style={[
-                    styles.cardColor,
-                    {
-                      marginBottom: 20,
-                    },
-                  ]}
-                >
-                  Other Instagram Posts
-                </Title>
-                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                  <View style={{ flexDirection: "column" }}>
-                    <View style={{ flexDirection: "row", marginBottom: 10 }}>
-                      {mediaProcessing &&
-                        mediaProcessing
-                          .filter((_, index) => index % 2 === 0)
-                          .map((item, index) => (
-                            <Image
-                              key={`top-${index}`}
-                              source={{ uri: item.url }}
-                              style={{
-                                width: 100,
-                                height: 100,
-                                borderRadius: 10,
-                                marginRight: 10,
-                              }}
-                            />
-                          ))}
+              {loadingPosts ? (
+                <ActivityIndicator size="large" color={Colors(theme).primary} />
+              ) : posts.length > 0 ? (
+                <View style={styles.aboutCard}>
+                  <Title
+                    style={[
+                      styles.cardColor,
+                      {
+                        marginBottom: 20,
+                      },
+                    ]}
+                  >
+                    {influencer.name}'s {isInstagram ? "Instagram" : "Facebook"}{" "}
+                    Posts
+                  </Title>
+
+                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                    <View style={{ flexDirection: "column" }}>
+                      <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                        {posts &&
+                          posts
+                            .filter((_, index) => index % 2 === 0)
+                            .map((item: any, index) => (
+                              <Pressable
+                                onPress={() => {
+                                  Linking.openURL(
+                                    isInstagram
+                                      ? item.permalink
+                                      : item.permalink_url
+                                  );
+                                }}
+                              >
+                                <Image
+                                  key={`bottom-${index}`}
+                                  source={{
+                                    uri: isInstagram
+                                      ? item.media_type === "IMAGE"
+                                        ? item.media_url
+                                        : item.thumbnail_url
+                                      : item.full_picture,
+                                  }}
+                                  style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: 10,
+                                    marginRight: 10,
+                                  }}
+                                />
+                              </Pressable>
+                            ))}
+                      </View>
+                      <View style={{ flexDirection: "row" }}>
+                        {posts &&
+                          posts
+                            .filter((_, index) => index % 2 !== 0)
+                            .map((item: any, index) => (
+                              <Pressable
+                                onPress={() => {
+                                  Linking.openURL(
+                                    isInstagram
+                                      ? item.permalink
+                                      : item.permalink_url
+                                  );
+                                }}
+                              >
+                                <Image
+                                  key={`bottom-${index}`}
+                                  source={{
+                                    uri: isInstagram
+                                      ? item.media_type === "IMAGE"
+                                        ? item.media_url
+                                        : item.thumbnail_url
+                                      : item.full_picture,
+                                  }}
+                                  style={{
+                                    width: 100,
+                                    height: 100,
+                                    borderRadius: 10,
+                                    marginRight: 10,
+                                  }}
+                                />
+                              </Pressable>
+                            ))}
+                      </View>
                     </View>
-                    <View style={{ flexDirection: "row" }}>
-                      {mediaProcessing &&
-                        mediaProcessing
-                          .filter((_, index) => index % 2 !== 0)
-                          .map((item, index) => (
-                            <Image
-                              key={`bottom-${index}`}
-                              source={{ uri: item.url }}
-                              style={{
-                                width: 100,
-                                height: 100,
-                                borderRadius: 10,
-                                marginRight: 10,
-                              }}
-                            />
-                          ))}
-                    </View>
-                  </View>
-                </ScrollView>
-              </View>
+                  </ScrollView>
+                </View>
+              ) : null}
             </View>
           </>
         ) : (
