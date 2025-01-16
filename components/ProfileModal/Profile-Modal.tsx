@@ -11,6 +11,7 @@ import {
   faArrowTrendUp,
   faArrowUpWideShort,
   faClock,
+  faComments,
   faEnvelope,
   faPhone,
   faStar,
@@ -55,8 +56,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const mediaProcessing = carouselMedia
     ? carouselMedia
     : influencer?.profile?.attachments?.map((media) =>
-      processRawAttachment(media)
-    );
+        processRawAttachment(media)
+      );
 
   const [previewType, setPreviewType] = useState({
     label: "Preview",
@@ -500,7 +501,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           >
             <InfluencerCard
               influencer={influencer}
-              ToggleModal={() => { }}
+              ToggleModal={() => {}}
               type="explore"
             />
           </View>
