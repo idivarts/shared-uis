@@ -25,7 +25,7 @@ import { doc, Firestore, getDoc } from "firebase/firestore";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
-import { faComment } from "@fortawesome/free-regular-svg-icons";
+import { faComments } from "@fortawesome/free-regular-svg-icons";
 
 interface ProfileBottomSheetProps {
   actionCard?: React.ReactNode;
@@ -128,7 +128,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                   }}
                 >
                   <FontAwesomeIcon
-                    icon={faComment}
+                    icon={faComments}
                     size={24}
                     color={Colors(theme).white}
                   />
