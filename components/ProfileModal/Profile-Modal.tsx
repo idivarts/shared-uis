@@ -132,13 +132,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         backgroundColor: Colors(theme).background,
         position: "relative",
         height: "100%",
-        paddingBottom: 100,
       }}
     >
       <ScrollView
         style={{
           flex: 1,
-          paddingBottom: 80,
         }}
         contentContainerStyle={{
           paddingBottom: 100,
@@ -279,7 +277,14 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             {actionCard}
 
             {influencer?.profile?.category?.length !== 0 && (
-              <View style={styles.chipContainer}>
+              <View
+                style={[
+                  styles.chipContainer,
+                  {
+                    paddingTop: actionCard ? 20 : 0,
+                  },
+                ]}
+              >
                 {influencer?.profile?.category &&
                   influencer?.profile?.category.map((interest, index) => (
                     <Chip key={index} style={styles.chip} mode="outlined">
