@@ -8,17 +8,14 @@ import Colors from "@/shared-uis/constants/Colors";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
-  faArrowDownWideShort,
-  faChartBar,
-  faChartLine,
+  faArrowTrendUp,
+  faArrowUpWideShort,
   faClock,
   faEnvelope,
-  faFaceSmile,
-  faMessage,
   faPhone,
-  faUsers,
+  faStar,
 } from "@fortawesome/free-solid-svg-icons";
-import RenderMediaItem, { MediaItem } from "../carousel/render-media-item";
+import { MediaItem } from "../carousel/render-media-item";
 import { Theme } from "@react-navigation/native";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import RenderHTML from "react-native-render-html";
@@ -58,8 +55,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const mediaProcessing = carouselMedia
     ? carouselMedia
     : influencer?.profile?.attachments?.map((media) =>
-        processRawAttachment(media)
-      );
+      processRawAttachment(media)
+    );
 
   const [previewType, setPreviewType] = useState({
     label: "Preview",
@@ -176,7 +173,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 <View style={styles.row}>
                   <FontAwesomeIcon
                     icon={primarySocial?.isInstagram ? faInstagram : faFacebook}
-                    size={16}
+                    size={18}
                     color={Colors(theme).primary}
                     style={styles.icon}
                   />
@@ -236,7 +233,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 {/* Reach */}
                 <View style={styles.row}>
                   <FontAwesomeIcon
-                    icon={faChartLine}
+                    icon={faArrowTrendUp}
                     size={16}
                     color={Colors(theme).primary}
                     style={styles.icon}
@@ -249,7 +246,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 {/* Engagement */}
                 <View style={styles.row}>
                   <FontAwesomeIcon
-                    icon={faArrowDownWideShort}
+                    icon={faArrowUpWideShort}
                     size={16}
                     color={Colors(theme).primary}
                     style={styles.icon}
@@ -262,7 +259,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 {/* Rating */}
                 <View style={styles.row}>
                   <FontAwesomeIcon
-                    icon={faFaceSmile}
+                    icon={faStar}
                     size={16}
                     color={Colors(theme).primary}
                     style={styles.icon}
@@ -503,7 +500,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           >
             <InfluencerCard
               influencer={influencer}
-              ToggleModal={() => {}}
+              ToggleModal={() => { }}
               type="explore"
             />
           </View>
