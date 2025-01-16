@@ -158,7 +158,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                   }}
                 >
                   <FontAwesomeIcon
-                    icon={faComment}
+                    icon={faComments}
                     size={24}
                     color={Colors(theme).white}
                   />
