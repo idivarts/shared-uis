@@ -2,6 +2,20 @@
   "name": "shared-uis",
   "version": "1.0.0",
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^6.7.1",
+    "@fortawesome/free-brands-svg-icons": "^6.7.1",
+    "@fortawesome/free-regular-svg-icons": "^6.7.1",
+    "@fortawesome/free-solid-svg-icons": "^6.7.1",
+    "@fortawesome/react-native-fontawesome": "^0.3.2",
+    "@gorhom/bottom-sheet": "^5.0.2",
+    "@react-native-async-storage/async-storage": "^2.0.0",
+    "@react-navigation/native": "^7.0.14",
+    "react-native-paper": "^5.12.5",
+    "react-native-reanimated": "^3.10.1",
+    "react-native-render-html": "^6.3.4",
+    "react-native-safe-area-context": "^5.0.0",
+    "react-native-svg": "^15.10.0",
+    "react-native-swiper": "^1.6.0",
     "react-native-toast-message": "^2.2.0",
     "zod": "^3.23.8"
   }
