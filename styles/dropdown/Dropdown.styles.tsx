@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { Dimensions, Platform, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
   dropdownContainer: {
@@ -45,7 +45,10 @@ const styles = StyleSheet.create({
     left: 0,
     width: 4000,
     height: 4000,
-    transform: [{ translateY: "-50%" }, { translateX: "-50%" }],
+    transform: Platform.select({
+      web: [{ translateY: "-50%" }, { translateX: "-50%" }],
+      default: [],
+    }),
   },
 });
 
