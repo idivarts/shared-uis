@@ -1,12 +1,11 @@
 import { useState } from "react";
 import { Image, Modal, Pressable, Text, View } from "react-native";
 import * as ImagePickerExpo from "expo-image-picker";
-import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "@/shared-uis/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import fnStyles from "@/shared-uis/styles/image-picker/ImagePicker.styles";
-import { useTheme } from "@react-navigation/native";
+import { Theme, useTheme } from "@react-navigation/native";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
@@ -15,19 +14,19 @@ interface ImagePickerProps {
   image: string;
   onUploadImage: (image: string) => void;
   setImage: React.Dispatch<React.SetStateAction<string>>;
+  theme?: Theme;
 }
-
-const placeholderImage = "https://via.placeholder.com/300";
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
   editable = true,
   image,
   onUploadImage,
   setImage,
+  theme,
 }) => {
   const [openModal, setOpenModal] = useState(false);
-  const theme = useTheme();
-  const styles = fnStyles(theme);
+  const defaultTheme = theme ? theme : useTheme();
+  const styles = fnStyles(defaultTheme);
 
   const uploadImage = async () => {
     try {
@@ -50,7 +49,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   };
 
   const removeImage = () => {
-    setImage(placeholderImage);
+    setImage('');
     setOpenModal(false);
     Toaster.success("Image is removed!");
   };
@@ -58,9 +57,11 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   return (
     <View style={styles.container}>
       <Image
-        source={{
-          uri: image ?? placeholderImage,
-        }}
+        source={
+          image ? {
+            uri: image,
+          } : require('../../assets/images/placeholder-image.jpg')
+        }
         style={styles.image}
       />
       {editable && (
@@ -71,7 +72,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
           <FontAwesomeIcon
             icon={faCamera}
             size={24}
-            color={Colors(theme).white}
+            color={Colors(defaultTheme).white}
           />
         </Pressable>
       )}
