@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Image, Modal, Pressable } from "react-native";
 import * as ImagePickerExpo from "expo-image-picker";
 
@@ -10,11 +10,12 @@ import { faCamera, faClose } from "@fortawesome/free-solid-svg-icons";
 import stylesFn from "@/shared-uis/styles/image-upload/ImageUpload.styles";
 import { imageUrl } from "@/shared-uis/utils/url";
 import { Text, View } from "../theme/Themed";
+import { Platform } from "react-native";
 
 interface ImageUploadProps {
   editable?: boolean;
   initialImage?: string;
-  onUploadImage: (image: string) => void;
+  onUploadImage: (image: string | File) => void;
   rounded?: boolean;
   theme: Theme;
 }
@@ -27,8 +28,10 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   theme,
 }) => {
   const [image, setImage] = useState<string>(initialImage || "");
+  const [file, setFile] = useState<File | null>(null);
   const [openModal, setOpenModal] = useState(false);
   const styles = stylesFn(theme);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const uploadImage = async () => {
     try {
@@ -53,6 +56,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       }
     } catch (error: any) {
       Toaster.error(`Failed to upload image: ${error.message}`);
+    }
+  };
+
+  const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      const selectedFile = event.target.files[0];
+      setFile(selectedFile);
+      setImage(URL.createObjectURL(selectedFile));
+      onUploadImage(selectedFile);
     }
   };
 
@@ -86,6 +98,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         {editable && (
           <Pressable
             onPress={() => {
+              if (Platform.OS === 'web') {
+                inputRef.current?.click();
+                return;
+              }
+
               if (image) {
                 setOpenModal(true);
               } else {
@@ -104,6 +121,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
               size={20}
               color={Colors(theme).white}
             />
+            {
+              Platform.OS === 'web' && (
+                <input
+                  ref={inputRef}
+                  type="file"
+                  style={{
+                    backgroundColor: "transparent",
+                    width: 0,
+                    height: 0,
+                    visibility: "hidden",
+                  }}
+                  multiple
+                  onChange={handleFileSelection}
+                  accept="image/*"
+                />
+              )
+            }
           </Pressable>
         )}
       </View>
