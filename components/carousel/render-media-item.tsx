@@ -1,12 +1,11 @@
 import { useState } from "react";
-import { ActivityIndicator, Image } from "react-native";
+import { ActivityIndicator } from "react-native";
 import Animated from "react-native-reanimated";
 import { ResizeMode, Video } from "expo-av";
 import { TapGestureHandler, State } from "react-native-gesture-handler";
 import { useTheme } from "@react-navigation/native";
 
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
-import { imageUrl } from "../../utils/url";
 import { View } from "../theme/Themed";
 import ImageComponent from "../image-component";
 
@@ -96,8 +95,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       source={
         item.url
           ? {
-              uri: item.url,
-            }
+            uri: item.url,
+          }
           : require("@/assets/videos/ForBiggerJoyrides.mp4")
       }
       style={[
@@ -112,7 +111,18 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       shouldPlay
       useNativeControls
       usePoster
-      posterSource={imageUrl(require("@/assets/images/placeholder-image.jpg"))}
+      volume={0.0}
+      PosterComponent={() => (
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ActivityIndicator />
+        </View>
+      )}
       onError={(error) => console.error("Video Error:", error)}
       onLoadStart={() => setIsLoading(true)}
       onLoad={() => setIsLoading(false)}
