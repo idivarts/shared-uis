@@ -187,7 +187,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
                 {/* Email */}
                 {influencer?.email && (
-                  <View style={styles.row}>
+                  <Pressable
+                    style={styles.row}
+                    onPress={() => {
+                      Linking.openURL(`mailto:${influencer?.email}`);
+                    }}
+                  >
                     <FontAwesomeIcon
                       icon={faEnvelope}
                       size={16}
@@ -197,12 +202,17 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <Text style={styles.subTextHeading}>
                       {influencer?.email}
                     </Text>
-                  </View>
+                  </Pressable>
                 )}
 
                 {/* Phone */}
                 {influencer?.phoneNumber && (
-                  <View style={styles.row}>
+                  <Pressable
+                    style={styles.row}
+                    onPress={() => {
+                      Linking.openURL(`tel:${influencer?.phoneNumber}`);
+                    }}
+                  >
                     <FontAwesomeIcon
                       icon={faPhone}
                       size={16}
@@ -212,7 +222,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <Text style={styles.subTextHeading}>
                       {influencer?.phoneNumber}
                     </Text>
-                  </View>
+                  </Pressable>
                 )}
 
                 {influencer?.profile?.timeCommitment && (
