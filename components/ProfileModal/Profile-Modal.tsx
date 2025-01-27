@@ -171,7 +171,21 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               <View style={styles.profileInfo}>
                 <Text style={styles.name}>{influencer?.name}</Text>
 
-                <View style={styles.row}>
+                <Pressable
+                  style={styles.row}
+                  onPress={() => {
+                    Linking.openURL(
+                      primarySocial?.isInstagram
+                        ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
+                        : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
+                    );
+                    console.log(
+                      primarySocial?.isInstagram
+                        ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
+                        : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
+                    );
+                  }}
+                >
                   <FontAwesomeIcon
                     icon={primarySocial?.isInstagram ? faInstagram : faFacebook}
                     size={18}
@@ -183,7 +197,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       ? "@" + primarySocial?.instaProfile?.username
                       : primarySocial?.fbProfile?.name}
                   </Text>
-                </View>
+                </Pressable>
 
                 {/* Email */}
                 {influencer?.email && (
