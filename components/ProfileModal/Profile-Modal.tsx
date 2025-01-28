@@ -13,6 +13,7 @@ import {
   faClock,
   faComments,
   faEnvelope,
+  faPeopleRoof,
   faPhone,
   faStar,
 } from "@fortawesome/free-solid-svg-icons";
@@ -256,6 +257,18 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 <View style={styles.divider} />
 
                 {/* Reach */}
+                <View style={styles.row}>
+                  <FontAwesomeIcon
+                    icon={faPeopleRoof}
+                    size={16}
+                    color={Colors(theme).primary}
+                    style={styles.icon}
+                  />
+                  <Text style={styles.subTextHeading}>
+                    {influencer?.backend?.followers || 0} Followers
+                  </Text>
+                </View>
+
                 <View style={styles.row}>
                   <FontAwesomeIcon
                     icon={faArrowTrendUp}
