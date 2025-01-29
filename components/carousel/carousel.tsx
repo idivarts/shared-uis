@@ -18,8 +18,9 @@ import {
   ICarouselInstance,
   Pagination,
 } from "react-native-reanimated-carousel";
-import { useSharedValue } from "react-native-reanimated";
+import { useSharedValue, runOnJS } from "react-native-reanimated";
 import { Pressable } from "react-native";
+import Swiper from "react-native-swiper";
 
 interface CarouselProps {
   carouselContainerStyle?: StyleProp<ViewProps>;
@@ -42,6 +43,7 @@ const Carousel: React.FC<CarouselProps> = ({
   const styles = stylesFn(theme);
   const swiperRef = useRef<ICarouselInstance>(null);
   const videoRefs = useRef<{ [key: number]: any }>({});
+  const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
 
   const handleImagePress = (item: MediaItem) => {
@@ -79,102 +81,132 @@ const Carousel: React.FC<CarouselProps> = ({
         paddingBottom: Platform.OS === "web" ? 40 : 0,
       }}
     >
-      <ReanimatedCarousel
-        ref={swiperRef}
-        data={data}
-        width={carouselWidth ? carouselWidth : Dimensions.get("window").width}
-        loop={false}
-        onProgressChange={(_, absoluteProgress) => {
-          progress.value = absoluteProgress;
-        }}
-        withAnimation={{
-          type: "timing",
-          config: {},
-        }}
-        renderItem={({ item, index }) => (
-          <RenderMediaItem
-            handleImagePress={handleImagePress}
-            height={Platform.OS === "web" ? 580 : 280}
-            index={index}
-            item={item}
-            key={item.url || index}
-            videoRefs={videoRefs}
+      {Platform.OS === "web" ? (
+        <>
+          <ReanimatedCarousel
+            ref={swiperRef}
+            data={data}
+            width={
+              carouselWidth ? carouselWidth : Dimensions.get("window").width
+            }
+            loop={false}
+            onProgressChange={(_, absoluteProgress) => {
+              runOnJS((value: number) => {
+                progress.value = value;
+              })(absoluteProgress);
+            }}
+            withAnimation={{
+              type: "timing",
+              config: {},
+            }}
+            renderItem={({ item, index }) => (
+              <RenderMediaItem
+                handleImagePress={handleImagePress}
+                height={Platform.OS === "web" ? 580 : 280}
+                index={index}
+                item={item}
+                key={item.url || index}
+                videoRefs={videoRefs}
+              />
+            )}
+            style={[styles.carouselContainer, carouselContainerStyle]}
+            pagingEnabled
+            {...props}
           />
-        )}
-        style={[styles.carouselContainer, carouselContainerStyle]}
-        pagingEnabled
-        {...props}
-      />
-      {Platform.OS === "web" && (
-        <View
-          style={{
-            position: "absolute",
-            top: "50%",
-            left: 10,
-            transform: [{ translateY: -50 }],
-            zIndex: 10,
-            padding: 10,
-            borderRadius: 50,
-          }}
+          {Platform.OS === "web" && (
+            <View
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: 10,
+                transform: [{ translateY: -50 }],
+                zIndex: 10,
+                padding: 10,
+                borderRadius: 50,
+              }}
+            >
+              <Pressable onPress={handlePrev}>
+                <FontAwesomeIcon
+                  icon={faChevronLeft}
+                  size={20}
+                  color={Colors(theme).black}
+                />
+              </Pressable>
+            </View>
+          )}
+          {Platform.OS === "web" && (
+            <View
+              style={{
+                position: "absolute",
+                top: "50%",
+                right: 10,
+                transform: [{ translateY: -50 }],
+                zIndex: 10,
+                borderRadius: 50,
+                padding: 10,
+              }}
+            >
+              <Pressable onPress={handleNext}>
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  size={20}
+                  color={Colors(theme).black}
+                />
+              </Pressable>
+            </View>
+          )}
+          <Pagination.Basic
+            progress={progress}
+            data={data}
+            size={15}
+            dotStyle={{
+              borderRadius: 100,
+              backgroundColor: Colors(theme).backdrop,
+            }}
+            activeDotStyle={{
+              borderRadius: 100,
+              overflow: "hidden",
+              backgroundColor: Colors(theme).primary,
+            }}
+            containerStyle={[
+              {
+                gap: 5,
+                marginTop: 10,
+                marginBottom: 10,
+              },
+            ]}
+            horizontal
+            onPress={(index) => {
+              swiperRef.current?.scrollTo({
+                count: index - progress.value,
+                animated: true,
+              });
+            }}
+          />
+        </>
+      ) : (
+        <Swiper
+          ref={nativeRef}
+          height={320}
+          style={[styles.carouselContainer, carouselContainerStyle]}
+          dotStyle={styles.dot}
+          activeDotStyle={[styles.dot, styles.activeDot]}
+          paginationStyle={styles.pagination}
+          pagingEnabled
+          {...props}
         >
-          <Pressable onPress={handlePrev}>
-            <FontAwesomeIcon
-              icon={faChevronLeft}
-              size={20}
-              color={Colors(theme).black}
+          {data.map((item: MediaItem, index: number) => (
+            <RenderMediaItem
+              handleImagePress={handleImagePress}
+              height={Platform.OS === "web" ? 560 : 280}
+              index={index}
+              item={item}
+              key={item.url || index}
+              videoRefs={videoRefs}
             />
-          </Pressable>
-        </View>
+          ))}
+        </Swiper>
       )}
-      {Platform.OS === "web" && (
-        <View
-          style={{
-            position: "absolute",
-            top: "50%",
-            right: 10,
-            transform: [{ translateY: -50 }],
-            zIndex: 10,
-            borderRadius: 50,
-            padding: 10,
-          }}
-        >
-          <Pressable onPress={handleNext}>
-            <FontAwesomeIcon
-              icon={faChevronRight}
-              size={20}
-              color={Colors(theme).black}
-            />
-          </Pressable>
-        </View>
-      )}
-      <Pagination.Basic
-        progress={progress}
-        data={data}
-        size={15}
-        dotStyle={{
-          borderRadius: 100,
-          backgroundColor: Colors(theme).backdrop,
-        }}
-        activeDotStyle={{
-          borderRadius: 100,
-          overflow: "hidden",
-          backgroundColor: Colors(theme).primary,
-        }}
-        containerStyle={[
-          {
-            gap: 5,
-            marginTop: 10,
-            marginBottom: 10,
-          },
-        ]}
-        horizontal
-        onPress={(index) => {
-          swiperRef.current?.scrollTo({
-            count: index - progress.value,
-            animated: true,
-          });
-        }}
-      />
     </View>
   );
 };
