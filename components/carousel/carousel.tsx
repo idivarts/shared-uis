@@ -77,8 +77,7 @@ const Carousel: React.FC<CarouselProps> = ({
           ? containerHeight
           : Platform.OS === "web"
           ? 580
-          : 320,
-        paddingBottom: Platform.OS === "web" ? 40 : 0,
+          : 400,
       }}
     >
       {Platform.OS === "web" ? (
@@ -172,7 +171,6 @@ const Carousel: React.FC<CarouselProps> = ({
               {
                 gap: 5,
                 marginTop: 10,
-                marginBottom: 10,
               },
             ]}
             horizontal
@@ -198,7 +196,9 @@ const Carousel: React.FC<CarouselProps> = ({
           {data.map((item: MediaItem, index: number) => (
             <RenderMediaItem
               handleImagePress={handleImagePress}
-              height={Platform.OS === "web" ? 560 : 280}
+              height={
+                Platform.OS === "web" ? 560 : Dimensions.get("window").width
+              }
               index={index}
               item={item}
               key={item.url || index}

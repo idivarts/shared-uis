@@ -8,6 +8,7 @@ import { useTheme } from "@react-navigation/native";
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import { View } from "../theme/Themed";
 import ImageComponent from "../image-component";
+import { Platform } from "react-native";
 
 export interface MediaItem {
   type: string;
@@ -75,8 +76,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             ]}
             shape={shape}
             size={size}
-            resizeMode="cover"
-            resizeMethod="resize"
+            resizeMode={Platform.OS === "web" ? "contain" : "cover"}
+            resizeMethod={"resize"}
             onLoadStart={() => setIsLoading(true)}
             onLoad={() => setIsLoading(false)}
           />
@@ -95,8 +96,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       source={
         item.url
           ? {
-            uri: item.url,
-          }
+              uri: item.url,
+            }
           : require("@/assets/videos/ForBiggerJoyrides.mp4")
       }
       style={[

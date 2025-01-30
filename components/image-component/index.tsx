@@ -10,6 +10,9 @@ import { Text, View } from "../theme/Themed";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { ImageStyle } from "react-native";
+import { Dimensions } from "react-native";
+import { ResizeMode } from "expo-av";
+import { Platform } from "react-native";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
   shape?: "circle" | "square";
@@ -39,8 +42,13 @@ const ImageComponent: FC<ImageComponentProps> = ({
   };
 
   const containerStyle: ImageStyle = {
-    width: size !== "large" ? dimensions[size] : "100%",
-    height: dimensions[size],
+    width: size !== "large" ? dimensions[size] : Dimensions.get("window").width,
+    height:
+      size !== "large"
+        ? dimensions[size]
+        : Platform.OS === "web"
+        ? 580
+        : Dimensions.get("window").width,
     borderRadius: shape === "circle" ? dimensions[size] / 2 : 0,
     overflow: "hidden",
   };
@@ -53,6 +61,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
       <Image
         source={imageUrl(url)}
         style={[containerStyle, style]}
+        height={Platform.OS === "web" ? 580 : 480}
         {...imageProps}
       />
     );
