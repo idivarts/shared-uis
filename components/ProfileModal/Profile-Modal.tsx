@@ -147,7 +147,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               {mediaProcessing && mediaProcessing.length > 0 && (
                 <Carousel data={mediaProcessing || []} theme={theme} />
               )}
-              {isBrandsApp && (
+              {/* {isBrandsApp && (
                 <Pressable
                   style={{
                     position: "absolute",
@@ -165,7 +165,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     color={Colors(theme).white}
                   />
                 </Pressable>
-              )}
+              )} */}
             </View>
 
             <View style={styles.header}>
