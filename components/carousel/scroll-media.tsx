@@ -14,7 +14,7 @@ interface IProps {
 }
 
 const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB }: IProps) => {
-    const styles = stylesWrapper(xl ? MAX_WIDTH_WEB : width);
+    const styles = stylesWrapper(xl ? MAX_WIDTH_WEB : "100%");
     return (
         <View style={styles.container}>
             <FlatList
@@ -53,11 +53,11 @@ const MediaRenderer = ({ media }: { media: MediaItem }) => {
     );
 };
 
-const stylesWrapper = (width: number) => StyleSheet.create({
+const stylesWrapper = (width: any) => StyleSheet.create({
     container: {
         width: width, // Fixed width container
         alignSelf: "center",
-        padding: 10,
+        padding: 16,
     },
     listContainer: {
         flexDirection: "row",
