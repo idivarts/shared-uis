@@ -11,10 +11,11 @@ interface IProps {
     xl: any;
     MAX_WIDTH_WEB: number;
     theme?: Theme
+    padding?: number
 }
 
-const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB }: IProps) => {
-    const styles = stylesWrapper(xl ? MAX_WIDTH_WEB : "100%");
+const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB, padding }: IProps) => {
+    const styles = stylesWrapper(xl ? MAX_WIDTH_WEB : "100%", padding);
     return (
         <View style={styles.container}>
             <FlatList
@@ -53,11 +54,11 @@ const MediaRenderer = ({ media }: { media: MediaItem }) => {
     );
 };
 
-const stylesWrapper = (width: any) => StyleSheet.create({
+const stylesWrapper = (width: any, padding = 16) => StyleSheet.create({
     container: {
         width: width, // Fixed width container
         alignSelf: "center",
-        padding: 16,
+        padding: padding,
     },
     listContainer: {
         flexDirection: "row",
