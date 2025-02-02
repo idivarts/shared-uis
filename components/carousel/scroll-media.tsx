@@ -1,3 +1,4 @@
+import { Theme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import React, { useState } from "react";
 import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
@@ -5,8 +6,14 @@ import { MediaItem } from "./render-media-item";
 
 
 const { width } = Dimensions.get("window");
+interface IProps {
+    media: MediaItem[];
+    xl: any;
+    MAX_WIDTH_WEB: number;
+    theme?: Theme
+}
 
-const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB }: { media: MediaItem[], xl: any, MAX_WIDTH_WEB: number }) => {
+const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB }: IProps) => {
     const styles = stylesWrapper(xl ? MAX_WIDTH_WEB : width);
     return (
         <View style={styles.container}>
