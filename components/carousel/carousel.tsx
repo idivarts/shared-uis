@@ -1,43 +1,45 @@
-import React, { useRef } from "react";
-import { Platform, Dimensions } from "react-native";
-import SwiperProps from "react-native-swiper";
-import { Theme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import {
   faChevronLeft,
   faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
-import { View } from "../theme/Themed";
-import { stylesFn } from "../../styles/carousel/Carousel.styles";
-import RenderMediaItem, { MediaItem } from "./render-media-item";
-import Colors from "../../constants/Colors";
-import { StyleProp } from "react-native";
-import { ViewProps } from "react-native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Theme } from "@react-navigation/native";
+import React, { useEffect, useRef, useState } from "react";
+import { Dimensions, Platform, Pressable, StyleProp, ViewProps } from "react-native";
+import { runOnJS, useSharedValue } from "react-native-reanimated";
 import {
-  default as ReanimatedCarousel,
   ICarouselInstance,
   Pagination,
+  default as ReanimatedCarousel,
 } from "react-native-reanimated-carousel";
-import { useSharedValue, runOnJS } from "react-native-reanimated";
-import { Pressable } from "react-native";
 import Swiper from "react-native-swiper";
+import Colors from "../../constants/Colors";
+import { stylesFn } from "../../styles/carousel/Carousel.styles";
+import { View } from "../theme/Themed";
+import getMediaDimensions, { MAX_WIDTH_WEB } from "./carousel-util";
+import RenderMediaItem, { MediaItem } from "./render-media-item";
 
 interface CarouselProps {
-  carouselContainerStyle?: StyleProp<ViewProps>;
-  carouselWidth?: number;
-  containerHeight?: number;
   data: MediaItem[];
-  onImagePress?: (data: MediaItem) => void;
   theme: Theme;
+  width?: number;
+  onImagePress?: (data: MediaItem) => void;
+
+  // To be removed later
+  carouselWidth?: number;
+  carouselContainerStyle?: StyleProp<ViewProps>;
+  containerHeight?: number;
 }
 
 const Carousel: React.FC<CarouselProps> = ({
-  carouselContainerStyle,
-  carouselWidth,
-  containerHeight,
-  data,
+  // carouselContainerStyle,
+  // containerHeight,
+  // carouselWidth,
+
   onImagePress,
+  data,
   theme,
+  width,
   ...props
 }) => {
   const styles = stylesFn(theme);
@@ -70,14 +72,29 @@ const Carousel: React.FC<CarouselProps> = ({
     }
   };
 
+  useEffect(() => {
+    if (data && data.length > 0) {
+      getMediaDimensions(data[0].url, data[0].type).then((dimensions: any) => {
+        // console.log("Calculated Dimensions", dimensions);
+        if (dimensions) {
+          setCarouselHeight(dimensions.height);
+          setCarouselWidth(dimensions.width);
+        }
+      });
+    }
+  }, [data]);
+
+  const { width: mWidth } = Dimensions.get('window');
+  const [carouselHeight, setCarouselHeight] = useState<any>(Platform.OS === "web"
+    ? MAX_WIDTH_WEB
+    : mWidth);
+
+  const [carouselWidth, setCarouselWidth] = useState(width ? width : Dimensions.get("window").width)
+
   return (
     <View
       style={{
-        height: containerHeight
-          ? containerHeight
-          : Platform.OS === "web"
-          ? 580
-          : 400,
+        height: carouselHeight,
       }}
     >
       {Platform.OS === "web" ? (
@@ -85,9 +102,7 @@ const Carousel: React.FC<CarouselProps> = ({
           <ReanimatedCarousel
             ref={swiperRef}
             data={data}
-            width={
-              carouselWidth ? carouselWidth : Dimensions.get("window").width
-            }
+            width={carouselWidth}
             loop={false}
             onProgressChange={(_, absoluteProgress) => {
               runOnJS((value: number) => {
@@ -108,7 +123,7 @@ const Carousel: React.FC<CarouselProps> = ({
                 videoRefs={videoRefs}
               />
             )}
-            style={[styles.carouselContainer, carouselContainerStyle]}
+            style={[styles.carouselContainer]}
             pagingEnabled
             {...props}
           />
@@ -185,8 +200,8 @@ const Carousel: React.FC<CarouselProps> = ({
       ) : (
         <Swiper
           ref={nativeRef}
-          height={320}
-          style={[styles.carouselContainer, carouselContainerStyle]}
+          height={carouselHeight}
+          style={[styles.carouselContainer]}
           dotStyle={styles.dot}
           activeDotStyle={[styles.dot, styles.activeDot]}
           paginationStyle={styles.pagination}
@@ -196,9 +211,7 @@ const Carousel: React.FC<CarouselProps> = ({
           {data.map((item: MediaItem, index: number) => (
             <RenderMediaItem
               handleImagePress={handleImagePress}
-              height={
-                Platform.OS === "web" ? 560 : Dimensions.get("window").width
-              }
+              height={carouselHeight}
               index={index}
               item={item}
               key={item.url || index}
