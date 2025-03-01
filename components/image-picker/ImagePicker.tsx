@@ -1,27 +1,32 @@
 import { useState } from "react";
 import { Image, Modal, Pressable, Text, View } from "react-native";
 import * as ImagePickerExpo from "expo-image-picker";
-import { Ionicons } from "@expo/vector-icons";
 
 import Colors from "@/shared-uis/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import styles from "@/shared-uis/styles/image-picker/ImagePicker.styles";
+import fnStyles from "@/shared-uis/styles/image-picker/ImagePicker.styles";
+import { Theme, useTheme } from "@react-navigation/native";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { faCamera } from "@fortawesome/free-solid-svg-icons";
 
 interface ImagePickerProps {
   editable?: boolean;
-  initialImage?: string;
+  image: string;
   onUploadImage: (image: string) => void;
+  setImage: React.Dispatch<React.SetStateAction<string>>;
+  theme?: Theme;
 }
-
-const placeholderImage = "https://via.placeholder.com/300";
 
 const ImagePicker: React.FC<ImagePickerProps> = ({
   editable = true,
-  initialImage = placeholderImage,
+  image,
   onUploadImage,
+  setImage,
+  theme,
 }) => {
-  const [image, setImage] = useState<string>(initialImage);
   const [openModal, setOpenModal] = useState(false);
+  const defaultTheme = theme ? theme : useTheme();
+  const styles = fnStyles(defaultTheme);
 
   const uploadImage = async () => {
     try {
@@ -44,7 +49,7 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   };
 
   const removeImage = () => {
-    setImage(placeholderImage);
+    setImage('');
     setOpenModal(false);
     Toaster.success("Image is removed!");
   };
@@ -52,18 +57,25 @@ const ImagePicker: React.FC<ImagePickerProps> = ({
   return (
     <View style={styles.container}>
       <Image
-        source={{
-          uri: image ?? placeholderImage,
-        }}
+        source={
+          image ? {
+            uri: image,
+          } : require('../../assets/images/placeholder-image.jpg')
+        }
         style={styles.image}
       />
-      {
-        editable && (
-          <Pressable onPress={() => setOpenModal(true)} style={styles.cameraButton}>
-            <Ionicons name="camera" color={Colors.regular.white} size={28} />
-          </Pressable>
-        )
-      }
+      {editable && (
+        <Pressable
+          onPress={() => setOpenModal(true)}
+          style={styles.cameraButton}
+        >
+          <FontAwesomeIcon
+            icon={faCamera}
+            size={24}
+            color={Colors(defaultTheme).white}
+          />
+        </Pressable>
+      )}
       <Modal animationType="fade" transparent={true} visible={openModal}>
         <View style={styles.modalOverlay}>
           <View style={styles.modalContent}>
