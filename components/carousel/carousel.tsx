@@ -16,7 +16,7 @@ import Swiper from "react-native-swiper";
 import Colors from "../../constants/Colors";
 import { stylesFn } from "../../styles/carousel/Carousel.styles";
 import { View } from "../theme/Themed";
-import getMediaDimensions, { MAX_WIDTH_WEB } from "./carousel-util";
+import getMediaDimensions, { MAX_HEIGHT_WEB, MAX_WIDTH_WEB } from "./carousel-util";
 import RenderMediaItem, { MediaItem } from "./render-media-item";
 
 interface CarouselProps {
@@ -73,7 +73,7 @@ const Carousel: React.FC<CarouselProps> = ({
   };
 
   useEffect(() => {
-    if (data && data.length > 0) {
+    if (data && data.length > 0 && Platform.OS !== "web") {
       getMediaDimensions(data[0].url, data[0].type).then((dimensions: any) => {
         // console.log("Calculated Dimensions", dimensions);
         if (dimensions) {
@@ -86,15 +86,16 @@ const Carousel: React.FC<CarouselProps> = ({
 
   const { width: mWidth } = Dimensions.get('window');
   const [carouselHeight, setCarouselHeight] = useState<any>(Platform.OS === "web"
-    ? MAX_WIDTH_WEB
+    ? MAX_HEIGHT_WEB
     : mWidth);
 
-  const [carouselWidth, setCarouselWidth] = useState(width ? width : Dimensions.get("window").width)
+  const [carouselWidth, setCarouselWidth] = useState(Platform.OS === "web" ? MAX_WIDTH_WEB : (width ? width : Dimensions.get("window").width))
 
   return (
     <View
       style={{
         height: carouselHeight,
+        width: Platform.OS == "web" ? carouselWidth : undefined,
       }}
     >
       {Platform.OS === "web" ? (
@@ -116,7 +117,7 @@ const Carousel: React.FC<CarouselProps> = ({
             renderItem={({ item, index }) => (
               <RenderMediaItem
                 handleImagePress={handleImagePress}
-                height={Platform.OS === "web" ? 580 : 280}
+                height={MAX_HEIGHT_WEB}
                 index={index}
                 item={item}
                 key={item.url || index}
@@ -127,48 +128,44 @@ const Carousel: React.FC<CarouselProps> = ({
             pagingEnabled
             {...props}
           />
-          {Platform.OS === "web" && (
-            <View
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: 10,
-                transform: [{ translateY: -50 }],
-                zIndex: 10,
-                padding: 10,
-                borderRadius: 50,
-              }}
-            >
-              <Pressable onPress={handlePrev}>
-                <FontAwesomeIcon
-                  icon={faChevronLeft}
-                  size={20}
-                  color={Colors(theme).black}
-                />
-              </Pressable>
-            </View>
-          )}
-          {Platform.OS === "web" && (
-            <View
-              style={{
-                position: "absolute",
-                top: "50%",
-                right: 10,
-                transform: [{ translateY: -50 }],
-                zIndex: 10,
-                borderRadius: 50,
-                padding: 10,
-              }}
-            >
-              <Pressable onPress={handleNext}>
-                <FontAwesomeIcon
-                  icon={faChevronRight}
-                  size={20}
-                  color={Colors(theme).black}
-                />
-              </Pressable>
-            </View>
-          )}
+          <View
+            style={{
+              position: "absolute",
+              top: "50%",
+              left: 10,
+              transform: [{ translateY: -50 }],
+              zIndex: 10,
+              padding: 10,
+              borderRadius: 50,
+            }}
+          >
+            <Pressable onPress={handlePrev}>
+              <FontAwesomeIcon
+                icon={faChevronLeft}
+                size={20}
+                color={Colors(theme).black}
+              />
+            </Pressable>
+          </View>
+          <View
+            style={{
+              position: "absolute",
+              top: "50%",
+              right: 10,
+              transform: [{ translateY: -50 }],
+              zIndex: 10,
+              borderRadius: 50,
+              padding: 10,
+            }}
+          >
+            <Pressable onPress={handleNext}>
+              <FontAwesomeIcon
+                icon={faChevronRight}
+                size={20}
+                color={Colors(theme).black}
+              />
+            </Pressable>
+          </View>
           <Pagination.Basic
             progress={progress}
             data={data}

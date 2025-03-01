@@ -1,5 +1,6 @@
 import { Dimensions, Image, Platform } from 'react-native';
 export const MAX_WIDTH_WEB = 640;
+export const MAX_HEIGHT_WEB = 640;
 
 const getMediaDimensions = async (url: string, type: string) => {
     return new Promise((resolve, reject) => {
@@ -24,7 +25,7 @@ const getMediaDimensions = async (url: string, type: string) => {
             const { width } = Dimensions.get('window');
             resolve({
                 width: Platform.OS === 'web' ? MAX_WIDTH_WEB : "100%",
-                height: Platform.OS === 'web' ? MAX_WIDTH_WEB : width,
+                height: Platform.OS === 'web' ? MAX_HEIGHT_WEB : width,
             });
         } else {
             reject(new Error('Invalid type. Use "image" or "video".'));

@@ -9,12 +9,13 @@ const { width } = Dimensions.get("window");
 interface IProps {
     media: MediaItem[];
     xl: any;
-    MAX_WIDTH_WEB: number;
+    MAX_WIDTH_WEB: any;
     theme?: Theme
-    padding?: number
+    padding?: number,
+    mediaRes?: { width: number, height: number }
 }
 
-const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB, padding }: IProps) => {
+const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB, padding, mediaRes }: IProps) => {
     const styles = stylesWrapper(xl ? MAX_WIDTH_WEB : "100%", padding);
     return (
         <View style={styles.container}>
@@ -24,16 +25,16 @@ const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB, padding }: IProps) => {
                 showsHorizontalScrollIndicator={true}
                 keyExtractor={(item, index) => `${item.url}-${index}`}
                 contentContainerStyle={styles.listContainer}
-                renderItem={({ item }) => <MediaRenderer media={item} />}
+                renderItem={({ item }) => <MediaRenderer media={item} mediaRes={mediaRes} />}
                 scrollEnabled={true}
             />
         </View>
     );
 };
 
-const MediaRenderer = ({ media }: { media: MediaItem }) => {
+const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { width: number, height: number } }) => {
     const [thumbnail, setThumbnail] = useState(media.url);
-    const styles = stylesWrapper(width);
+    const styles = stylesWrapper(width, undefined, mediaRes);
 
     return (
         <View style={styles.mediaWrapper}>
@@ -54,7 +55,7 @@ const MediaRenderer = ({ media }: { media: MediaItem }) => {
     );
 };
 
-const stylesWrapper = (width: any, padding = 16) => StyleSheet.create({
+const stylesWrapper = (width: any, padding = 16, mediaRes: any = undefined) => StyleSheet.create({
     container: {
         width: width, // Fixed width container
         alignSelf: "center",
@@ -68,7 +69,10 @@ const stylesWrapper = (width: any, padding = 16) => StyleSheet.create({
         borderRadius: 8,
         overflow: "hidden",
     },
-    media: {
+    media: mediaRes ? {
+        ...mediaRes,
+        borderRadius: 8,
+    } : {
         width: 100,
         height: 100,
         borderRadius: 8,
