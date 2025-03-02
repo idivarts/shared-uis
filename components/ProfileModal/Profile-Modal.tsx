@@ -8,6 +8,7 @@ import {
   faArrowTrendUp,
   faArrowUpWideShort,
   faClock,
+  faClose,
   faEnvelope,
   faPeopleRoof,
   faPhone,
@@ -34,6 +35,7 @@ interface ProfileBottomSheetProps {
   FireStoreDB: Firestore;
   influencer: IUsers;
   isBrandsApp: boolean;
+  closeModal?: () => void;
   theme: Theme;
 }
 
@@ -43,6 +45,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   FireStoreDB: FirestoreDB,
   influencer,
   isBrandsApp,
+  closeModal,
   theme,
 }) => {
   const styles = stylesFn(theme);
@@ -142,6 +145,17 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           paddingBottom: 100,
         }}
       >
+        {closeModal &&
+          <View style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
+            <Pressable onPress={closeModal}>
+              <FontAwesomeIcon
+                icon={faClose}
+                size={24}
+                color={Colors(theme).primary}
+                style={styles.icon}
+              />
+            </Pressable>
+          </View>}
         {previewType.value === "Preview" ? (
           <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: 16 }}>
             {isTwoColumn ?
