@@ -1,36 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { View, Dimensions, ScrollView, Text } from "react-native";
-import { Chip, Title } from "react-native-paper";
-import Swiper from "react-native-swiper";
+import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import Colors from "@/shared-uis/constants/Colors";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
+import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
   faArrowTrendUp,
   faArrowUpWideShort,
   faClock,
-  faComments,
   faEnvelope,
   faPeopleRoof,
   faPhone,
-  faStar,
+  faStar
 } from "@fortawesome/free-solid-svg-icons";
-import { MediaItem } from "../carousel/render-media-item";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
-import { processRawAttachment } from "@/shared-uis/utils/attachments";
-import RenderHTML from "react-native-render-html";
-import { Image, Pressable } from "react-native";
-import SelectGroup from "../select/select-group";
+import axios from "axios";
 import { doc, Firestore, getDoc } from "firebase/firestore";
-import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
+import React, { useEffect, useState } from "react";
+import { ActivityIndicator, Dimensions, Image, Linking, Pressable, ScrollView, Text, View } from "react-native";
+import { Chip, Title } from "react-native-paper";
+import RenderHTML from "react-native-render-html";
+import Swiper from "react-native-swiper";
 import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
-import { faComment } from "@fortawesome/free-regular-svg-icons";
-import axios from "axios";
-import { ActivityIndicator } from "react-native";
-import { Linking } from "react-native";
+import { MediaItem } from "../carousel/render-media-item";
+import SelectGroup from "../select/select-group";
 
 interface ProfileBottomSheetProps {
   actionCard?: React.ReactNode;
@@ -57,8 +52,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const mediaProcessing = carouselMedia
     ? carouselMedia
     : influencer?.profile?.attachments?.map((media) =>
-        processRawAttachment(media)
-      );
+      processRawAttachment(media)
+    );
 
   const [previewType, setPreviewType] = useState({
     label: "Preview",
@@ -106,7 +101,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           Authorization: `Bearer ${influencer.id}`,
         },
       }
-    );
+    ).finally(() => {
+      setLoadingPosts(false)
+    });
 
     if (response.data.data.isInstagram) {
       setIsInstagram(true);
@@ -538,7 +535,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           >
             <InfluencerCard
               influencer={influencer}
-              ToggleModal={() => {}}
+              ToggleModal={() => { }}
               type="explore"
             />
           </View>
