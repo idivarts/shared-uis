@@ -1,14 +1,15 @@
+import { useTheme } from "@react-navigation/native";
+import { ResizeMode, Video } from "expo-av";
 import { useState } from "react";
 import { ActivityIndicator } from "react-native";
+import { State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
-import { ResizeMode, Video } from "expo-av";
-import { TapGestureHandler, State } from "react-native-gesture-handler";
-import { useTheme } from "@react-navigation/native";
 
-import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
-import { View } from "../theme/Themed";
-import ImageComponent from "../image-component";
+import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import { Platform } from "react-native";
+import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
+import ImageComponent from "../image-component";
+import { View } from "../theme/Themed";
 
 export interface MediaItem {
   type: string;
@@ -39,7 +40,23 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [isLoading, setIsLoading] = useState(false);
-
+  const mImage = <ImageComponent
+    url={item.url}
+    altText="Media"
+    style={[
+      styles.media,
+      {
+        height: height || 250,
+        width: width || "100%",
+      },
+    ]}
+    shape={shape}
+    size={size}
+    resizeMode={Platform.OS === "web" ? "contain" : "cover"}
+    resizeMethod={"resize"}
+    onLoadStart={() => setIsLoading(true)}
+    onLoad={() => setIsLoading(false)}
+  />
   if (item?.type.includes("image")) {
     return (
       <TapGestureHandler
@@ -64,23 +81,11 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           >
             {isLoading && <ActivityIndicator />}
           </View>
-          <ImageComponent
-            url={item.url}
-            altText="Media"
-            style={[
-              styles.media,
-              {
-                height: height || 250,
-                width: width || "100%",
-              },
-            ]}
-            shape={shape}
-            size={size}
-            resizeMode={Platform.OS === "web" ? "contain" : "cover"}
-            resizeMethod={"resize"}
-            onLoadStart={() => setIsLoading(true)}
-            onLoad={() => setIsLoading(false)}
-          />
+
+          {Platform.OS == "web" ? mImage : <Zoomable
+            maxPanPointers={2}>
+            {mImage}
+          </Zoomable>}
         </Animated.View>
       </TapGestureHandler>
     );
@@ -96,8 +101,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       source={
         item.url
           ? {
-              uri: item.url,
-            }
+            uri: item.url,
+          }
           : require("@/assets/videos/ForBiggerJoyrides.mp4")
       }
       style={[
