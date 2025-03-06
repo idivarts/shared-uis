@@ -556,11 +556,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         <View
           style={{
             padding: 10,
+            paddingBottom: 40,
             backgroundColor: Colors(theme).background,
             borderTopWidth: 1,
             borderTopColor: Colors(theme).border,
             position: "absolute",
-            bottom: 30,
+            bottom: 0,
             left: 0,
             right: 0,
             zIndex: 1000,
