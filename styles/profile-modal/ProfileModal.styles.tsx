@@ -1,5 +1,5 @@
 import Colors from "@/shared-uis/constants/Colors";
-import { Dimensions, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 export const stylesFn = (theme: any) =>
   StyleSheet.create({

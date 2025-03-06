@@ -145,7 +145,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           paddingBottom: 100,
         }}
       >
-        {closeModal &&
+        {(closeModal && isTwoColumn) &&
           <View style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
             <Pressable onPress={closeModal}>
               <FontAwesomeIcon
@@ -157,7 +157,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             </Pressable>
           </View>}
         {previewType.value === "Preview" ? (
-          <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: 16 }}>
+          <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: isTwoColumn ? 20 : 0 }}>
             {isTwoColumn ?
               <View style={[styles.carouselContainer, { flex: 1, borderColor: Colors(theme).border, borderWidth: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
                 <InfluencerCard
@@ -173,7 +173,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 )}
               </View>}
 
-            <View style={{ flex: 1 }}>
+            <View style={[{ flex: 1 }, isTwoColumn ? {} : { marginTop: 16 }]}>
               <View style={[styles.header]}>
                 <View style={styles.profileInfo}>
                   <Text style={styles.name}>{influencer?.name}</Text>
@@ -540,7 +540,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         ) : (
           <View
             style={{
-              padding: 20,
+              padding: isTwoColumn ? 20 : 0,
               alignSelf: "center",
             }}
           >
