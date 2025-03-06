@@ -20,6 +20,7 @@
     "react-native-svg": "^15.10.0",
     "react-native-swiper": "^1.6.0",
     "react-native-toast-message": "^2.2.0",
+    "@likashefqet/react-native-image-zoom": "^4.3.0",
     "zod": "^3.23.8"
   }
 }
