@@ -85,11 +85,12 @@ const Carousel: React.FC<CarouselProps> = ({
   }, [data]);
 
   const { width: mWidth } = Dimensions.get('window');
-  const [carouselHeight, setCarouselHeight] = useState<any>(Platform.OS === "web"
-    ? MAX_HEIGHT_WEB
-    : mWidth);
+  const screenWidth = Dimensions.get("screen").width;
 
-  const [carouselWidth, setCarouselWidth] = useState(Platform.OS === "web" ? MAX_WIDTH_WEB : (width ? width : Dimensions.get("window").width))
+  const [carouselHeight, setCarouselHeight] = useState<any>(Platform.OS === "web"
+    ? (MAX_WIDTH_WEB < screenWidth ? MAX_HEIGHT_WEB : screenWidth)
+    : mWidth);
+  const [carouselWidth, setCarouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : Dimensions.get("window").width))
 
   return (
     <View
@@ -117,7 +118,7 @@ const Carousel: React.FC<CarouselProps> = ({
             renderItem={({ item, index }) => (
               <RenderMediaItem
                 handleImagePress={handleImagePress}
-                height={MAX_HEIGHT_WEB}
+                height={carouselHeight}
                 index={index}
                 item={item}
                 key={item.url || index}
