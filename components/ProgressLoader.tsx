@@ -1,15 +1,21 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Animated, Modal, StyleSheet, Text, View } from "react-native";
+import { Subject } from "rxjs";
 
 interface ProgressLoaderProps {
     isProcessing: boolean;
     progress: number; // Progress percentage (0 to 100)
+    totalFiles?: number
+    subject?: Subject<any>
 }
 
-const ProgressLoader: React.FC<ProgressLoaderProps> = ({ isProcessing, progress }) => {
+const ProgressLoader: React.FC<ProgressLoaderProps> = ({ isProcessing, progress: mProgress, totalFiles, subject }) => {
+    const [progress, setProgress] = useState(mProgress)
     const animatedWidth = new Animated.Value(progress);
 
-    React.useEffect(() => {
+    const increment = totalFiles ? (95 - mProgress) / totalFiles : 0
+
+    useEffect(() => {
         Animated.timing(animatedWidth, {
             toValue: progress,
             duration: 500, // Smooth transition
@@ -17,13 +23,19 @@ const ProgressLoader: React.FC<ProgressLoaderProps> = ({ isProcessing, progress 
         }).start();
     }, [progress]);
 
+    useEffect(() => {
+        subject?.subscribe(() => {
+            setProgress(progress + increment)
+        })
+    }, [])
+
     if (!isProcessing) return null;
 
     return (
         <Modal transparent={true} animationType="fade" visible={isProcessing}>
             <View style={styles.modalContainer}>
                 <View style={styles.loaderBox}>
-                    <Text style={styles.loadingText}>Processing... {progress}%</Text>
+                    <Text style={styles.loadingText}>Processing... {Math.round(progress)}%</Text>
                     <View style={styles.progressBar}>
                         <Animated.View
                             style={[
