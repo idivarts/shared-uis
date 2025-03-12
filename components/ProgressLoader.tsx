@@ -5,15 +5,12 @@ import { Subject } from "rxjs";
 interface ProgressLoaderProps {
     isProcessing: boolean;
     progress: number; // Progress percentage (0 to 100)
-    totalFiles?: number
     subject?: Subject<any>
 }
 
-const ProgressLoader: React.FC<ProgressLoaderProps> = ({ isProcessing, progress: mProgress, totalFiles, subject }) => {
+const ProgressLoader: React.FC<ProgressLoaderProps> = ({ isProcessing, progress: mProgress, subject }) => {
     const [progress, setProgress] = useState(mProgress)
     const animatedWidth = new Animated.Value(progress);
-
-    const increment = totalFiles ? (95 - mProgress) / totalFiles : 0
 
     useEffect(() => {
         Animated.timing(animatedWidth, {
@@ -24,8 +21,10 @@ const ProgressLoader: React.FC<ProgressLoaderProps> = ({ isProcessing, progress:
     }, [progress]);
 
     useEffect(() => {
-        subject?.subscribe(() => {
-            setProgress(progress + increment)
+        subject?.subscribe(({ percentage }) => {
+            if (percentage != undefined)
+                setProgress(percentage)
+            // setProgress(progress + increment)
         })
     }, [])
 
