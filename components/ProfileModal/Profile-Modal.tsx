@@ -98,7 +98,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     setLoadingPosts(true);
     const response = await axios.get(
       //@ts-ignore
-      `https://be.trendly.pro/api/v1/socials/medias?userId=${influencer.id}`,
+      `https://be.trendly.now/api/v1/socials/medias?userId=${influencer.id}`,
       {
         headers: {
           //@ts-ignore
