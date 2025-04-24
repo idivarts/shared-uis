@@ -16,7 +16,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
-import axios from "axios";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, Image, Linking, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
@@ -36,6 +35,9 @@ interface ProfileBottomSheetProps {
   influencer: IUsers;
   isBrandsApp: boolean;
   closeModal?: () => void;
+  loadingPosts?: boolean;
+  posts?: any[];
+  isInstagram?: boolean;
   theme: Theme;
 }
 
@@ -47,11 +49,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   isBrandsApp,
   closeModal,
   theme,
+  loadingPosts,
+  posts = [],
+  isInstagram
 }) => {
   const styles = stylesFn(theme);
   const swiperRef = React.useRef<Swiper>(null);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
-  const [loadingPosts, setLoadingPosts] = useState(false);
 
   const mediaProcessing = carouselMedia
     ? carouselMedia
@@ -64,8 +68,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     value: "Preview",
   });
 
-  const [posts, setPosts] = useState([]);
-  const [isInstagram, setIsInstagram] = useState(false);
 
   const screenWidth = Dimensions.get("window").width;
 
@@ -94,35 +96,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     }
   };
 
-  const fetchPosts = async () => {
-    setLoadingPosts(true);
-    const response = await axios.get(
-      //@ts-ignore
-      `https://be.trendly.now/api/v1/socials/medias?userId=${influencer.id}`,
-      {
-        headers: {
-          //@ts-ignore
-          Authorization: `Bearer ${influencer.id}`,
-        },
-      }
-    ).finally(() => {
-      setLoadingPosts(false)
-    });
-
-    if (response.data.data.isInstagram) {
-      setIsInstagram(true);
-      setPosts(response.data.data.medias);
-      setLoadingPosts(false);
-    } else {
-      setIsInstagram(false);
-      setPosts(response.data.data.posts);
-      setLoadingPosts(false);
-    }
-  };
 
   useEffect(() => {
     fetchPrimarySocialMedia();
-    fetchPosts();
   }, []);
 
   const { width } = useWindowDimensions();
