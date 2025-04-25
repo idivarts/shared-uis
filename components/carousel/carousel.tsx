@@ -48,7 +48,7 @@ const Carousel: React.FC<CarouselProps> = ({
   const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
 
-  const [key, _] = useState(Math.floor(Math.random() + 10000))
+  const [key, _] = useState(Math.floor(Math.random() * 10000))
   const handleImagePress = (item: MediaItem) => {
     if (onImagePress) {
       onImagePress(item);

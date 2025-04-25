@@ -1,6 +1,6 @@
 import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
@@ -76,11 +76,17 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       }
       parent = parent.parentElement;
     }
+    // console.log("All scrollable parents", cKey, scrollableParents);
     return scrollableParents[0];
   }
 
+  const [element, setElement] = useState<any>(null)
+  useEffect(() => {
+    setElement(getScrollableParent());
+    // const element = getScrollableParent()
+  }, [])
+
   if (item?.type.includes("image")) {
-    const element = getScrollableParent()
     const AnimatedVideo = <Animated.View
       style={{
         position: "relative",
@@ -115,7 +121,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       >
         {Platform.OS == "web" ? <PanGestureHandler
           onGestureEvent={({ nativeEvent }) => {
-            console.log("Vertical drag detected", nativeEvent);
+            // console.log("Vertical drag detected", element);
             element?.scrollBy(0, -nativeEvent.translationY * 0.05);
           }}
           onHandlerStateChange={({ nativeEvent }) => {
