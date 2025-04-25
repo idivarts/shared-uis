@@ -48,6 +48,7 @@ const Carousel: React.FC<CarouselProps> = ({
   const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
 
+  const [key, _] = useState(Math.floor(Math.random() + 10000))
   const handleImagePress = (item: MediaItem) => {
     if (onImagePress) {
       onImagePress(item);
@@ -94,6 +95,7 @@ const Carousel: React.FC<CarouselProps> = ({
 
   return (
     <View
+      id={"carousel" + key}
       style={{
         height: carouselHeight,
         width: Platform.OS == "web" ? carouselWidth : undefined,
@@ -116,14 +118,18 @@ const Carousel: React.FC<CarouselProps> = ({
               config: {},
             }}
             renderItem={({ item, index }) => (
+              // <ScrollView directionalLockEnabled={true} horizontal={true}
+              //   style={{ flex: 1, height: carouselHeight }}>
               <RenderMediaItem
                 handleImagePress={handleImagePress}
                 height={carouselHeight}
                 index={index}
+                cKey={"carousel" + key}
                 item={item}
                 key={item.url || index}
                 videoRefs={videoRefs}
               />
+              // </ScrollView>
             )}
             style={[styles.carouselContainer]}
             pagingEnabled

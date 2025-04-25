@@ -2,7 +2,7 @@ import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { State, TapGestureHandler } from "react-native-gesture-handler";
+import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
@@ -23,6 +23,7 @@ interface RenderMediaItemProps {
   item: MediaItem;
   videoRefs?: React.MutableRefObject<{ [key: number]: any }>;
   width?: number;
+  cKey?: string;
   shape?: "circle" | "square";
   size?: "small" | "medium" | "large";
 }
@@ -34,6 +35,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   item,
   videoRefs,
   width,
+  cKey,
   shape = "square",
   size = "large",
 }) => {
@@ -57,7 +59,52 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     onLoadStart={() => setIsLoading(true)}
     onLoad={() => setIsLoading(false)}
   />
+  const getScrollableParent = () => {
+    if (!cKey)
+      return null;
+    const element = document.getElementById(cKey);
+    if (!element)
+      return null;
+
+    const scrollableParents = [];
+    let parent = element.parentElement;
+    while (parent) {
+      const overflowY = window.getComputedStyle(parent).overflowY;
+      const isScrollable = (overflowY === 'scroll' || overflowY === 'auto') && parent.scrollHeight > parent.clientHeight;
+      if (isScrollable) {
+        scrollableParents.push(parent);
+      }
+      parent = parent.parentElement;
+    }
+    return scrollableParents[0];
+  }
+
   if (item?.type.includes("image")) {
+    const element = getScrollableParent()
+    const AnimatedVideo = <Animated.View
+      style={{
+        position: "relative",
+      }}
+    >
+      <View
+        style={[
+          styles.loadingIndicatorContainer,
+          {
+            display: isLoading ? "flex" : "none",
+          },
+        ]}
+      >
+        {isLoading && <ActivityIndicator />}
+      </View>
+      {Platform.OS == "web" ? (
+        mImage
+      ) : (
+        <Zoomable maxPanPointers={2}>
+          {mImage}
+        </Zoomable>
+      )}
+    </Animated.View>
+
     return (
       <TapGestureHandler
         onHandlerStateChange={({ nativeEvent }) => {
@@ -66,28 +113,22 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           }
         }}
       >
-        <Animated.View
-          style={{
-            position: "relative",
+        {Platform.OS == "web" ? <PanGestureHandler
+          onGestureEvent={({ nativeEvent }) => {
+            console.log("Vertical drag detected", nativeEvent);
+            element?.scrollBy(0, -nativeEvent.translationY * 0.05);
           }}
+          onHandlerStateChange={({ nativeEvent }) => {
+            // console.log("Vertical drag ended", nativeEvent);
+            // document.getElementById("collab-list")?.scrollBy(0, -nativeEvent.translationY);
+          }}
+          activeOffsetY={[-5, 5]} // allow only minimal horizontal 
+        // minDist={10}
+        // activeOffsetX={[-5, 5]} // allow only minimal horizontal 
         >
-          <View
-            style={[
-              styles.loadingIndicatorContainer,
-              {
-                display: isLoading ? "flex" : "none",
-              },
-            ]}
-          >
-            {isLoading && <ActivityIndicator />}
-          </View>
-
-          {Platform.OS == "web" ? mImage : <Zoomable
-            maxPanPointers={2}>
-            {mImage}
-          </Zoomable>}
-        </Animated.View>
-      </TapGestureHandler>
+          {AnimatedVideo}
+        </PanGestureHandler> : AnimatedVideo}
+      </TapGestureHandler >
     );
   }
 
