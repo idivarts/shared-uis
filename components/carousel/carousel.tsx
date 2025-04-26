@@ -99,6 +99,7 @@ const Carousel: React.FC<CarouselProps> = ({
       style={{
         height: carouselHeight,
         width: Platform.OS == "web" ? carouselWidth : undefined,
+        backgroundColor: "transparent",
       }}
     >
       {Platform.OS === "web" ? (
@@ -179,7 +180,7 @@ const Carousel: React.FC<CarouselProps> = ({
             size={15}
             dotStyle={{
               borderRadius: 100,
-              backgroundColor: Colors(theme).backdrop,
+              backgroundColor: Colors(theme).secondary,
             }}
             activeDotStyle={{
               borderRadius: 100,
