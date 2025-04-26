@@ -161,7 +161,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       ]}
       resizeMode={ResizeMode.COVER}
       isLooping={true}
-      shouldPlay
+      shouldPlay={false}
       useNativeControls
       usePoster
       volume={0.0}
