@@ -87,7 +87,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   }, [])
 
   if (item?.type.includes("image")) {
-    const AnimatedVideo = <Animated.View
+    const AnimatedImageView = <Animated.View
       style={{
         position: "relative",
       }}
@@ -132,8 +132,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         // minDist={10}
         // activeOffsetX={[-5, 5]} // allow only minimal horizontal 
         >
-          {AnimatedVideo}
-        </PanGestureHandler> : AnimatedVideo}
+          {AnimatedImageView}
+        </PanGestureHandler> : AnimatedImageView}
       </TapGestureHandler >
     );
   }
@@ -145,13 +145,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           videoRefs.current[index] = ref;
         }
       }}
-      source={
-        item.url
-          ? {
-            uri: item.url,
-          }
-          : require("@/assets/videos/ForBiggerJoyrides.mp4")
-      }
+      source={{ uri: item.url, }}
       style={[
         styles.media,
         {
@@ -160,11 +154,11 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         },
       ]}
       resizeMode={ResizeMode.COVER}
-      isLooping={true}
-      shouldPlay={false}
+      isLooping={false}
+      shouldPlay
       useNativeControls
       usePoster
-      volume={0.0}
+      isMuted={true}
       PosterComponent={() => (
         <View
           style={{
