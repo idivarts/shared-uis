@@ -45,6 +45,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const styles = stylesFn(theme);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const [isMuted, setIsMuted] = useState(true)
   const videoRef = useRef<HTMLVideoElement>()
   const nativeVideoRef = useRef<Video>()
 
@@ -160,7 +161,15 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           nativeVideoRef.current.pauseAsync();
         }
     }} >
-      <View style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}>
+      <View
+        style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
+        // onPress={() => {
+        //   videoRef.current?.play();
+        // }} 
+        onTouchEnd={() => {
+          videoRef.current?.play();
+          setIsMuted(false)
+        }} >
         <WebVideo
           ref={(ref) => {
             if (ref) {
@@ -171,9 +180,10 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           style={{ width: "100%", height: "100%" }}
           resizeMode="cover"
           controls // enables native controls
-          // paused={true} // auto play
+          // paused={false} // auto play
           repeat={false}
-          muted={true}
+          muted={isMuted}
+          playInBackground={false}
           onError={(error) => console.error("Video error:", error)}
           onLoadStart={() => console.log("Loading video")}
           onLoad={() => console.log("Video loaded")}
@@ -183,6 +193,10 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   }
   return (
     <Video
+      onTouchEnd={() => {
+        nativeVideoRef.current?.playAsync();
+        setIsMuted(false)
+      }}
       ref={(ref) => {
         if (ref) {
           nativeVideoRef.current = ref;
@@ -201,7 +215,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       shouldPlay
       useNativeControls
       usePoster
-      isMuted={true}
+      isMuted={isMuted}
       PosterComponent={() => (
         <View
           style={{
