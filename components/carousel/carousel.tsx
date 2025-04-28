@@ -94,6 +94,10 @@ const Carousel: React.FC<CarouselProps> = ({
     : mWidth);
   const [carouselWidth, setCarouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : Dimensions.get("window").width))
 
+  if (data.length == 0) {
+    return null;
+  }
+
   return (
     <View
       id={"carousel" + key}
