@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
+import { Video as WebVideo } from "react-native-video";
 
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import { Platform } from "react-native";
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
-import { View } from "../theme/Themed";
+import { Text, View } from "../theme/Themed";
 
 export interface MediaItem {
   type: string;
@@ -42,6 +43,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
   const mImage = <ImageComponent
     url={item.url}
     altText="Media"
@@ -138,6 +140,22 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     );
   }
 
+  if (Platform.OS == "web") {
+    return <View style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}>
+      <WebVideo
+        source={{ uri: item.url }}
+        style={{ width: "100%", height: "100%" }}
+        resizeMode="cover"
+        controls // enables native controls
+        paused={false} // auto play
+        repeat={false}
+        muted={true}
+        onError={(error) => console.error("Video error:", error)}
+        onLoadStart={() => console.log("Loading video")}
+        onLoad={() => console.log("Video loaded")}
+      />
+    </View>
+  }
   return (
     <Video
       ref={(ref) => {
@@ -167,10 +185,15 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             alignItems: "center",
           }}
         >
-          <ActivityIndicator />
+          {isLoading && <ActivityIndicator />}
+          {isError && <Text style={{ color: "red" }}>Error loading video</Text>}
         </View>
       )}
-      onError={(error) => console.error("Video Error:", error)}
+      onError={(error) => {
+        setIsLoading(false);
+        setIsError(true);
+        console.error("Video Error:", error)
+      }}
       onLoadStart={() => setIsLoading(true)}
       onLoad={() => setIsLoading(false)}
     />

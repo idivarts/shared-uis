@@ -124,6 +124,7 @@ const Carousel: React.FC<CarouselProps> = ({
               <RenderMediaItem
                 handleImagePress={handleImagePress}
                 height={carouselHeight}
+                width={carouselWidth}
                 index={index}
                 cKey={"carousel" + key}
                 item={item}
@@ -217,6 +218,7 @@ const Carousel: React.FC<CarouselProps> = ({
             <RenderMediaItem
               handleImagePress={handleImagePress}
               height={carouselHeight}
+              width={carouselWidth}
               index={index}
               item={item}
               key={item.url || index}
