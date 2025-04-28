@@ -44,6 +44,7 @@ const Carousel: React.FC<CarouselProps> = ({
 }) => {
   const styles = stylesFn(theme);
   const swiperRef = useRef<ICarouselInstance>(null);
+  const [currentItem, setCurrentItem] = useState<number>(0);
   const videoRefs = useRef<{ [key: number]: any }>({});
   const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
@@ -113,6 +114,7 @@ const Carousel: React.FC<CarouselProps> = ({
               runOnJS((value: number) => {
                 progress.value = value;
               })(absoluteProgress);
+              setCurrentItem(absoluteProgress)
             }}
             withAnimation={{
               type: "timing",
@@ -125,6 +127,7 @@ const Carousel: React.FC<CarouselProps> = ({
                 handleImagePress={handleImagePress}
                 height={carouselHeight}
                 width={carouselWidth}
+                currentIndex={currentItem}
                 index={index}
                 cKey={"carousel" + key}
                 item={item}
@@ -211,6 +214,7 @@ const Carousel: React.FC<CarouselProps> = ({
           dotStyle={styles.dot}
           activeDotStyle={[styles.dot, styles.activeDot]}
           paginationStyle={styles.pagination}
+          onIndexChanged={(index) => { setCurrentItem(index) }}
           pagingEnabled
           {...props}
         >
@@ -219,6 +223,7 @@ const Carousel: React.FC<CarouselProps> = ({
               handleImagePress={handleImagePress}
               height={carouselHeight}
               width={carouselWidth}
+              currentIndex={currentItem}
               index={index}
               item={item}
               key={item.url || index}

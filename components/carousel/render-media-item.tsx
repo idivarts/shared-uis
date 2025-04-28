@@ -22,6 +22,7 @@ interface RenderMediaItemProps {
   handleImagePress: (item: MediaItem) => void;
   height?: number;
   index: number;
+  currentIndex?: number;
   item: MediaItem;
   videoRefs?: React.MutableRefObject<{ [key: number]: any }>;
   width?: number;
@@ -35,7 +36,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   height,
   index,
   item,
-  // videoRefs,
+  currentIndex,
   width,
   cKey,
   shape = "square",
@@ -46,8 +47,33 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
   const [isMuted, setIsMuted] = useState(true)
+  const [inView, setInView] = useState(false)
   const videoRef = useRef<HTMLVideoElement>()
   const nativeVideoRef = useRef<Video>()
+
+  useEffect(() => {
+    if (currentIndex == index && inView) {
+      if (videoRef.current) {
+        videoRef.current.play();
+        if (index != 0)
+          setIsMuted(false)
+        // setIsMuted(false)
+      }
+      if (nativeVideoRef.current) {
+        nativeVideoRef.current.playAsync();
+        if (index != 0)
+          setIsMuted(false)
+        // setIsMuted(false)
+      }
+    } else {
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+      if (nativeVideoRef.current) {
+        nativeVideoRef.current.pauseAsync();
+      }
+    }
+  }, [currentIndex, inView])
 
   const mImage = <ImageComponent
     url={item.url}
@@ -148,18 +174,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   if (Platform.OS == "web") {
     return <InView onChange={(inView) => {
       console.log("Video in view", inView, index, typeof videoRef?.current);
-      if (videoRef.current)
-        if (inView) {
-          videoRef.current.play();
-        } else {
-          videoRef.current.pause();
-        }
-      if (nativeVideoRef.current)
-        if (inView) {
-          nativeVideoRef.current.playAsync();
-        } else {
-          nativeVideoRef.current.pauseAsync();
-        }
+      setInView(inView);
     }} >
       <View
         style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
@@ -180,10 +195,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           style={{ width: "100%", height: "100%" }}
           resizeMode="cover"
           controls // enables native controls
-          // paused={false} // auto play
           repeat={false}
           muted={isMuted}
-          playInBackground={false}
           onError={(error) => console.error("Video error:", error)}
           onLoadStart={() => console.log("Loading video")}
           onLoad={() => console.log("Video loaded")}
@@ -212,7 +225,6 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       ]}
       resizeMode={ResizeMode.COVER}
       isLooping={false}
-      shouldPlay
       useNativeControls
       usePoster
       isMuted={isMuted}
