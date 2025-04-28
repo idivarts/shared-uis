@@ -140,71 +140,73 @@ const Carousel: React.FC<CarouselProps> = ({
             pagingEnabled
             {...props}
           />
-          <View
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: 10,
-              transform: [{ translateY: -50 }],
-              zIndex: 10,
-              padding: 10,
-              borderRadius: 50,
-            }}
-          >
-            <Pressable onPress={handlePrev}>
-              <FontAwesomeIcon
-                icon={faChevronLeft}
-                size={20}
-                color={Colors(theme).black}
-              />
-            </Pressable>
-          </View>
-          <View
-            style={{
-              position: "absolute",
-              top: "50%",
-              right: 10,
-              transform: [{ translateY: -50 }],
-              zIndex: 10,
-              borderRadius: 50,
-              padding: 10,
-            }}
-          >
-            <Pressable onPress={handleNext}>
-              <FontAwesomeIcon
-                icon={faChevronRight}
-                size={20}
-                color={Colors(theme).black}
-              />
-            </Pressable>
-          </View>
-          <Pagination.Basic
-            progress={progress}
-            data={data}
-            size={15}
-            dotStyle={{
-              borderRadius: 100,
-              backgroundColor: Colors(theme).secondary,
-            }}
-            activeDotStyle={{
-              borderRadius: 100,
-              overflow: "hidden",
-              backgroundColor: Colors(theme).primary,
-            }}
-            containerStyle={[
-              {
-                gap: 5,
-                marginTop: 10,
-              },
-            ]}
-            horizontal
-            onPress={(index) => {
-              swiperRef.current?.scrollTo({
-                count: index - progress.value,
-                animated: true,
-              });
-            }}
-          />
+          {data.length > 1 && <>
+            <View
+              style={{
+                position: "absolute",
+                top: "50%",
+                left: 10,
+                transform: [{ translateY: -50 }],
+                zIndex: 10,
+                padding: 10,
+                borderRadius: 50,
+              }}
+            >
+              <Pressable onPress={handlePrev}>
+                <FontAwesomeIcon
+                  icon={faChevronLeft}
+                  size={20}
+                  color={Colors(theme).primary}
+                />
+              </Pressable>
+            </View>
+            <View
+              style={{
+                position: "absolute",
+                top: "50%",
+                right: 10,
+                transform: [{ translateY: -50 }],
+                zIndex: 10,
+                borderRadius: 50,
+                padding: 10,
+              }}
+            >
+              <Pressable onPress={handleNext}>
+                <FontAwesomeIcon
+                  icon={faChevronRight}
+                  size={20}
+                  color={Colors(theme).primary}
+                />
+              </Pressable>
+            </View>
+            <Pagination.Basic
+              progress={progress}
+              data={data}
+              size={15}
+              dotStyle={{
+                borderRadius: 100,
+                backgroundColor: Colors(theme).secondary,
+              }}
+              activeDotStyle={{
+                borderRadius: 100,
+                overflow: "hidden",
+                backgroundColor: Colors(theme).primary,
+              }}
+              containerStyle={[
+                {
+                  gap: 5,
+                  marginTop: 10,
+                },
+              ]}
+              horizontal
+              onPress={(index) => {
+                swiperRef.current?.scrollTo({
+                  count: index - progress.value,
+                  animated: true,
+                });
+              }}
+            />
+          </>}
         </>
       ) : (
         <Swiper
