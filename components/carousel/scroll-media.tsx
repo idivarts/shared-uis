@@ -1,7 +1,8 @@
 import { Theme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
-import React, { useState } from "react";
-import { Dimensions, FlatList, Image, StyleSheet, View } from "react-native";
+import React from "react";
+import { Dimensions, FlatList, Image, Platform, StyleSheet, View } from "react-native";
+import { Video as WebVideo } from "react-native-video";
 import { MediaItem } from "./render-media-item";
 
 
@@ -33,7 +34,7 @@ const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB, padding, mediaRes }: IProps) =>
 };
 
 const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { width: number, height: number } }) => {
-    const [thumbnail, setThumbnail] = useState(media.url);
+    // const [thumbnail, setThumbnail] = useState(media.url);
     const styles = stylesWrapper(width, undefined, mediaRes);
 
     return (
@@ -41,15 +42,29 @@ const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { wid
             {media.type === "image" ? (
                 <Image source={{ uri: media.url }} style={styles.media} />
             ) : (
-                <Video
-                    source={{ uri: media.url }}
-                    style={styles.media}
-                    resizeMode={ResizeMode.COVER}
-                    shouldPlay={false}
-                    usePoster={true}
-                    posterSource={{ uri: thumbnail }}
-                    posterStyle={styles.media}
-                />
+                Platform.OS === "web" ? (
+                    <View style={styles.media}>
+                        <WebVideo
+                            source={{ uri: media.url }}
+                            style={{ width: "100%", height: "100%" }}
+                            resizeMode="cover"
+                            paused={true}
+                            controls={true}
+                        // poster={media.url}
+                        // onLoad={() => setThumbnail(media.url)}
+                        />
+                    </View>
+                ) : (
+                    <Video
+                        source={{ uri: media.url }}
+                        style={styles.media}
+                        resizeMode={ResizeMode.COVER}
+                        shouldPlay={false}
+                        useNativeControls={true}
+                        usePoster={true}
+                        posterSource={{ uri: media.url }}
+                        posterStyle={styles.media}
+                    />)
             )}
         </View>
     );
