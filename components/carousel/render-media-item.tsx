@@ -1,6 +1,6 @@
 import { useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
@@ -8,6 +8,7 @@ import { Video as WebVideo } from "react-native-video";
 
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import { Platform } from "react-native";
+import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
 import { Text, View } from "../theme/Themed";
@@ -34,7 +35,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   height,
   index,
   item,
-  videoRefs,
+  // videoRefs,
   width,
   cKey,
   shape = "square",
@@ -44,6 +45,9 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const styles = stylesFn(theme);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>()
+  const nativeVideoRef = useRef<Video>()
+
   const mImage = <ImageComponent
     url={item.url}
     altText="Media"
@@ -141,26 +145,47 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   }
 
   if (Platform.OS == "web") {
-    return <View style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}>
-      <WebVideo
-        source={{ uri: item.url }}
-        style={{ width: "100%", height: "100%" }}
-        resizeMode="cover"
-        controls // enables native controls
-        paused={false} // auto play
-        repeat={false}
-        muted={true}
-        onError={(error) => console.error("Video error:", error)}
-        onLoadStart={() => console.log("Loading video")}
-        onLoad={() => console.log("Video loaded")}
-      />
-    </View>
+    return <InView onChange={(inView) => {
+      console.log("Video in view", inView, index, typeof videoRef?.current);
+      if (videoRef.current)
+        if (inView) {
+          videoRef.current.play();
+        } else {
+          videoRef.current.pause();
+        }
+      if (nativeVideoRef.current)
+        if (inView) {
+          nativeVideoRef.current.playAsync();
+        } else {
+          nativeVideoRef.current.pauseAsync();
+        }
+    }} >
+      <View style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}>
+        <WebVideo
+          ref={(ref) => {
+            if (ref) {
+              videoRef.current = ref.nativeHtmlVideoRef?.current as any;
+            }
+          }}
+          source={{ uri: item.url }}
+          style={{ width: "100%", height: "100%" }}
+          resizeMode="cover"
+          controls // enables native controls
+          // paused={true} // auto play
+          repeat={false}
+          muted={true}
+          onError={(error) => console.error("Video error:", error)}
+          onLoadStart={() => console.log("Loading video")}
+          onLoad={() => console.log("Video loaded")}
+        />
+      </View>
+    </InView>
   }
   return (
     <Video
       ref={(ref) => {
-        if (ref && videoRefs) {
-          videoRefs.current[index] = ref;
+        if (ref) {
+          nativeVideoRef.current = ref;
         }
       }}
       source={{ uri: item.url, }}
