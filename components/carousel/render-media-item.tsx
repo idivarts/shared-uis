@@ -186,22 +186,35 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           videoRef.current?.play();
           setIsMuted(false)
         }} >
-        <WebVideo
-          ref={(ref) => {
-            if (ref) {
-              videoRef.current = ref.nativeHtmlVideoRef?.current as any;
-            }
+        <PanGestureHandler
+          onGestureEvent={({ nativeEvent }) => {
+            element?.scrollBy(0, -nativeEvent.translationY * 0.05);
           }}
-          source={{ uri: item.url }}
-          style={{ width: "100%", height: "100%" }}
-          resizeMode="cover"
-          controls // enables native controls
-          repeat={false}
-          muted={isMuted}
-          onError={(error) => console.error("Video error:", error)}
-          onLoadStart={() => console.log("Loading video")}
-          onLoad={() => console.log("Video loaded")}
-        />
+          onHandlerStateChange={({ nativeEvent }) => {
+          }}
+          activeOffsetY={[-5, 5]} // allow only minimal horizontal 
+        >
+          <Animated.View
+            style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
+          >
+            <WebVideo
+              ref={(ref) => {
+                if (ref) {
+                  videoRef.current = ref.nativeHtmlVideoRef?.current as any;
+                }
+              }}
+              source={{ uri: item.url }}
+              style={{ width: "100%", height: "100%" }}
+              resizeMode="cover"
+              controls // enables native controls
+              repeat={false}
+              muted={isMuted}
+              onError={(error) => console.error("Video error:", error)}
+              onLoadStart={() => console.log("Loading video")}
+              onLoad={() => console.log("Video loaded")}
+            />
+          </Animated.View>
+        </PanGestureHandler>
       </Pressable>
     </InView>
   }
