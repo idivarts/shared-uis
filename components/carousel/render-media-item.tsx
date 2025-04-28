@@ -7,7 +7,7 @@ import Animated from "react-native-reanimated";
 import { Video as WebVideo } from "react-native-video";
 
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
-import { Platform } from "react-native";
+import { Platform, Pressable } from "react-native";
 import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
@@ -176,11 +176,12 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       console.log("Video in view", inView, index, typeof videoRef?.current);
       setInView(inView);
     }} >
-      <View
+      <Pressable
         style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
-        // onPress={() => {
-        //   videoRef.current?.play();
-        // }} 
+        onPress={() => {
+          videoRef.current?.play();
+          setIsMuted(false)
+        }}
         onTouchEnd={() => {
           videoRef.current?.play();
           setIsMuted(false)
@@ -201,7 +202,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           onLoadStart={() => console.log("Loading video")}
           onLoad={() => console.log("Video loaded")}
         />
-      </View>
+      </Pressable>
     </InView>
   }
   return (
