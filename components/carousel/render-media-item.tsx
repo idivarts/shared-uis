@@ -174,7 +174,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
 
   if (Platform.OS == "web") {
     return <InView onChange={(inView) => {
-      console.log("Video in view", inView, index, typeof videoRef?.current);
+      // console.log("Video in view", inView, index, typeof videoRef?.current);
       setInView(inView);
     }} >
       <Pressable
