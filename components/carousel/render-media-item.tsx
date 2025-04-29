@@ -1,4 +1,4 @@
-import { useTheme } from "@react-navigation/native";
+import { useIsFocused, useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator } from "react-native";
@@ -50,9 +50,10 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const [inView, setInView] = useState(false)
   const videoRef = useRef<HTMLVideoElement>()
   const nativeVideoRef = useRef<Video>()
+  const isFocused = useIsFocused();
 
   useEffect(() => {
-    if (currentIndex == index && inView) {
+    if (currentIndex == index && inView && isFocused) {
       if (videoRef.current) {
         videoRef.current.play();
         if (index != 0)
@@ -73,7 +74,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         nativeVideoRef.current.pauseAsync();
       }
     }
-  }, [currentIndex, inView])
+  }, [currentIndex, inView, isFocused])
 
   const mImage = <ImageComponent
     url={item.url}
