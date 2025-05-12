@@ -1,3 +1,4 @@
+import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
 import Carousel from "@/shared-uis/components/carousel/carousel";
@@ -7,13 +8,11 @@ import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { truncateText } from "@/shared-uis/utils/text";
 import { imageUrl } from "@/shared-uis/utils/url";
 import {
-  faCheck,
-  faEllipsis,
-  faPlus
+  faEllipsis
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Dimensions,
   Pressable,
@@ -24,17 +23,17 @@ import { Avatar, Card } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
 import Colors from "../constants/Colors";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
-import Tag from "./tag";
 
 type User = IUsers & { id?: string }
 interface InfluencerCardPropsType {
-  alreadyInvited?: (influencerId: string) => Promise<boolean>;
   influencer: User;
+  customAttachments?: Attachment[]
   openProfile?: (influencer: User) => void;
   setSelectedInfluencer?: React.Dispatch<React.SetStateAction<User | null>>;
-  ToggleMessageModal?: () => void;
-  ToggleModal: () => void;
+  ToggleModal?: () => void;
   type: string;
+  cardActionNode?: any
+  footerNode?: any
 }
 
 const InfluencerCard = (props: InfluencerCardPropsType) => {
@@ -46,6 +45,11 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
 
+  const [images, setImages] = useState((props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
+    processRawAttachment(attachment)
+  ) || [])
+
+
   const screenWidth = Dimensions.get("window").width;
 
   const onImagePress = (data: MediaItem) => {
@@ -53,14 +57,6 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     setPreviewImage(true);
   };
 
-  useEffect(() => {
-    if (props?.alreadyInvited) {
-      //@ts-ignore
-      props.alreadyInvited(props.influencer.id).then((invited) => {
-        setIsInvited(invited);
-      });
-    }
-  }, []);
 
   return (
     <>
@@ -91,40 +87,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               {influencer.socials?.[0] || "influencer-handle"}
             </Text>
           </Pressable>
-          {props.type === "invitation" &&
-            (isInvited ? (
-              <Tag
-                icon={() => (
-                  <FontAwesomeIcon
-                    icon={faCheck}
-                    size={12}
-                    color={Colors(theme).text}
-                  />
-                )}
-              >
-                Invited
-              </Tag>
-            ) : (
-              <Tag
-                icon={() => (
-                  <FontAwesomeIcon
-                    icon={faPlus}
-                    size={12}
-                    color={Colors(theme).text}
-                  />
-                )}
-                onPress={() => {
-                  if (props.ToggleMessageModal) {
-                    props.ToggleMessageModal();
-                  }
-                }}
-              >
-                Invite
-              </Tag>
-            ))}
+
           <Pressable
             onPress={() => {
-              props.ToggleModal();
+              props.ToggleModal?.();
               if (props?.setSelectedInfluencer) {
                 props.setSelectedInfluencer(props.influencer);
               }
@@ -139,17 +105,13 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         </View>
 
         <Carousel
-          data={
-            influencer.profile?.attachments?.map((attachment) =>
-              processRawAttachment(attachment)
-            ) || []
-          }
+          data={images}
           onImagePress={onImagePress}
           theme={theme}
         />
 
         <View style={styles.content}>
-          <InfluencerMetrics user={influencer} />
+          <InfluencerMetrics user={influencer} action={props.cardActionNode} />
 
           <Pressable
             onPress={() => {
@@ -179,6 +141,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             </Text>
           </Pressable>
         </View>
+        {props.footerNode}
       </Card>
 
       <AssetPreviewModal
