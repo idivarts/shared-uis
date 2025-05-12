@@ -62,7 +62,7 @@ export const InfluencerMetrics = ({ user, action = null }: CardActionsProps) => 
               size={16}
             />
             <Text style={styles.metricText}>
-              {convertToKUnits(metrics.rating)}
+              {metrics.rating}
             </Text>
           </View>}
       </View>
