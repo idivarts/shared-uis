@@ -1,4 +1,4 @@
-import { IUsers as User } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
@@ -26,6 +26,7 @@ import Colors from "../constants/Colors";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
 import Tag from "./tag";
 
+type User = IUsers & { id?: string }
 interface InfluencerCardPropsType {
   alreadyInvited?: (influencerId: string) => Promise<boolean>;
   influencer: User;
