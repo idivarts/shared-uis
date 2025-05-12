@@ -20,8 +20,10 @@ import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Pressable,
+  StyleProp,
   Text,
-  View
+  View,
+  ViewStyle
 } from "react-native";
 import { Avatar, Card } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
@@ -38,6 +40,7 @@ interface InfluencerCardPropsType {
   type: string;
   cardActionNode?: any
   footerNode?: any
+  style?: StyleProp<ViewStyle>
 }
 
 const InfluencerCard = (props: InfluencerCardPropsType) => {
@@ -83,7 +86,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
 
   return (
     <>
-      <Card style={styles.card} mode="contained">
+      <Card style={[styles.card, props.style]} mode="contained">
         <View style={[styles.header]}>
           <Pressable
             onPress={() => {
