@@ -51,10 +51,31 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
   const influencer = props.influencer;
   const theme = useTheme();
   const styles = stylesFn(theme);
+  const [socials, setSocials] = useState<ISocials | undefined>(undefined)
 
   const [images, setImages] = useState((props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
     processRawAttachment(attachment)
   ) || [])
+  useEffect(() => {
+    let mImg = []
+    if (!props.customAttachments) {
+      mImg = props.influencer.profile?.attachments?.map((attachment) =>
+        processRawAttachment(attachment)
+      ) || []
+      if (socials && socials.socialScreenShots && socials.socialScreenShots.length > 0) {
+        const sdata = socials.socialScreenShots?.map(s => ({
+          type: "image",
+          url: s
+        }))
+        mImg.push(...sdata)
+      }
+    } else {
+      mImg = props.customAttachments.map((attachment) =>
+        processRawAttachment(attachment)
+      ) || []
+    }
+    setImages([...mImg])
+  }, [props.customAttachments, props.influencer, socials])
 
   const getSocial = async () => {
     if (influencer.primarySocial) {
@@ -62,14 +83,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
       const socialData = await getDoc(doc(socialCol, influencer.primarySocial))
       const social = socialData.data() as ISocials
       setSocialHandle(social.instaProfile?.username || social.fbProfile?.name || "")
-      if (!props.customAttachments && social.socialScreenShots && social.socialScreenShots.length > 0) {
-        setImages([
-          ...images, ...(social.socialScreenShots?.map(s => ({
-            type: "image",
-            url: s
-          })))
-        ])
-      }
+      setSocials(social)
     }
   }
   useEffect(() => {
@@ -83,6 +97,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     setPreviewImage(true);
   };
 
+
+  console.log("Images", images, (props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
+    processRawAttachment(attachment)
+  ) || []);
 
   return (
     <>
