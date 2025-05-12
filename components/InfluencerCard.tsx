@@ -1,5 +1,8 @@
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
+import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { AuthApp } from "@/shared-libs/utils/firebase/auth";
+import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
@@ -12,7 +15,8 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
-import React, { useState } from "react";
+import { collection, doc, getDoc } from "firebase/firestore";
+import React, { useEffect, useState } from "react";
 import {
   Dimensions,
   Pressable,
@@ -39,7 +43,7 @@ interface InfluencerCardPropsType {
 const InfluencerCard = (props: InfluencerCardPropsType) => {
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState(false);
-  const [isInvited, setIsInvited] = useState(false);
+  const [socialHandle, setSocialHandle] = useState("")
 
   const influencer = props.influencer;
   const theme = useTheme();
@@ -49,6 +53,25 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     processRawAttachment(attachment)
   ) || [])
 
+  const getSocial = async () => {
+    if (influencer.primarySocial) {
+      const socialCol = collection(FirestoreDB, "users", influencer.id || AuthApp.currentUser?.uid || "", "socials")
+      const socialData = await getDoc(doc(socialCol, influencer.primarySocial))
+      const social = socialData.data() as ISocials
+      setSocialHandle(social.instaProfile?.username || social.fbProfile?.name || "")
+      if (!props.customAttachments && social.socialScreenShots && social.socialScreenShots.length > 0) {
+        setImages([
+          ...images, ...(social.socialScreenShots?.map(s => ({
+            type: "image",
+            url: s
+          })))
+        ])
+      }
+    }
+  }
+  useEffect(() => {
+    getSocial()
+  }, [])
 
   const screenWidth = Dimensions.get("window").width;
 
@@ -83,9 +106,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             }}
           >
             <Text style={styles.name}>{influencer.name}</Text>
-            <Text style={styles.handle}>
-              {influencer.socials?.[0] || "influencer-handle"}
-            </Text>
+            {socialHandle &&
+              <Text style={styles.handle}>
+                {socialHandle}
+              </Text>}
           </Pressable>
 
           <Pressable
