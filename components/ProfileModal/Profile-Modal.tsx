@@ -143,7 +143,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                   type="explore"
                 />
               </View> :
-              <View style={[styles.carouselContainer, { flex: 1, borderColor: Colors(theme).border, borderWidth: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
+              <View style={[styles.carouselContainer,
+              { borderColor: Colors(theme).border, borderWidth: 1 },
+              Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } :
+                { alignSelf: "center" }]}>
                 {mediaProcessing && mediaProcessing.length > 0 && (
                   <Carousel data={mediaProcessing || []} theme={theme} />
                 )}
