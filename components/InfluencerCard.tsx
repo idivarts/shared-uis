@@ -1,35 +1,30 @@
+import { IUsers as User } from "@/shared-libs/firestore/trendly-pro/models/users";
+import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
+import Carousel from "@/shared-uis/components/carousel/carousel";
+import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
+import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
+import { processRawAttachment } from "@/shared-uis/utils/attachments";
+import { truncateText } from "@/shared-uis/utils/text";
+import { imageUrl } from "@/shared-uis/utils/url";
+import {
+  faCheck,
+  faEllipsis,
+  faPlus
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { useTheme } from "@react-navigation/native";
 import React, { useEffect, useState } from "react";
 import {
-  View,
-  Text,
-  TouchableOpacity,
   Dimensions,
   Pressable,
+  Text,
+  View
 } from "react-native";
-import { Card, Avatar } from "react-native-paper";
-import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
-import { useTheme } from "@react-navigation/native";
-import Colors from "../constants/Colors";
-import { convertToKUnits } from "@/shared-uis/utils/conversion";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import {
-  faEllipsis,
-  faPeopleRoof,
-  faChartLine,
-  faFaceSmile,
-  faComment,
-  faCheck,
-  faPlus,
-} from "@fortawesome/free-solid-svg-icons";
-import { imageUrl } from "@/shared-uis/utils/url";
-import Tag from "./tag";
-import { IUsers as User } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { processRawAttachment } from "@/shared-uis/utils/attachments";
+import { Avatar, Card } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
-import { truncateText } from "@/shared-uis/utils/text";
-import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
-import Carousel from "@/shared-uis/components/carousel/carousel";
-import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
+import Colors from "../constants/Colors";
+import { InfluencerMetrics } from "./influencers/influencer-metrics";
+import Tag from "./tag";
 
 interface InfluencerCardPropsType {
   alreadyInvited?: (influencerId: string) => Promise<boolean>;
@@ -153,47 +148,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         />
 
         <View style={styles.content}>
-          <View style={styles.stats}>
-            <View style={styles.statsContainer}>
-              <View style={styles.statItem}>
-                <FontAwesomeIcon
-                  icon={faPeopleRoof}
-                  color={Colors(theme).primary}
-                  size={20}
-                />
-                <Text style={styles.statsText}>
-                  {convertToKUnits(Number(influencer.backend?.followers))}
-                </Text>
-              </View>
-              <View style={styles.statItem}>
-                <FontAwesomeIcon
-                  icon={faChartLine}
-                  color={Colors(theme).primary}
-                  size={20}
-                />
-                <Text style={styles.statsText}>
-                  {convertToKUnits(Number(influencer.backend?.reach))}
-                </Text>
-              </View>
-              <View style={styles.statItem}>
-                <FontAwesomeIcon
-                  icon={faFaceSmile}
-                  color={Colors(theme).primary}
-                  size={20}
-                />
-                <Text style={styles.statsText}>
-                  {influencer.backend?.rating}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.statItem}>
-              <FontAwesomeIcon
-                icon={faComment}
-                color={Colors(theme).primary}
-                size={18}
-              />
-            </View>
-          </View>
+          <InfluencerMetrics user={influencer} />
 
           <Pressable
             onPress={() => {

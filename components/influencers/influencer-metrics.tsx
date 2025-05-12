@@ -1,5 +1,5 @@
-import Colors from "@/constants/Colors";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import Colors from "@/shared-uis/constants/Colors";
 import { convertToKUnits } from "@/shared-uis/utils/conversion";
 import {
   faChartLine,
