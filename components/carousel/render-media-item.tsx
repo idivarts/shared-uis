@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator } from "react-native";
 import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
-import { Video as WebVideo } from "react-native-video";
 
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import { Platform, Pressable } from "react-native";
@@ -12,6 +11,7 @@ import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
 import { Text, View } from "../theme/Themed";
+import MyVideo from "./video/video";
 
 export interface MediaItem {
   type: string;
@@ -198,8 +198,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           <Animated.View
             style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
           >
-            <WebVideo
-              ref={(ref) => {
+            <MyVideo
+              ref={(ref: any) => {
                 if (ref) {
                   videoRef.current = ref.nativeHtmlVideoRef?.current as any;
                 }
@@ -210,7 +210,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
               controls // enables native controls
               repeat={false}
               muted={isMuted}
-              onError={(error) => console.error("Video error:", error)}
+              onError={(error: any) => console.error("Video error:", error)}
               onLoadStart={() => console.log("Loading video")}
               onLoad={() => console.log("Video loaded")}
             />
@@ -220,12 +220,12 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     </InView>
   }
   return (
-    <Video
+    <MyVideo
       onTouchEnd={() => {
         nativeVideoRef.current?.playAsync();
         setIsMuted(false)
       }}
-      ref={(ref) => {
+      ref={(ref: any) => {
         if (ref) {
           nativeVideoRef.current = ref;
         }
@@ -255,7 +255,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           {isError && <Text style={{ color: "red" }}>Error loading video</Text>}
         </View>
       )}
-      onError={(error) => {
+      onError={(error: any) => {
         setIsLoading(false);
         setIsError(true);
         console.error("Video Error:", error)
