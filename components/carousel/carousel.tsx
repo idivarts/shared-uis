@@ -12,7 +12,6 @@ import {
   Pagination,
   default as ReanimatedCarousel,
 } from "react-native-reanimated-carousel";
-import Swiper from "react-native-swiper";
 import Colors from "../../constants/Colors";
 import { stylesFn } from "../../styles/carousel/Carousel.styles";
 import { View } from "../theme/Themed";
@@ -45,7 +44,7 @@ const Carousel: React.FC<CarouselProps> = ({
   const styles = stylesFn(theme);
   const swiperRef = useRef<ICarouselInstance>(null);
   const [currentItem, setCurrentItem] = useState<number>(0);
-  const nativeRef = useRef<Swiper>(null);
+  // const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
 
   const [key, _] = useState(Math.floor(Math.random() * 10000))
@@ -91,8 +90,9 @@ const Carousel: React.FC<CarouselProps> = ({
   const [carouselHeight, setCarouselHeight] = useState<any>(Platform.OS === "web"
     ? (MAX_WIDTH_WEB < screenWidth ? MAX_HEIGHT_WEB : screenWidth)
     : mWidth);
-  const [carouselWidth, setCarouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : Dimensions.get("window").width))
+  const [carouselWidth, setCarouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : mWidth))
 
+  // console.log("Carousel Width", carouselWidth, "Carousel Height", carouselHeight, "Screen Width", screenWidth, "Max Width Web", MAX_WIDTH_WEB);
   if (data.length == 0) {
     return null;
   }
@@ -101,49 +101,47 @@ const Carousel: React.FC<CarouselProps> = ({
     <View
       id={"carousel" + key}
       style={{
-        height: carouselHeight,
-        width: Platform.OS == "web" ? carouselWidth : undefined,
+        height: carouselHeight + 20,
+        width: Platform.OS == "web" ? carouselWidth : "auto",
         backgroundColor: "transparent",
       }}
     >
-      {Platform.OS === "web" ? (
-        <>
-          <ReanimatedCarousel
-            ref={swiperRef}
-            data={data}
-            width={carouselWidth}
-            height={carouselHeight}
-            loop={false}
-            onProgressChange={(_, absoluteProgress) => {
-              runOnJS((value: number) => {
-                progress.value = value;
-              })(absoluteProgress);
-              setCurrentItem(absoluteProgress)
-            }}
-            withAnimation={{
-              type: "timing",
-              config: {},
-            }}
-            renderItem={({ item, index }) => (
-              // <ScrollView directionalLockEnabled={true} horizontal={true}
-              //   style={{ flex: 1, height: carouselHeight }}>
-              <RenderMediaItem
-                handleImagePress={handleImagePress}
-                height={carouselHeight}
-                width={carouselWidth}
-                currentIndex={currentItem}
-                index={index}
-                cKey={"carousel" + key}
-                item={item}
-                key={item.url || index}
-              />
-              // </ScrollView>
-            )}
-            style={[styles.carouselContainer]}
-            pagingEnabled
-            {...props}
-          />
-          {data.length > 1 && <>
+      {/* {Platform.OS === "web" ? ( */}
+      <>
+        <ReanimatedCarousel
+          ref={swiperRef}
+          data={data}
+          width={carouselWidth}
+          height={carouselHeight}
+          loop={false}
+          onProgressChange={(_, absoluteProgress) => {
+            runOnJS((value: number) => {
+              progress.value = value;
+            })(absoluteProgress);
+            setCurrentItem(absoluteProgress)
+          }}
+          withAnimation={{
+            type: "timing",
+            config: {},
+          }}
+          renderItem={({ item, index }) => (
+            <RenderMediaItem
+              handleImagePress={handleImagePress}
+              height={carouselHeight}
+              width={carouselWidth}
+              currentIndex={currentItem}
+              index={index}
+              cKey={"carousel" + key}
+              item={item}
+              key={item.url || index}
+            />
+          )}
+          style={[styles.carouselContainer]}
+          pagingEnabled
+          {...props}
+        />
+        {data.length > 1 && <>
+          {Platform.OS == "web" && <>
             <View
               style={{
                 position: "absolute",
@@ -182,36 +180,37 @@ const Carousel: React.FC<CarouselProps> = ({
                 />
               </Pressable>
             </View>
-            <Pagination.Basic
-              progress={progress}
-              data={data}
-              size={15}
-              dotStyle={{
-                borderRadius: 100,
-                backgroundColor: Colors(theme).secondary,
-              }}
-              activeDotStyle={{
-                borderRadius: 100,
-                overflow: "hidden",
-                backgroundColor: Colors(theme).primary,
-              }}
-              containerStyle={[
-                {
-                  gap: 5,
-                  marginTop: 10,
-                },
-              ]}
-              horizontal
-              onPress={(index) => {
-                swiperRef.current?.scrollTo({
-                  count: index - progress.value,
-                  animated: true,
-                });
-              }}
-            />
           </>}
-        </>
-      ) : (
+          <Pagination.Basic
+            progress={progress}
+            data={data}
+            size={8}
+            dotStyle={{
+              borderRadius: 100,
+              backgroundColor: Colors(theme).secondary,
+            }}
+            activeDotStyle={{
+              borderRadius: 100,
+              overflow: "hidden",
+              backgroundColor: Colors(theme).primary,
+            }}
+            containerStyle={[
+              {
+                gap: 5,
+                marginTop: 10,
+              },
+            ]}
+            horizontal
+          // onPress={(index) => {
+          //   swiperRef.current?.scrollTo({
+          //     count: index - progress.value,
+          //     animated: true,
+          //   });
+          // }}
+          />
+        </>}
+      </>
+      {/* ) : (
         <Swiper
           ref={nativeRef}
           height={carouselHeight}
@@ -235,7 +234,7 @@ const Carousel: React.FC<CarouselProps> = ({
             />
           ))}
         </Swiper>
-      )}
+      )} */}
     </View>
   );
 };

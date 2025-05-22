@@ -14,7 +14,7 @@ const getMediaDimensions = async (url: string, type: string) => {
                     const iHeight = (iWidth * height) / width;
                     const fHeight = Math.round(Math.min(Math.max(iHeight, 0.8 * mWidth), 1.3 * mWidth));
                     resolve({
-                        width: Platform.OS === 'web' ? MAX_WIDTH_WEB : "100%",
+                        width: Platform.OS === 'web' ? MAX_WIDTH_WEB : Dimensions.get('window').width,
                         height: fHeight,
                     });
                 },
@@ -24,7 +24,7 @@ const getMediaDimensions = async (url: string, type: string) => {
             // const videoRef = new Video({});
             const { width } = Dimensions.get('window');
             resolve({
-                width: Platform.OS === 'web' ? MAX_WIDTH_WEB : "100%",
+                width: Platform.OS === 'web' ? MAX_WIDTH_WEB : Dimensions.get('window').width,
                 height: Platform.OS === 'web' ? MAX_HEIGHT_WEB : width,
             });
         } else {
