@@ -10,7 +10,7 @@ import { Platform, Pressable } from "react-native";
 import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
-import { Text, View } from "../theme/Themed";
+import { View } from "../theme/Themed";
 import MyVideo from "./video/video";
 
 export interface MediaItem {
@@ -24,7 +24,6 @@ interface RenderMediaItemProps {
   index: number;
   currentIndex?: number;
   item: MediaItem;
-  videoRefs?: React.MutableRefObject<{ [key: number]: any }>;
   width?: number;
   cKey?: string;
   shape?: "circle" | "square";
@@ -220,7 +219,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     </InView>
   }
   return (
-    <MyVideo
+    <Video
       onTouchEnd={() => {
         nativeVideoRef.current?.playAsync();
         setIsMuted(false)
@@ -241,20 +240,21 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       resizeMode={ResizeMode.COVER}
       isLooping={false}
       useNativeControls
-      usePoster
+      shouldPlay={true}
       isMuted={isMuted}
-      PosterComponent={() => (
-        <View
-          style={{
-            flex: 1,
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {isLoading && <ActivityIndicator />}
-          {isError && <Text style={{ color: "red" }}>Error loading video</Text>}
-        </View>
-      )}
+      // usePoster
+      // PosterComponent={() => (
+      //   <View
+      //     style={{
+      //       flex: 1,
+      //       justifyContent: "center",
+      //       alignItems: "center",
+      //     }}
+      //   >
+      //     {isLoading && <ActivityIndicator />}
+      //     {isError && <Text style={{ color: "red" }}>Error loading video</Text>}
+      //   </View>
+      // )}
       onError={(error: any) => {
         setIsLoading(false);
         setIsError(true);

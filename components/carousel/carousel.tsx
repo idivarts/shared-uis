@@ -45,7 +45,6 @@ const Carousel: React.FC<CarouselProps> = ({
   const styles = stylesFn(theme);
   const swiperRef = useRef<ICarouselInstance>(null);
   const [currentItem, setCurrentItem] = useState<number>(0);
-  const videoRefs = useRef<{ [key: number]: any }>({});
   const nativeRef = useRef<Swiper>(null);
   const progress = useSharedValue(0);
 
@@ -136,7 +135,6 @@ const Carousel: React.FC<CarouselProps> = ({
                 cKey={"carousel" + key}
                 item={item}
                 key={item.url || index}
-                videoRefs={videoRefs}
               />
               // </ScrollView>
             )}
@@ -233,7 +231,6 @@ const Carousel: React.FC<CarouselProps> = ({
               index={index}
               item={item}
               key={item.url || index}
-              videoRefs={videoRefs}
             />
           ))}
         </Swiper>
