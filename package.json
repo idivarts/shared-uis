@@ -16,7 +16,7 @@
     "react-native-gesture-handler": "^2.22.1",
     "react-native-paper": "^5.12.5",
     "react-native-reanimated": "^3.16.7",
-    "react-native-reanimated-carousel": "^4.0.0-alpha.12",
+    "react-native-reanimated-carousel": "~4.0.2",
     "react-native-render-html": "^6.3.4",
     "react-native-safe-area-context": "^5.0.0",
     "react-native-svg": "^15.10.0",
