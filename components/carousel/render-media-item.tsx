@@ -2,9 +2,10 @@ import { useIsFocused, useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator } from "react-native";
-import { PanGestureHandler, State, TapGestureHandler } from "react-native-gesture-handler";
+import { GestureEventPayload, PanGestureHandler, PanGestureHandlerEventPayload, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
+import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import { Platform, Pressable } from "react-native";
 import { InView } from 'react-native-intersection-observer';
@@ -28,6 +29,7 @@ interface RenderMediaItemProps {
   shape?: "circle" | "square";
   size?: "small" | "medium" | "large";
 }
+let uHeight = 0
 
 const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   handleImagePress,
@@ -49,6 +51,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const videoRef = useRef<HTMLVideoElement>()
   const nativeVideoRef = useRef<Video>()
   const isFocused = useIsFocused();
+  const { scrollRef, scrollHeight } = useScrollContext()
 
   useEffect(() => {
     if (currentIndex == index && inView && isFocused) {
@@ -91,32 +94,30 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     onLoadStart={() => setIsLoading(true)}
     onLoad={() => setIsLoading(false)}
   />
-  const getScrollableParent = () => {
-    if (!cKey)
-      return null;
-    const element = document.getElementById(cKey);
-    if (!element)
-      return null;
 
-    const scrollableParents = [];
-    let parent = element.parentElement;
-    while (parent) {
-      const overflowY = window.getComputedStyle(parent).overflowY;
-      const isScrollable = (overflowY === 'scroll' || overflowY === 'auto') && parent.scrollHeight > parent.clientHeight;
-      if (isScrollable) {
-        scrollableParents.push(parent);
+  const element = scrollRef
+
+  const scrollBy = (nativeEvent: Readonly<GestureEventPayload & PanGestureHandlerEventPayload>) => {
+    if (element?.current) {
+      // console.log("Scroll by", scrollHeight, nativeEvent.translationY);
+
+      if (Math.abs(nativeEvent.translationY) < 50) {
+        uHeight = scrollHeight || 0
       }
-      parent = parent.parentElement;
-    }
-    // console.log("All scrollable parents", cKey, scrollableParents);
-    return scrollableParents[0];
-  }
+      const currentScroll = uHeight;
+      const newScroll = currentScroll - nativeEvent.translationY;
 
-  const [element, setElement] = useState<any>(null)
-  useEffect(() => {
-    setElement(getScrollableParent());
-    // const element = getScrollableParent()
-  }, [])
+      element.current.scrollTo({
+        y: newScroll,
+        animated: false,
+      });
+    }
+  }
+  // const [element, setElement] = useState<any>(null)
+  // useEffect(() => {
+  //   setElement(getScrollableParent());
+  //   // const element = getScrollableParent()
+  // }, [])
 
   if (item?.type.includes("image")) {
     const AnimatedImageView = <Animated.View
@@ -151,130 +152,107 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           }
         }}
       >
-        {Platform.OS == "web" ? <PanGestureHandler
+        <PanGestureHandler
           onGestureEvent={({ nativeEvent }) => {
-            // console.log("Vertical drag detected", element);
-            element?.scrollBy(0, -nativeEvent.translationY * 0.05);
+            scrollBy(nativeEvent)
+            // element?.current?.scrollBy(0, -nativeEvent.translationY * 0.05);
           }}
-          onHandlerStateChange={({ nativeEvent }) => {
-            // console.log("Vertical drag ended", nativeEvent);
-            // document.getElementById("collab-list")?.scrollBy(0, -nativeEvent.translationY);
-          }}
-          activeOffsetY={[-5, 5]} // allow only minimal horizontal 
-        // minDist={10}
-        // activeOffsetX={[-5, 5]} // allow only minimal horizontal 
+          activeOffsetY={[-5, 5]}
         >
           {AnimatedImageView}
-        </PanGestureHandler> : AnimatedImageView}
+        </PanGestureHandler>
       </TapGestureHandler >
     );
   }
 
-  if (Platform.OS == "web") {
-    return <InView onChange={(inView) => {
-      // console.log("Video in view", inView, index, typeof videoRef?.current);
-      setInView(inView);
-    }} >
-      <Pressable
-        style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
-        onPress={() => {
-          videoRef.current?.play();
-          setIsMuted(false)
-        }}
-        onTouchEnd={() => {
-          videoRef.current?.play();
-          setIsMuted(false)
-        }} >
-        <PanGestureHandler
-          onGestureEvent={({ nativeEvent }) => {
-            element?.scrollBy(0, -nativeEvent.translationY * 0.05);
-          }}
-          onHandlerStateChange={({ nativeEvent }) => {
-          }}
-          activeOffsetY={[-5, 5]} // allow only minimal horizontal 
-        >
-          <Animated.View
-            style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
-          >
-            <video
-              ref={(ref) => {
-                if (ref) {
-                  videoRef.current = ref;
-                }
-              }}
-              src={item.url}
-              style={{ width: "100%", height: "100%" }}
-              muted={isMuted}
-              controls
-              loop={false}
-            />
-            {/* <WebVideo
-              ref={(ref) => {
-                if (ref) {
-                  videoRef.current = ref.nativeHtmlVideoRef?.current as HTMLVideoElement;
-                }
-              }}
-              source={{ uri: item.url }}
-              style={{ width: "100%", height: "100%" }}
-              resizeMode="cover"
-              controls // enables native controls
-              repeat={false}
-              muted={isMuted}
-              onError={(error) => console.error("Video error:", error)}
-              onLoadStart={() => console.log("Loading video")}
-              onLoad={() => console.log("Video loaded")}
-            /> */}
-          </Animated.View>
-        </PanGestureHandler>
-      </Pressable>
-    </InView>
-  }
-  return (
-    <Video
-      onTouchEnd={() => {
-        nativeVideoRef.current?.playAsync();
+  return <InView onChange={(inView) => {
+    // console.log("Video in view", inView, index, typeof videoRef?.current);
+    setInView(inView);
+  }} >
+    <Pressable
+      style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
+      onPress={() => {
+        videoRef.current?.play();
         setIsMuted(false)
       }}
-      ref={(ref) => {
-        if (ref) {
-          nativeVideoRef.current = ref;
-        }
-      }}
-      source={{ uri: item.url, }}
-      style={[
-        styles.media,
-        {
-          height: height || 250,
-          width: width || "100%",
-        },
-      ]}
-      resizeMode={ResizeMode.COVER}
-      isLooping={false}
-      useNativeControls
-      shouldPlay={true}
-      isMuted={isMuted}
-      // usePoster
-      // PosterComponent={() => (
-      //   <View
-      //     style={{
-      //       flex: 1,
-      //       justifyContent: "center",
-      //       alignItems: "center",
-      //     }}
-      //   >
-      //     {isLoading && <ActivityIndicator />}
-      //     {isError && <Text style={{ color: "red" }}>Error loading video</Text>}
-      //   </View>
-      // )}
-      onError={(error: any) => {
-        setIsLoading(false);
-        setIsError(true);
-        console.error("Video Error:", error)
-      }}
-      onLoadStart={() => setIsLoading(true)}
-      onLoad={() => setIsLoading(false)}
-    />
-  );
+      onTouchEnd={() => {
+        videoRef.current?.play();
+        setIsMuted(false)
+      }} >
+      <PanGestureHandler
+        onGestureEvent={({ nativeEvent }) => {
+          scrollBy(nativeEvent)
+          // element?.current?.scrollBy(0, -nativeEvent.translationY * 0.05);
+        }}
+        onHandlerStateChange={({ nativeEvent }) => {
+        }}
+        activeOffsetY={[-5, 5]} // allow only minimal horizontal 
+      >
+        <Animated.View
+          style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
+        >
+          {/* if (Platform.OS == "web") { */}
+          {Platform.OS == "web" ? <video
+            ref={(ref) => {
+              if (ref) {
+                videoRef.current = ref;
+              }
+            }}
+            src={item.url}
+            style={{ width: "100%", height: "100%" }}
+            muted={isMuted}
+            controls
+            loop={false}
+          /> : <Video
+            onTouchEnd={() => {
+              nativeVideoRef.current?.playAsync();
+              setIsMuted(false)
+            }}
+            ref={(ref) => {
+              if (ref) {
+                nativeVideoRef.current = ref;
+              }
+            }}
+            source={{ uri: item.url, }}
+            style={[
+              styles.media,
+              {
+                height: height || 250,
+                width: width || "100%",
+              },
+            ]}
+            resizeMode={ResizeMode.COVER}
+            isLooping={false}
+            useNativeControls
+            shouldPlay={true}
+            isMuted={isMuted}
+            // usePoster
+            // PosterComponent={() => (
+            //   <View
+            //     style={{
+            //       flex: 1,
+            //       justifyContent: "center",
+            //       alignItems: "center",
+            //     }}
+            //   >
+            //     {isLoading && <ActivityIndicator />}
+            //     {isError && <Text style={{ color: "red" }}>Error loading video</Text>}
+            //   </View>
+            // )}
+            onError={(error: any) => {
+              setIsLoading(false);
+              setIsError(true);
+              console.error("Video Error:", error)
+            }}
+            onLoadStart={() => setIsLoading(true)}
+            onLoad={() => setIsLoading(false)}
+          />}
+        </Animated.View>
+      </PanGestureHandler>
+    </Pressable>
+  </InView>
+
+
 };
 
 export default RenderMediaItem;
