@@ -1,9 +1,8 @@
 import { Theme } from "@react-navigation/native";
-import { ResizeMode } from "expo-av";
+import { ResizeMode, Video } from "expo-av";
 import React from "react";
 import { Dimensions, FlatList, Image, Platform, StyleSheet, View } from "react-native";
 import { MediaItem } from "./render-media-item";
-import MyVideo from "./video/video";
 
 
 const { width } = Dimensions.get("window");
@@ -44,18 +43,19 @@ const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { wid
             ) : (
                 Platform.OS === "web" ? (
                     <View style={styles.media}>
-                        <MyVideo
-                            source={{ uri: media.url }}
+                        <video
+                            src={media.url}
                             style={{ width: "100%", height: "100%" }}
-                            resizeMode="cover"
-                            paused={true}
+                            autoPlay={false}
                             controls={true}
+                        // resizeMode="cover"
+                        // paused={true}
                         // poster={media.url}
                         // onLoad={() => setThumbnail(media.url)}
                         />
                     </View>
                 ) : (
-                    <MyVideo
+                    <Video
                         source={{ uri: media.url }}
                         style={styles.media}
                         resizeMode={ResizeMode.COVER}

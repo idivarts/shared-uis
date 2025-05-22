@@ -11,7 +11,6 @@ import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
 import { View } from "../theme/Themed";
-import MyVideo from "./video/video";
 
 export interface MediaItem {
   type: string;
@@ -197,10 +196,22 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           <Animated.View
             style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
           >
-            <MyVideo
-              ref={(ref: any) => {
+            <video
+              ref={(ref) => {
                 if (ref) {
-                  videoRef.current = ref.nativeHtmlVideoRef?.current as any;
+                  videoRef.current = ref;
+                }
+              }}
+              src={item.url}
+              style={{ width: "100%", height: "100%" }}
+              muted={isMuted}
+              controls
+              loop={false}
+            />
+            {/* <WebVideo
+              ref={(ref) => {
+                if (ref) {
+                  videoRef.current = ref.nativeHtmlVideoRef?.current as HTMLVideoElement;
                 }
               }}
               source={{ uri: item.url }}
@@ -209,10 +220,10 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
               controls // enables native controls
               repeat={false}
               muted={isMuted}
-              onError={(error: any) => console.error("Video error:", error)}
+              onError={(error) => console.error("Video error:", error)}
               onLoadStart={() => console.log("Loading video")}
               onLoad={() => console.log("Video loaded")}
-            />
+            /> */}
           </Animated.View>
         </PanGestureHandler>
       </Pressable>
@@ -224,7 +235,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         nativeVideoRef.current?.playAsync();
         setIsMuted(false)
       }}
-      ref={(ref: any) => {
+      ref={(ref) => {
         if (ref) {
           nativeVideoRef.current = ref;
         }
