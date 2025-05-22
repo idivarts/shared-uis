@@ -112,6 +112,7 @@ const Carousel: React.FC<CarouselProps> = ({
             ref={swiperRef}
             data={data}
             width={carouselWidth}
+            height={carouselHeight}
             loop={false}
             onProgressChange={(_, absoluteProgress) => {
               runOnJS((value: number) => {
