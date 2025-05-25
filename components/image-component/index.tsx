@@ -1,18 +1,15 @@
+import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import Colors from "@/shared-uis/constants/Colors";
 import {
   IMAGE_LARGE,
   IMAGE_MEDIUM,
   IMAGE_SMALL,
 } from "@/shared-uis/constants/ImageSize";
 import { imageUrl } from "@/shared-uis/utils/url";
-import React, { FC } from "react";
-import { Image, ImageProps } from "react-native";
-import { Text, View } from "../theme/Themed";
-import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import { ImageStyle } from "react-native";
-import { Dimensions } from "react-native";
-import { ResizeMode } from "expo-av";
-import { Platform } from "react-native";
+import React, { FC } from "react";
+import { Dimensions, Image, ImageProps, ImageStyle, Platform } from "react-native";
+import { Text, View } from "../theme/Themed";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
   shape?: "circle" | "square";
@@ -47,8 +44,8 @@ const ImageComponent: FC<ImageComponentProps> = ({
       size !== "large"
         ? dimensions[size]
         : Platform.OS === "web"
-        ? 580
-        : Dimensions.get("window").width,
+          ? 580
+          : Dimensions.get("window").width,
     borderRadius: shape === "circle" ? dimensions[size] / 2 : 0,
     overflow: "hidden",
   };
@@ -73,7 +70,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
         source={imageUrl(placeholder)}
         style={[containerStyle, style]}
         onError={() => {
-          console.log("Image load failed");
+          CrashLog.log("Image load failed");
 
           setLoadFailed(true);
         }}

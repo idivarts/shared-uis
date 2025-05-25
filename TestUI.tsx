@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import { CrashLog } from '@/shared-libs/utils/firebase/crashlytics';
+import React, { useEffect } from 'react';
 
 const TestUI = () => {
     useEffect(() => {
-        console.log("Welcome");
+        CrashLog.log("Welcome");
     }, [])
     return (
         <div>TestUI</div>
