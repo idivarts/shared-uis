@@ -1,3 +1,4 @@
+import Colors from "@/shared-uis/constants/Colors";
 import {
   faChevronLeft,
   faChevronRight,
@@ -12,7 +13,6 @@ import {
   Pagination,
   default as ReanimatedCarousel,
 } from "react-native-reanimated-carousel";
-import Colors from "../../constants/Colors";
 import { stylesFn } from "../../styles/carousel/Carousel.styles";
 import { View } from "../theme/Themed";
 import getMediaDimensions, { MAX_HEIGHT_WEB, MAX_WIDTH_WEB } from "./carousel-util";
