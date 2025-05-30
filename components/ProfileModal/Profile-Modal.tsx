@@ -1,6 +1,6 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
@@ -93,7 +93,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
       setPrimarySocial(data);
     } catch (error) {
-      CrashLog.log("Error fetching primary social media", error);
+      Console.log("Error fetching primary social media", error);
     }
   };
 
@@ -166,7 +166,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                           ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
                           : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
                       );
-                      CrashLog.log(
+                      Console.log(
                         primarySocial?.isInstagram
                           ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
                           : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`

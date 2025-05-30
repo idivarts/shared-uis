@@ -1,9 +1,9 @@
-import { CrashLog } from '@/shared-libs/utils/firebase/crashlytics';
+import { Console } from '@/shared-libs/utils/console';
 import React, { useEffect } from 'react';
 
 const TestUI = () => {
     useEffect(() => {
-        CrashLog.log("Welcome");
+        Console.log("Welcome");
     }, [])
     return (
         <div>TestUI</div>

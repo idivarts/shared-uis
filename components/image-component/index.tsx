@@ -1,4 +1,4 @@
-import { CrashLog } from "@/shared-libs/utils/firebase/crashlytics";
+import { Console } from "@/shared-libs/utils/console";
 import Colors from "@/shared-uis/constants/Colors";
 import {
   IMAGE_LARGE,
@@ -70,7 +70,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
         source={imageUrl(placeholder)}
         style={[containerStyle, style]}
         onError={() => {
-          CrashLog.log("Image load failed");
+          Console.log("Image load failed");
 
           setLoadFailed(true);
         }}
