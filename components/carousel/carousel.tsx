@@ -187,7 +187,7 @@ const Carousel: React.FC<CarouselProps> = ({
             size={8}
             dotStyle={{
               borderRadius: 100,
-              backgroundColor: Colors(theme).secondary,
+              backgroundColor: Colors(theme).backdrop,
             }}
             activeDotStyle={{
               borderRadius: 100,
