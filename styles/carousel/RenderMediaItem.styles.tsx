@@ -8,8 +8,6 @@ export const stylesFn = (theme: Theme) =>
     },
     loadingIndicatorContainer: {
       position: "absolute",
-      marginTop: 100,
-      // justifyContent: "center",
-      alignSelf: "center",
+      // alignSelf: "center",
     },
   });

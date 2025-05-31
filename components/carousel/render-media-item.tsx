@@ -6,8 +6,9 @@ import { GestureEventPayload, PanGestureHandler, PanGestureHandlerEventPayload, 
 import Animated from "react-native-reanimated";
 
 import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import Colors from "@/shared-uis/constants/Colors";
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
-import { Platform, Pressable } from "react-native";
+import { Dimensions, Platform, Pressable } from "react-native";
 import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
@@ -44,7 +45,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [isError, setIsError] = useState(false);
   const [isMuted, setIsMuted] = useState(true)
   const [inView, setInView] = useState(false)
@@ -77,23 +78,20 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     }
   }, [currentIndex, inView, isFocused])
 
-  const mImage = <ImageComponent
-    url={item.url}
-    altText="Media"
-    style={[
-      styles.media,
-      {
-        height: height || 250,
-        width: width || "100%",
-      },
-    ]}
-    shape={shape}
-    size={size}
-    resizeMode={Platform.OS === "web" ? "contain" : "cover"}
-    resizeMethod={"resize"}
-    onLoadStart={() => setIsLoading(true)}
-    onLoad={() => setIsLoading(false)}
-  />
+  let LoadingCircle = null
+  if (isLoading) {
+    LoadingCircle = <View
+      style={[
+        {
+          position: "absolute",
+          top: (height || 250) / 2,
+          left: (width || Dimensions.get("window").width) / 2 - 12,
+        },
+      ]}
+    >
+      <ActivityIndicator style={{ backgroundColor: "transparent" }} color={Colors(theme).text} />
+    </View>
+  }
 
   const element = scrollRef
 
@@ -113,28 +111,34 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       });
     }
   }
-  // const [element, setElement] = useState<any>(null)
-  // useEffect(() => {
-  //   setElement(getScrollableParent());
-  //   // const element = getScrollableParent()
-  // }, [])
 
   if (item?.type.includes("image")) {
+    const mImage = <ImageComponent
+      url={item.url}
+      altText="Media"
+      style={[
+        styles.media,
+        {
+          height: height || 250,
+          width: width || "100%",
+        },
+      ]}
+      shape={shape}
+      size={size}
+      resizeMode={Platform.OS === "web" ? "contain" : "cover"}
+      resizeMethod={"resize"}
+      onLoadStart={() => setIsLoading(true)}
+      onLoadEnd={() => setIsLoading(false)}
+      onError={() => {
+        setIsError(true);
+      }}
+    />
+
     const AnimatedImageView = <Animated.View
       style={{
         position: "relative",
       }}
     >
-      <View
-        style={[
-          styles.loadingIndicatorContainer,
-          {
-            display: isLoading ? "flex" : "none",
-          },
-        ]}
-      >
-        {isLoading && <ActivityIndicator />}
-      </View>
       {Platform.OS == "web" ? (
         mImage
       ) : (
@@ -142,6 +146,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           {mImage}
         </Zoomable>
       )}
+      {LoadingCircle}
     </Animated.View>
 
     return (
@@ -202,6 +207,13 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             style={{ width: "100%", height: "100%" }}
             muted={isMuted}
             controls
+            onLoadStart={() => setIsLoading(true)}
+            onLoad={() => setIsLoading(false)}
+            onError={(error: any) => {
+              setIsLoading(false);
+              setIsError(true);
+              console.error("Video Error:", error)
+            }}
             loop={false}
           /> : <Video
             onTouchEnd={() => {
@@ -226,19 +238,6 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             useNativeControls
             shouldPlay={true}
             isMuted={isMuted}
-            // usePoster
-            // PosterComponent={() => (
-            //   <View
-            //     style={{
-            //       flex: 1,
-            //       justifyContent: "center",
-            //       alignItems: "center",
-            //     }}
-            //   >
-            //     {isLoading && <ActivityIndicator />}
-            //     {isError && <Text style={{ color: "red" }}>Error loading video</Text>}
-            //   </View>
-            // )}
             onError={(error: any) => {
               setIsLoading(false);
               setIsError(true);
@@ -250,9 +249,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         </Animated.View>
       </PanGestureHandler>
     </Pressable>
+    {LoadingCircle}
   </InView>
-
-
 };
 
 export default RenderMediaItem;
