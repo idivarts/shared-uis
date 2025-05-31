@@ -133,7 +133,7 @@ const Carousel: React.FC<CarouselProps> = ({
               index={index}
               cKey={"carousel" + key}
               item={item}
-              key={item.url || index}
+              key={index}
             />
           )}
           style={[styles.carouselContainer]}

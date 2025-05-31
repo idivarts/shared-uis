@@ -8,6 +8,7 @@ import Animated from "react-native-reanimated";
 import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import Colors from "@/shared-uis/constants/Colors";
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
+import React from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
 import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
@@ -78,20 +79,18 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     }
   }, [currentIndex, inView, isFocused])
 
-  let LoadingCircle = null
-  if (isLoading) {
-    LoadingCircle = <View
-      style={[
-        {
-          position: "absolute",
-          top: (height || 250) / 2,
-          left: (width || Dimensions.get("window").width) / 2 - 12,
-        },
-      ]}
-    >
-      <ActivityIndicator style={{ backgroundColor: "transparent" }} color={Colors(theme).text} />
-    </View>
-  }
+  // const [LoadingCircle, setLoadingCircle] = useState<any>(null);
+  const LoadingCircle = () => isLoading ? <View
+    style={[
+      {
+        position: "absolute",
+        top: (height || 250) / 2,
+        left: (width || Dimensions.get("window").width) / 2 - 12,
+      },
+    ]}
+  >
+    <ActivityIndicator style={{ backgroundColor: "transparent" }} color={Colors(theme).text} />
+  </View> : null
 
   const element = scrollRef
 
@@ -127,7 +126,6 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       size={size}
       resizeMode={Platform.OS === "web" ? "contain" : "cover"}
       resizeMethod={"resize"}
-      onLoadStart={() => setIsLoading(true)}
       onLoadEnd={() => setIsLoading(false)}
       onError={() => {
         setIsError(true);
@@ -146,7 +144,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
           {mImage}
         </Zoomable>
       )}
-      {LoadingCircle}
+      <LoadingCircle />
     </Animated.View>
 
     return (
@@ -207,8 +205,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             style={{ width: "100%", height: "100%" }}
             muted={isMuted}
             controls
-            onLoadStart={() => setIsLoading(true)}
-            onLoad={() => setIsLoading(false)}
+            onLoadedMetadata={() => setIsLoading(false)}
+            // onLoad={() => setIsLoading(false)}
             onError={(error: any) => {
               setIsLoading(false);
               setIsError(true);
@@ -243,13 +241,12 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
               setIsError(true);
               console.error("Video Error:", error)
             }}
-            onLoadStart={() => setIsLoading(true)}
             onLoad={() => setIsLoading(false)}
           />}
         </Animated.View>
       </PanGestureHandler>
     </Pressable>
-    {LoadingCircle}
+    <LoadingCircle />
   </InView>
 };
 
