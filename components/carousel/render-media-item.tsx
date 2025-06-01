@@ -208,7 +208,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             onError={(error: any) => {
               setIsLoading(false);
               setIsError(true);
-              Console.errorT("Video Error:", error)
+              Console.error(error, "Video Error:")
             }}
             loop={false}
           /> : <Video
@@ -237,7 +237,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             onError={(error: any) => {
               setIsLoading(false);
               setIsError(true);
-              Console.errorT("Video Error:", error)
+              Console.error(error, "Video Error:")
             }}
             onLoad={() => setIsLoading(false)}
           />}
