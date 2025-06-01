@@ -75,7 +75,6 @@ const Carousel: React.FC<CarouselProps> = ({
   useEffect(() => {
     if (data && data.length > 0 && Platform.OS !== "web") {
       getMediaDimensions(data[0].url, data[0].type).then((dimensions: any) => {
-        // console.log("Calculated Dimensions", dimensions);
         if (dimensions) {
           setCarouselHeight(dimensions.height);
           setCarouselWidth(dimensions.width);
@@ -92,7 +91,6 @@ const Carousel: React.FC<CarouselProps> = ({
     : mWidth);
   const [carouselWidth, setCarouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : mWidth))
 
-  // console.log("Carousel Width", carouselWidth, "Carousel Height", carouselHeight, "Screen Width", screenWidth, "Max Width Web", MAX_WIDTH_WEB);
   if (data.length == 0) {
     return null;
   }

@@ -96,8 +96,6 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
 
   const scrollBy = (nativeEvent: Readonly<GestureEventPayload & PanGestureHandlerEventPayload>) => {
     if (element?.current) {
-      // console.log("Scroll by", scrollHeight, nativeEvent.translationY);
-
       if (Math.abs(nativeEvent.translationY) < 50) {
         uHeight = scrollHeight || 0
       }
@@ -169,7 +167,6 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   }
 
   return <InView onChange={(inView) => {
-    // console.log("Video in view", inView, index, typeof videoRef?.current);
     setInView(inView);
   }} >
     <Pressable
