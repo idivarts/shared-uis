@@ -6,6 +6,7 @@ import { GestureEventPayload, PanGestureHandler, PanGestureHandlerEventPayload, 
 import Animated from "react-native-reanimated";
 
 import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import { Console } from "@/shared-libs/utils/console";
 import Colors from "@/shared-uis/constants/Colors";
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import React from "react";
@@ -207,7 +208,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             onError={(error: any) => {
               setIsLoading(false);
               setIsError(true);
-              console.error("Video Error:", error)
+              Console.errorT("Video Error:", error)
             }}
             loop={false}
           /> : <Video
@@ -236,7 +237,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             onError={(error: any) => {
               setIsLoading(false);
               setIsError(true);
-              console.error("Video Error:", error)
+              Console.errorT("Video Error:", error)
             }}
             onLoad={() => setIsLoading(false)}
           />}
