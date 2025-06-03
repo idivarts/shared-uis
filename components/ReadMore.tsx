@@ -30,7 +30,7 @@ const stylesWrapper = (theme: Theme) => StyleSheet.create({
     text: {
         fontSize: 16,
         lineHeight: 22,
-        color: "#333",
+        color: Colors(theme).text,
     },
     readMore: {
         fontSize: 14,
