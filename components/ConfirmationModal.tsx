@@ -1,5 +1,6 @@
 import Colors from "@/shared-uis/constants/Colors";
 import { Theme, useTheme } from "@react-navigation/native";
+import React, { createContext, useContext, useState } from "react";
 import { Modal, Platform, StyleSheet } from "react-native";
 import { Button } from "react-native-paper";
 import { Text, View } from "./theme/Themed";
@@ -15,6 +16,45 @@ interface ConfirmationModalProps {
   loading?: boolean;
   setVisible: React.Dispatch<React.SetStateAction<boolean>>;
   visible: boolean;
+}
+const ConfirmationModalContext = createContext<{
+  openModal: (props: Partial<ConfirmationModalProps>) => void
+}>({
+  openModal: () => { },
+});
+export const useConfirmationModel = () => useContext(ConfirmationModalContext)
+export const ConfirmationModalProvider = ({ children }: { children: any }) => {
+  const [loading, setLoading] = useState(false)
+  const [props, setProps] = useState<ConfirmationModalProps>({
+    animationType: "fade",
+    cancelAction: () => { setProps((prev) => ({ ...prev, visible: false })) },
+    confirmAction: () => { },
+    confirmText: "Confirm",
+    description: "Are you sure?",
+    setVisible: () => { },
+    visible: false,
+  });
+  const openModal = (mprops: Partial<ConfirmationModalProps>) => {
+    setProps({
+      ...props,
+      ...mprops,
+      visible: true
+    });
+  }
+  return <ConfirmationModalContext.Provider value={{
+    openModal
+  }}>
+    {children}
+    <ConfirmationModal {...props} loading={loading} confirmAction={async () => {
+      setLoading(true)
+      try {
+        await props.confirmAction()
+      } finally {
+        setLoading(false)
+        setProps((prev) => ({ ...prev, visible: false }))
+      }
+    }} setVisible={() => setProps((prev) => ({ ...prev, visible: false }))} />
+  </ConfirmationModalContext.Provider>
 }
 
 const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
