@@ -7,21 +7,24 @@ import { Text } from "./theme/Themed";
 interface IReadMore {
     text: string,
     style?: any
+    lineCount?: number,
+    showReadMore?: boolean
 }
-const ReadMore: React.FC<IReadMore> = ({ text, style }) => {
+const ReadMore: React.FC<IReadMore> = ({ text, style, lineCount = 5, showReadMore = true }) => {
     const [expanded, setExpanded] = useState(false);
     const theme = useTheme()
     const styles = stylesWrapper(theme)
     return (
         <View>
-            <Text style={style ? style : styles.text} numberOfLines={expanded ? undefined : 5}>
+            <Text style={style ? style : styles.text} numberOfLines={expanded ? undefined : lineCount}>
                 {text}
             </Text>
-            <TouchableOpacity onPress={() => setExpanded(!expanded)}>
-                <Text style={styles.readMore}>
-                    {expanded ? "Read Less" : "Read More"}
-                </Text>
-            </TouchableOpacity>
+            {showReadMore &&
+                <TouchableOpacity onPress={() => setExpanded(!expanded)}>
+                    <Text style={styles.readMore}>
+                        {expanded ? "Read Less" : "Read More"}
+                    </Text>
+                </TouchableOpacity>}
         </View>
     );
 };
