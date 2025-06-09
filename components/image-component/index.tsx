@@ -5,9 +5,9 @@ import {
   IMAGE_MEDIUM,
   IMAGE_SMALL,
 } from "@/shared-uis/constants/ImageSize";
-import { imageUrl } from "@/shared-uis/utils/url";
+import { imageUrl, imageUrlSync } from "@/shared-uis/utils/url";
 import { useTheme } from "@react-navigation/native";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { Dimensions, Image, ImageProps, ImageStyle, Platform } from "react-native";
 import { Text, View } from "../theme/Themed";
 
@@ -53,21 +53,44 @@ const ImageComponent: FC<ImageComponentProps> = ({
   const [loadFailed, setLoadFailed] = React.useState(false);
   const theme = useTheme();
 
+  const [source, setSource] = useState<any>(null)
+  useEffect(() => {
+    (async () => {
+      if (url) {
+        const src = await imageUrl(url)
+        setSource(src)
+      }
+    })()
+  }, [url])
+
   const renderContent = () => {
-    return (
+    if (source)
+      return (
+        <Image
+          source={source}
+          style={[containerStyle, style]}
+          height={Platform.OS === "web" ? 580 : 480}
+          {...imageProps}
+        />
+      );
+    else {
       <Image
-        source={imageUrl(url)}
+        source={imageUrlSync(placeholder)}
         style={[containerStyle, style]}
-        height={Platform.OS === "web" ? 580 : 480}
-        {...imageProps}
+        onError={() => {
+          Console.log("Image load failed");
+
+          setLoadFailed(true);
+        }}
+        resizeMode="cover"
       />
-    );
+    }
   };
 
   if (!url && !initials) {
     return (
       <Image
-        source={imageUrl(placeholder)}
+        source={imageUrlSync(placeholder)}
         style={[containerStyle, style]}
         onError={() => {
           Console.log("Image load failed");
