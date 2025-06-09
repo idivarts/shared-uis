@@ -2,7 +2,6 @@ import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attach
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
-import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
 import Carousel from "@/shared-uis/components/carousel/carousel";
@@ -99,9 +98,9 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
   };
 
 
-  Console.log("Images", images, (props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
-    processRawAttachment(attachment)
-  ) || []);
+  // Console.log("Images", images, (props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
+  //   processRawAttachment(attachment)
+  // ) || []);
 
   return (
     <>
