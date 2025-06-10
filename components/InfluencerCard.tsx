@@ -189,12 +189,13 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         {props.footerNode}
       </Card>
 
-      <AssetPreviewModal
-        previewImage={previewImage}
-        setPreviewImage={setPreviewImage}
-        previewImageUrl={previewImageUrl}
-        theme={theme}
-      />
+      {previewImage &&
+        <AssetPreviewModal
+          previewImage={previewImage}
+          setPreviewImage={setPreviewImage}
+          previewImageUrl={previewImageUrl}
+          theme={theme}
+        />}
     </>
   );
 };
