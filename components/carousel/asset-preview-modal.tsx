@@ -1,19 +1,19 @@
+import { faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Theme } from "@react-navigation/native";
 import { Dimensions, Modal, Pressable } from "react-native";
+import { PinchGestureHandler, PinchGestureHandlerGestureEvent } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from "react-native-reanimated";
-import { PinchGestureHandler, PinchGestureHandlerGestureEvent } from "react-native-gesture-handler";
-import { Theme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faClose } from "@fortawesome/free-solid-svg-icons";
 
-import { View } from "../theme/Themed";
-import { imageUrl } from "@/shared-uis/utils/url";
-import { stylesFn } from "@/shared-uis/styles/carousel/AssetPreviewModal.styles";
 import Colors from "@/shared-uis/constants/Colors";
+import { stylesFn } from "@/shared-uis/styles/carousel/AssetPreviewModal.styles";
+import { imageUrlSync } from "@/shared-uis/utils/url";
+import { View } from "../theme/Themed";
 
 const { width } = Dimensions.get("window");
 
@@ -88,7 +88,7 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
           onGestureEvent={pinchHandler}
         >
           <Animated.Image
-            source={imageUrl(previewImageUrl || "")}
+            source={imageUrlSync(previewImageUrl || "")}
             style={[
               animatedImageStyle,
               {

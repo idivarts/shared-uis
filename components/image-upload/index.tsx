@@ -1,16 +1,16 @@
+import * as ImagePickerExpo from "expo-image-picker";
 import { useRef, useState } from "react";
 import { Image, Modal, Pressable } from "react-native";
-import * as ImagePickerExpo from "expo-image-picker";
 
-import Colors from "@/shared-uis/constants/Colors";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { Theme } from "@react-navigation/native";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { faCamera, faClose } from "@fortawesome/free-solid-svg-icons";
+import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/shared-uis/styles/image-upload/ImageUpload.styles";
-import { imageUrl } from "@/shared-uis/utils/url";
-import { Text, View } from "../theme/Themed";
+import { imageUrlSync } from "@/shared-uis/utils/url";
+import { faCamera, faClose } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Theme } from "@react-navigation/native";
 import { Platform } from "react-native";
+import { Text, View } from "../theme/Themed";
 
 interface ImageUploadProps {
   editable?: boolean;
@@ -87,7 +87,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     >
       <View style={styles.innerContainer}>
         <Image
-          source={imageUrl(image)}
+          source={imageUrlSync(image)}
           style={[
             styles.image,
             {
