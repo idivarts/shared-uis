@@ -5,7 +5,7 @@ import { Image, Modal, Pressable } from "react-native";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
 import Colors from "@/shared-uis/constants/Colors";
 import stylesFn from "@/shared-uis/styles/image-upload/ImageUpload.styles";
-import { imageUrlSync } from "@/shared-uis/utils/url";
+import { imageUrl } from "@/shared-uis/utils/url";
 import { faCamera, faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
@@ -87,7 +87,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     >
       <View style={styles.innerContainer}>
         <Image
-          source={imageUrlSync(image)}
+          source={imageUrl(image)}
           style={[
             styles.image,
             {

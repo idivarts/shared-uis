@@ -12,7 +12,7 @@ import Animated, {
 
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/carousel/AssetPreviewModal.styles";
-import { imageUrlSync } from "@/shared-uis/utils/url";
+import { imageUrl } from "@/shared-uis/utils/url";
 import { View } from "../theme/Themed";
 
 const { width } = Dimensions.get("window");
@@ -88,7 +88,7 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
           onGestureEvent={pinchHandler}
         >
           <Animated.Image
-            source={imageUrlSync(previewImageUrl || "")}
+            source={imageUrl(previewImageUrl || "")}
             style={[
               animatedImageStyle,
               {

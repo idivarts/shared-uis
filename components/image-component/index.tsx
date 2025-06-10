@@ -5,7 +5,7 @@ import {
   IMAGE_MEDIUM,
   IMAGE_SMALL,
 } from "@/shared-uis/constants/ImageSize";
-import { imageUrl, imageUrlSync } from "@/shared-uis/utils/url";
+import { imageUrl, imageUrlWithHeic } from "@/shared-uis/utils/url";
 import { useTheme } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
 import { Dimensions, Image, ImageProps, ImageStyle, Platform } from "react-native";
@@ -57,7 +57,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
   useEffect(() => {
     (async () => {
       if (url) {
-        const src = await imageUrl(url)
+        const src = await imageUrlWithHeic(url)
         setSource(src)
       }
     })()
@@ -75,7 +75,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
       );
     else {
       <Image
-        source={imageUrlSync(placeholder)}
+        source={imageUrl(placeholder)}
         style={[containerStyle, style]}
         onError={() => {
           Console.log("Image load failed");
@@ -90,7 +90,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
   if (!url && !initials) {
     return (
       <Image
-        source={imageUrlSync(placeholder)}
+        source={imageUrl(placeholder)}
         style={[containerStyle, style]}
         onError={() => {
           Console.log("Image load failed");

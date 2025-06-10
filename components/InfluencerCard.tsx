@@ -9,7 +9,7 @@ import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
 import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { truncateText } from "@/shared-uis/utils/text";
-import { imageUrlSync } from "@/shared-uis/utils/url";
+import { imageUrl } from "@/shared-uis/utils/url";
 import {
   faEllipsis
 } from "@fortawesome/free-solid-svg-icons";
@@ -115,7 +115,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           >
             <Avatar.Image
               size={50}
-              source={imageUrlSync(influencer.profileImage)}
+              source={imageUrl(influencer.profileImage)}
             />
           </Pressable>
           <Pressable

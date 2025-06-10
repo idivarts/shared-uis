@@ -1,7 +1,7 @@
 import * as ImageManipulator from 'expo-image-manipulator';
 import { Platform } from 'react-native';
 
-export const imageUrl = async (image: string | NodeRequire | undefined) => {
+export const imageUrlWithHeic = async (image: string | NodeRequire | undefined) => {
 
   if (
     image &&
@@ -25,7 +25,7 @@ export const imageUrl = async (image: string | NodeRequire | undefined) => {
     return require("@/assets/images/placeholder-image.jpg");
   }
 };
-export const imageUrlSync = (image: string | NodeRequire | undefined) => {
+export const imageUrl = (image: string | NodeRequire | undefined) => {
   if (
     image &&
     typeof image === "string" &&
