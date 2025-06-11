@@ -11,8 +11,8 @@ export const stylesFn = (theme: Theme) => StyleSheet.create({
   },
   closeButton: {
     position: "absolute",
-    top: 80,
-    right: 0,
+    top: 24,
+    right: 16,
     zIndex: 1,
     padding: 10,
   },
