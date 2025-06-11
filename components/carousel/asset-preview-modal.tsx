@@ -1,7 +1,7 @@
 import { faClose } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
-import { Dimensions, Modal, Pressable } from "react-native";
+import { Dimensions, Image, Modal, Platform, Pressable, ScrollView } from "react-native";
 import { PinchGestureHandler, PinchGestureHandlerGestureEvent } from "react-native-gesture-handler";
 import Animated, {
   useAnimatedGestureHandler,
@@ -84,21 +84,45 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
             color={Colors(theme).white}
           />
         </Pressable>
-        <PinchGestureHandler
-          onGestureEvent={pinchHandler}
-        >
-          <Animated.Image
-            source={imageUrl(previewImageUrl || "")}
-            style={[
-              animatedImageStyle,
-              {
-                width,
-                height: width,
-              }
-            ]}
-            resizeMode="contain"
-          />
-        </PinchGestureHandler>
+        {Platform.OS === "web" && typeof window !== "undefined" && window.innerWidth > 768 ? (
+          <ScrollView
+            maximumZoomScale={3}
+            minimumZoomScale={1}
+            contentContainerStyle={{
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              width: "100%"
+            }}
+            style={{ flex: 1, width: "100%", height: "100%" }}
+          >
+            <Image
+              source={imageUrl(previewImageUrl || "")}
+              style={{
+                width: "100%",
+                height: "100%",
+                resizeMode: "contain",
+              }}
+            />
+          </ScrollView>
+        ) : (
+          <PinchGestureHandler
+            onGestureEvent={pinchHandler}
+          >
+            <Animated.Image
+              source={imageUrl(previewImageUrl || "")}
+              style={[
+                animatedImageStyle,
+                {
+                  width,
+                  aspectRatio: 1,
+                  maxHeight: "100%",
+                }
+              ]}
+              resizeMode="contain"
+            />
+          </PinchGestureHandler>
+        )}
       </View>
     </Modal>
   );
