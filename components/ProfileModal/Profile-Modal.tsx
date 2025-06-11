@@ -22,7 +22,6 @@ import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, Image, Linking, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { Chip, Title } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
-import Swiper from "react-native-swiper";
 import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
@@ -55,7 +54,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   isInstagram
 }) => {
   const styles = stylesFn(theme);
-  const swiperRef = React.useRef<Swiper>(null);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
 
   const mediaProcessing = carouselMedia
