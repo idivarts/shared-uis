@@ -71,19 +71,6 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
       animationType="fade"
     >
       <View style={styles.modalContainer}>
-        <Pressable
-          style={styles.closeButton}
-          onPress={() => {
-            setPreviewImage(false);
-            scale.value = 1;
-          }}
-        >
-          <FontAwesomeIcon
-            icon={faClose}
-            size={28}
-            color={Colors(theme).white}
-          />
-        </Pressable>
         {Platform.OS === "web" && typeof window !== "undefined" && window.innerWidth > 768 ? (
           <ScrollView
             maximumZoomScale={3}
@@ -123,6 +110,19 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
             />
           </PinchGestureHandler>
         )}
+        <Pressable
+          style={styles.closeButton}
+          onPress={() => {
+            setPreviewImage(false);
+            scale.value = 1;
+          }}
+        >
+          <FontAwesomeIcon
+            icon={faClose}
+            size={28}
+            color={Colors(theme).white}
+          />
+        </Pressable>
       </View>
     </Modal>
   );
