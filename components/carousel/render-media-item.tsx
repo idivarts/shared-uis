@@ -1,7 +1,7 @@
 import { useIsFocused, useTheme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, findNodeHandle, UIManager } from "react-native";
 import { GestureEventPayload, PanGestureHandler, PanGestureHandlerEventPayload, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 
@@ -89,16 +89,16 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       setTopPosition(rect.top)
       setBottomPosition(rect.bottom)
     }
-    // if (Platform.OS !== 'web' && nativeVideoRef.current) {
-    //   const handle = findNodeHandle(nativeVideoRef.current);
-    //   if (handle) {
-    //     UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
-    //       console.log("Scroll Calculations :", cKey, { x, y, width, height, pageX, pageY });
-    //       setTopPosition(pageY);
-    //       setBottomPosition(pageY + height);
-    //     });
-    //   }
-    // }
+    if (Platform.OS !== 'web' && nativeVideoRef.current) {
+      const handle = findNodeHandle(nativeVideoRef.current);
+      if (handle) {
+        UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
+          console.log("Scroll Calculations :", cKey, { x, y, width, height, pageX, pageY });
+          setTopPosition(pageY);
+          setBottomPosition(pageY + height);
+        });
+      }
+    }
   }, [videoRef.current, nativeVideoRef.current])
 
   const threshold = 200
@@ -242,10 +242,6 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             }}
             loop={false}
           /> : <Video
-            onLayout={(e) => {
-              setTopPosition(e.nativeEvent.layout.y)
-              setBottomPosition(e.nativeEvent.layout.y + e.nativeEvent.layout.height)
-            }}
             onTouchEnd={() => {
               nativeVideoRef.current?.playAsync();
               setIsMuted(false)
