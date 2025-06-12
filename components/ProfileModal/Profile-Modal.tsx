@@ -216,15 +216,17 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       style={styles.row}
                       onPress={() => {
                         if (isPhoneMasked) {
-                          closeModal?.()
-                          openModal({
-                            title: "Phone Access Unavailable",
-                            description: "You can only get the influencers phone number if they apply on your collaboration",
-                            confirmAction: () => {
-                              router.push("/collaborations")
-                            },
-                            confirmText: "Post Collaboration"
-                          })
+                          if (closeModal) {
+                            closeModal()
+                            openModal({
+                              title: "Phone Access Unavailable",
+                              description: "You can only get the influencers phone number if they apply on your collaboration",
+                              confirmAction: () => {
+                                router.push("/collaborations")
+                              },
+                              confirmText: "Post Collaboration"
+                            })
+                          }
                         } else
                           Linking.openURL(`tel:${influencer?.phoneNumber}`);
                       }}
