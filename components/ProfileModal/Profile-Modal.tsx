@@ -17,11 +17,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
+import { useRouter } from "expo-router";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, Image, Linking, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
 import { Chip, Title } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
+import { useConfirmationModel } from "../ConfirmationModal";
 import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
@@ -38,6 +40,7 @@ interface ProfileBottomSheetProps {
   loadingPosts?: boolean;
   posts?: any[];
   isInstagram?: boolean;
+  isPhoneMasked?: boolean;
   theme: Theme;
 }
 
@@ -51,10 +54,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   theme,
   loadingPosts,
   posts = [],
-  isInstagram
+  isInstagram,
+  isPhoneMasked = true
 }) => {
   const styles = stylesFn(theme);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
+  const { openModal } = useConfirmationModel()
+  const router = useRouter()
 
   const mediaProcessing = carouselMedia
     ? carouselMedia
@@ -209,7 +215,18 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <Pressable
                       style={styles.row}
                       onPress={() => {
-                        Linking.openURL(`tel:${influencer?.phoneNumber}`);
+                        if (isPhoneMasked) {
+                          closeModal?.()
+                          openModal({
+                            title: "Phone Access Unavailable",
+                            description: "You can only get the influencers phone number if they apply on your collaboration",
+                            confirmAction: () => {
+                              router.push("/collaborations")
+                            },
+                            confirmText: "Post Collaboration"
+                          })
+                        } else
+                          Linking.openURL(`tel:${influencer?.phoneNumber}`);
                       }}
                     >
                       <FontAwesomeIcon
@@ -218,9 +235,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         color={Colors(theme).primary}
                         style={styles.icon}
                       />
-                      <Text style={styles.subTextHeading}>
+                      {isPhoneMasked ? <>
+                        <Text style={styles.subTextHeading}>
+                          {influencer?.phoneNumber.slice(0, 4) + "****"}
+                        </Text>
+                      </> : <Text style={styles.subTextHeading}>
                         {influencer?.phoneNumber}
-                      </Text>
+                      </Text>}
                     </Pressable>
                   )}
 
