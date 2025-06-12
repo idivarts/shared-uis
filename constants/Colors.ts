@@ -39,6 +39,9 @@ export const ColorsStatic = {
   tagForegroundLight: "rgb(95, 99, 104)",
   outlineLight: "rgb(5, 68, 99)",
   modalBackgroundLight: "rgb(255, 255, 255)",
+
+  shimmerOverlayDark: 'rgba(255, 255, 255, 0.3)',
+  shimmerOverlayLight: 'rgba(0, 0, 0, 0.1)',
 }
 
 export default (theme: Theme) => ({
@@ -62,6 +65,8 @@ export default (theme: Theme) => ({
       modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
 
       backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
+      shimmerBackground: ColorsStatic.gray100,
+      shimmerOverlay: ColorsStatic.shimmerOverlayDark,
     }
     : {
       primary: ColorsStatic.primary, // Main accent color
@@ -80,5 +85,7 @@ export default (theme: Theme) => ({
       modalBackground: ColorsStatic.white, // Modal or overlay background
 
       backdrop: ColorsStatic.backdrop, // Backdrop color for modals
+      shimmerBackground: ColorsStatic.gray200,
+      shimmerOverlay: ColorsStatic.shimmerOverlayLight,
     }),
 });

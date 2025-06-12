@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, StyleSheet, Dimensions, Easing, DimensionValue } from 'react-native';
 import { Theme, useTheme } from '@react-navigation/native';
+import React, { useEffect, useRef } from 'react';
+import { Animated, Dimensions, DimensionValue, Easing, StyleSheet } from 'react-native';
 
+import Colors from '@/shared-uis/constants/Colors';
 import { View } from '../theme/Themed';
-import Colors from '../../constants/Colors';
 
 const { width } = Dimensions.get('window');
 
