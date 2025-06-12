@@ -89,12 +89,16 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       setTopPosition(rect.top)
       setBottomPosition(rect.bottom)
     }
-    if (Platform.OS !== 'web' && nativeVideoRef.current) {
-      // nativeVideoRef.current.measure?.((x, y, width, height, pageX, pageY) => {
-      //   console.log("Scroll Calculations :", cKey, { x, y, width, height, pageX, pageY });
-      //   // pageY is distance from top of screen
-      // })
-    }
+    // if (Platform.OS !== 'web' && nativeVideoRef.current) {
+    //   const handle = findNodeHandle(nativeVideoRef.current);
+    //   if (handle) {
+    //     UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
+    //       console.log("Scroll Calculations :", cKey, { x, y, width, height, pageX, pageY });
+    //       setTopPosition(pageY);
+    //       setBottomPosition(pageY + height);
+    //     });
+    //   }
+    // }
   }, [videoRef.current, nativeVideoRef.current])
 
   const threshold = 200
@@ -238,6 +242,10 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             }}
             loop={false}
           /> : <Video
+            onLayout={(e) => {
+              setTopPosition(e.nativeEvent.layout.y)
+              setBottomPosition(e.nativeEvent.layout.y + e.nativeEvent.layout.height)
+            }}
             onTouchEnd={() => {
               nativeVideoRef.current?.playAsync();
               setIsMuted(false)
