@@ -11,7 +11,7 @@ import Colors from "@/shared-uis/constants/Colors";
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import React from "react";
 import { Dimensions, Platform, Pressable } from "react-native";
-import { InView } from 'react-native-intersection-observer';
+// import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
 import { View } from "../theme/Themed";
@@ -55,6 +55,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const nativeVideoRef = useRef<Video>()
   const isFocused = useIsFocused();
   const { scrollRef, scrollHeight } = useScrollContext()
+  const [topPosition, setTopPosition] = useState<number | null>(null)
+  const [bottomPosition, setBottomPosition] = useState<number | null>(null)
 
   useEffect(() => {
     if (currentIndex == index && inView && isFocused) {
@@ -79,6 +81,31 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       }
     }
   }, [currentIndex, inView, isFocused])
+
+  useEffect(() => {
+    if (Platform.OS === 'web' && videoRef.current) {
+      const rect = videoRef.current.getBoundingClientRect();
+      console.log("Scroll Calculations :", cKey, rect.top, rect.bottom, rect.left, rect.right);
+      setTopPosition(rect.top)
+      setBottomPosition(rect.bottom)
+    }
+    if (Platform.OS !== 'web' && nativeVideoRef.current) {
+      // nativeVideoRef.current.measure?.((x, y, width, height, pageX, pageY) => {
+      //   console.log("Scroll Calculations :", cKey, { x, y, width, height, pageX, pageY });
+      //   // pageY is distance from top of screen
+      // })
+    }
+  }, [videoRef.current, nativeVideoRef.current])
+
+  const threshold = 200
+  useEffect(() => {
+    if (topPosition == null || bottomPosition == null || scrollHeight === undefined) {
+      return;
+    }
+    const layoutY = topPosition;
+    const isInView = scrollHeight >= layoutY - threshold && scrollHeight <= bottomPosition + threshold;
+    setInView(isInView);
+  }, [scrollHeight])
 
   // const [LoadingCircle, setLoadingCircle] = useState<any>(null);
   const LoadingCircle = () => isLoading ? <View
@@ -167,9 +194,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     );
   }
 
-  return <InView onChange={(inView) => {
-    setInView(inView);
-  }} >
+
+  return <>
     <Pressable
       style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
       onPress={() => {
@@ -245,7 +271,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       </PanGestureHandler>
     </Pressable>
     <LoadingCircle />
-  </InView>
+  </>
+  // </InView>
 };
 
 export default RenderMediaItem;
