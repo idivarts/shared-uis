@@ -15,6 +15,18 @@ export const showToast = (
 };
 
 class Toaster {
+  public static notification(title: string, description: string, onPress: Function) {
+    Toast.show({
+      type: "info",
+      text1: title,
+      text2: description,
+      text1Style: { fontSize: 14 },
+      text2Style: { fontSize: 12 },
+      onPress: () => {
+        onPress();
+      }
+    });
+  }
   public static success(title: string = "", description: string = "") {
     showToast("success", title, description)
   }
