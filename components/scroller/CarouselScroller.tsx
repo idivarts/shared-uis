@@ -8,6 +8,7 @@ interface IProps<T = any> {
     objectKey: string;
     width: number;
     height: number;
+    vertical: boolean;
     onLoadMore?: () => void;
 }
 const CarouselScroller: React.FC<IProps> = (props) => {
@@ -58,7 +59,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 
     return (<Carousel
         loop={true}
-        vertical
+        vertical={props.vertical}
         onSnapToItem={refreshCarousel}
         width={props.width}
         height={props.height}
