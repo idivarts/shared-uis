@@ -101,13 +101,19 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     }
   }, [videoRef.current, nativeVideoRef.current])
 
-  const threshold = 200
   useEffect(() => {
     if (topPosition == null || bottomPosition == null || scrollHeight === undefined) {
       return;
     }
-    const layoutY = topPosition;
-    const isInView = scrollHeight >= layoutY - threshold && scrollHeight <= bottomPosition + threshold;
+    const yStart = scrollHeight;
+    const yEnd = scrollHeight + Dimensions.get("window").height;
+
+    const cardHeight = bottomPosition - topPosition;
+    const visibleHeight = Math.min(bottomPosition, yEnd) - Math.max(topPosition, yStart);
+    const percentageInView = (visibleHeight / cardHeight) * 100;
+
+    const isInView = percentageInView > 70;
+
     setInView(isInView);
   }, [scrollHeight])
 
