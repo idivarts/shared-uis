@@ -28,6 +28,7 @@ import {
 import { Avatar, Card } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
 import Colors from "../constants/Colors";
+import { MAX_WIDTH_WEB } from "./carousel/carousel-util";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
 
 type User = IUsers & { id?: string }
@@ -40,7 +41,8 @@ interface InfluencerCardPropsType {
   type: string;
   cardActionNode?: any
   footerNode?: any
-  style?: StyleProp<ViewStyle>
+  style?: StyleProp<ViewStyle>,
+  xl?: boolean;
 }
 
 const InfluencerCard = (props: InfluencerCardPropsType) => {
@@ -97,14 +99,30 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     setPreviewImage(true);
   };
 
-
-  // Console.log("Images", images, (props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
-  //   processRawAttachment(attachment)
-  // ) || []);
-
   return (
     <>
-      <Card style={[styles.card, props.style]} mode="contained">
+      <Card
+        style={[
+          styles.card,
+          props.style,
+          props.xl && {
+            maxWidth: MAX_WIDTH_WEB,
+            alignSelf: "center",
+            borderRadius: 20,
+            borderColor: Colors(theme).border,
+            borderWidth: 1,
+            shadowColor: "#000",
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+            elevation: 5,
+          }
+        ]}
+        mode="contained"
+      >
         <View style={[styles.header]}>
           <Pressable
             onPress={() => {

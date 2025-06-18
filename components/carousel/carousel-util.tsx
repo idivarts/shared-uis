@@ -1,6 +1,7 @@
 import { Dimensions, Image, Platform } from 'react-native';
-export const MAX_WIDTH_WEB = 640;
-export const MAX_HEIGHT_WEB = 640;
+export const MAX_WIDTH_WEB = 500;
+export const MAX_HEIGHT_WEB = 500;
+export const APPROX_CARD_HEIGHT = 710;
 
 const getMediaDimensions = async (url: string, type: string) => {
     return new Promise((resolve, reject) => {
