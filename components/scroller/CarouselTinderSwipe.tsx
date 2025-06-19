@@ -45,8 +45,10 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
 
     const refreshCarousel = (index: number) => {
         const direction = index > prevIndex.current ? 'accept' : 'reject';
-        setSwipeOverlay(direction);
-        setTimeout(() => setSwipeOverlay(null), 500);
+        if (!showOverlay && index != prevIndex.current) {
+            setSwipeOverlay(direction);
+            setTimeout(() => setSwipeOverlay(null), 500);
+        }
         prevIndex.current = index;
 
         Console.log("Refreshing carousel at index:", index);
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
     overlay: {
         position: 'absolute',
         top: '50%',
-        left: '50%',
+        left: '30%',
         transform: [{ translateX: -75 }, { translateY: -25 }],
         backgroundColor: 'rgba(0, 0, 0, 0.2)',
         paddingHorizontal: 20,
