@@ -13,6 +13,10 @@ interface IProps<T = any> {
 }
 const CarouselScroller: React.FC<IProps> = (props) => {
     const [data, setData] = useState<any[]>([])
+    const [loop, setLoop] = useState(false)
+    const [currentIndex, setCurrentIndex] = useState(0)
+    const [currentGlobalIndex, setCurrentGlobalIndex] = useState(0)
+
     useEffect(() => {
         if (!props.data || props.data.length < 3) {
             Console.error("CarouselScroller requires at least 3 items to function properly", "CarouselScroller");
@@ -38,6 +42,10 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         if (globalIndex >= data.length - 3) {
             props.onLoadMore?.();
         }
+        setCurrentIndex(index);
+        setCurrentGlobalIndex(globalIndex);
+        setLoop(globalIndex != 0);
+
         setData((prevData) => {
             const newData = [...prevData];
             // const itemToMove = newData.splice(globalIndex, 1)[0];
@@ -58,7 +66,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     }
 
     return (<Carousel
-        loop={true}
+        loop={loop}
         vertical={props.vertical}
         onSnapToItem={refreshCarousel}
         width={props.width}
