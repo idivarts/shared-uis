@@ -1,6 +1,6 @@
-import Colors from "../constants/Colors";
 import { Theme } from "@react-navigation/native";
 import { StyleSheet } from "react-native";
+import Colors from "../constants/Colors";
 
 export const stylesFn = (theme: Theme) =>
   StyleSheet.create({
@@ -69,7 +69,6 @@ export const stylesFn = (theme: Theme) =>
       height: 8,
       width: 8,
       borderRadius: 4,
-      backgroundColor: Colors(theme).platinum,
       marginHorizontal: 4,
     },
     activeDot: {

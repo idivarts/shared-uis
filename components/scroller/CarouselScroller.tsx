@@ -99,7 +99,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     }
 
     return (
-        <View style={{ position: 'relative' }}>
+        <View style={{ position: 'relative', height: "100%" }}>
             <Carousel
                 ref={carouselRef}
                 loop={loop}
@@ -110,8 +110,13 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                 data={data}
                 renderItem={props.renderItem}
                 mode="parallax"
+                // modeConfig={{
+                //     parallaxScrollingScale: 0.95,
+                //     parallaxAdjacentItemScale: 0.8,
+                // }}
                 style={{
-                    transform: [props.vertical ? { translateY: 3 } : { translateX: 5 }]
+                    transform: [props.vertical ? { translateY: 3 } : { translateX: 5 }],
+                    paddingVertical: 16
                 }}
             />
             {showOverlay && (
