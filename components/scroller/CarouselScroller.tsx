@@ -1,9 +1,9 @@
 import { Console } from '@/shared-libs/utils/console';
-import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faPeopleRoof } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Carousel, { CarouselRenderItem } from 'react-native-reanimated-carousel';
+import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
 
 interface IProps<T = any> {
     data: T[];
@@ -13,6 +13,7 @@ interface IProps<T = any> {
     height: number;
     vertical: boolean;
     onLoadMore?: () => void;
+    onPressView?: (item: T, index: number) => void;
 }
 const CarouselScroller: React.FC<IProps> = (props) => {
     const [data, setData] = useState<any[]>([])
@@ -30,7 +31,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         Console.log("CarouselScroller initialized with data length:", props.data.length);
     }, [props.data])
 
-    const carouselRef = useRef<any>(null);
+    const carouselRef = useRef<ICarouselInstance>(null);
 
     useEffect(() => {
         setTimeout(() => {
@@ -47,6 +48,18 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     if (props.data.length < 3) {
         Console.error("CarouselScroller requires at least 3 items to function properly", "CarouselScroller");
         return null
+    }
+
+    const handleSwipe = (direction: 'accept' | 'reject') => {
+        if (direction === 'accept') {
+            Console.log("Accepted item at index:", currentIndex);
+            // Handle accept action
+            carouselRef.current?.next();
+        } else if (direction === 'reject') {
+            Console.log("Rejected item at index:", currentIndex);
+            // Handle reject action
+            carouselRef.current?.prev();
+        }
     }
 
     const refreshCarousel = (index: number) => {
@@ -108,11 +121,15 @@ const CarouselScroller: React.FC<IProps> = (props) => {
             )}
             {!props.vertical &&
                 <View style={styles.floatingButtonsContainer}>
-                    <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]}>
+                    <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
                         <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Previous</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]}>
+                    <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[currentIndex], currentGlobalIndex)}>
+                        <FontAwesomeIcon icon={faPeopleRoof} size={32} color="#fff" />
+                        <Text style={styles.buttonLabel}>View</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
                         <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Next</Text>
                     </TouchableOpacity>
@@ -146,7 +163,10 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(144, 238, 144, 0.8)', // pastel green with transparency
     },
     rejectButton: {
-        backgroundColor: 'rgba(25, 112, 144, 0.8)', // pastel red/pink with transparency
+        backgroundColor: 'rgba(214, 138, 222, 0.8)', // pastel red/pink with transparency
+    },
+    profileButton: {
+        backgroundColor: 'rgba(173, 216, 230, 0.8)', // pastel blue with transparency
     },
     buttonLabel: {
         fontSize: 12,
