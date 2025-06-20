@@ -1,6 +1,8 @@
 import { Console } from '@/shared-libs/utils/console';
+import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem } from 'react-native-reanimated-carousel';
 
 interface IProps<T = any> {
@@ -108,12 +110,51 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
                     </Text>
                 </View>
             )}
+            <View style={styles.floatingButtonsContainer}>
+                <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]}>
+                    <FontAwesomeIcon icon={faTimes} size={32} color="#fff" />
+                    <Text style={styles.buttonLabel}>Reject</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]}>
+                    <FontAwesomeIcon icon={faCheck} size={32} color="#fff" />
+                    <Text style={styles.buttonLabel}>Accept</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     );
 
 }
 
 const styles = StyleSheet.create({
+    floatingButtonsContainer: {
+        position: 'absolute',
+        bottom: 20,
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        zIndex: 999,
+    },
+    floatingButton: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 64,
+        height: 64,
+        borderRadius: 32,
+        backgroundColor: '#ccc',
+        elevation: 5,
+        padding: 16,
+    },
+    acceptButton: {
+        backgroundColor: 'rgba(144, 238, 144, 0.8)', // pastel green with transparency
+    },
+    rejectButton: {
+        backgroundColor: 'rgba(255, 182, 193, 0.8)', // pastel red/pink with transparency
+    },
+    buttonLabel: {
+        fontSize: 12,
+        color: 'white',
+        marginTop: 4,
+    },
     overlay: {
         position: 'absolute',
         top: '50%',

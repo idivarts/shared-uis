@@ -105,7 +105,8 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         style={[
           styles.card,
           props.style,
-          props.xl && {
+          // props.xl && 
+          {
             maxWidth: MAX_WIDTH_WEB,
             alignSelf: "center",
             borderRadius: 20,
