@@ -27,6 +27,8 @@ const CarouselScroller: React.FC<IProps> = (props) => {
             Console.error("CarouselScroller requires at least 3 items to function properly", "CarouselScroller");
             return;
         }
+        if (data.length != 0) return
+
         setData(props.data.slice(0, 3));
         Console.log("CarouselScroller initialized with data length:", props.data.length);
     }, [props.data])
@@ -70,12 +72,12 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         const globalIndex = props.data.findIndex((item) => item[props.objectKey] === key)
         if (globalIndex == -1)
             return;
-        if (globalIndex >= data.length - 3) {
+        if (globalIndex >= props.data.length - 3) {
             props.onLoadMore?.();
         }
         setCurrentIndex(index);
         setCurrentGlobalIndex(globalIndex);
-        setLoop(globalIndex != 0);
+        setLoop(globalIndex > 0 && globalIndex < props.data.length - 1);
 
         setData((prevData) => {
             const newData = [...prevData];
