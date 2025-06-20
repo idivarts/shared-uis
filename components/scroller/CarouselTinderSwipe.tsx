@@ -1,9 +1,9 @@
 import { Console } from '@/shared-libs/utils/console';
-import { faCheck, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCheck, faPeopleRoof, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Carousel, { CarouselRenderItem } from 'react-native-reanimated-carousel';
+import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
 
 interface IProps<T = any> {
     data: T[];
@@ -12,12 +12,17 @@ interface IProps<T = any> {
     width: number;
     height: number;
     onLoadMore?: () => void;
+    onAccept?: (item: T, index: number) => void;
+    onReject?: (item: T, index: number) => void;
+    onPressView?: (item: T, index: number) => void;
 }
 const CarouselTinderSwipe: React.FC<IProps> = (props) => {
     const [data, setData] = useState<any[]>([])
     const [showOverlay, setShowOverlay] = useState(true);
     const [swipeOverlay, setSwipeOverlay] = useState<'accept' | 'reject' | null>(null);
-    const carouselRef = useRef<any>(null);
+    const [currentGlobalIndex, setCurrentGlobalIndex] = useState(0)
+
+    const carouselRef = useRef<ICarouselInstance>(null);
     const prevIndex = useRef(0);
 
     useEffect(() => {
@@ -45,6 +50,18 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
         return null
     }
 
+    const handleSwipe = (direction: 'accept' | 'reject') => {
+        if (direction === 'accept') {
+            props.onAccept?.(data[prevIndex.current], prevIndex.current);
+            // Handle accept action
+            carouselRef.current?.next();
+        } else if (direction === 'reject') {
+            props.onReject?.(data[prevIndex.current], prevIndex.current);
+            // Handle reject action
+            carouselRef.current?.prev();
+        }
+    }
+
     const refreshCarousel = (index: number) => {
         const direction = index > prevIndex.current ? 'accept' : 'reject';
         if (!showOverlay && index != prevIndex.current) {
@@ -58,6 +75,8 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
         const globalIndex = props.data.findIndex((item) => item[props.objectKey] === key)
         if (globalIndex == -1)
             return;
+        setCurrentGlobalIndex(globalIndex);
+
         if (globalIndex >= data.length - 3) {
             props.onLoadMore?.();
         }
@@ -111,11 +130,15 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
                 </View>
             )}
             <View style={styles.floatingButtonsContainer}>
-                <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]}>
+                <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
                     <FontAwesomeIcon icon={faTimes} size={32} color="#fff" />
                     <Text style={styles.buttonLabel}>Reject</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]}>
+                <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[prevIndex.current], currentGlobalIndex)}>
+                    <FontAwesomeIcon icon={faPeopleRoof} size={28} color="#fff" />
+                    <Text style={styles.buttonLabel}>View</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
                     <FontAwesomeIcon icon={faCheck} size={32} color="#fff" />
                     <Text style={styles.buttonLabel}>Accept</Text>
                 </TouchableOpacity>
@@ -149,6 +172,9 @@ const styles = StyleSheet.create({
     },
     rejectButton: {
         backgroundColor: 'rgba(255, 182, 193, 0.8)', // pastel red/pink with transparency
+    },
+    profileButton: {
+        backgroundColor: 'rgba(173, 216, 230, 0.8)', // pastel blue with transparency
     },
     buttonLabel: {
         fontSize: 12,
