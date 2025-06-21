@@ -7,6 +7,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useCarouselInViewContext } from './CarouselInViewContext';
+import styles from '@/shared-uis/styles/dropdown/Dropdown.styles';
 
 interface IProps<T = any> {
     data: T[];
@@ -28,7 +29,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const { xl } = useBreakpoints()
     const styles = stylesFn(theme, Platform.OS == "web" && xl);
     useEffect(() => {
-        if (!props.data || props.data.length > 0) {
+        if (!props.data || props.data.length == 0) {
             Console.error("CarouselScroller requires at least 1 items to function properly", "CarouselScroller");
             return;
         }
