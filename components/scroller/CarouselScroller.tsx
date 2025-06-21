@@ -19,7 +19,7 @@ interface IProps<T = any> {
     onPressView?: (item: T, index: number) => void;
 }
 const CarouselScroller: React.FC<IProps> = (props) => {
-    const [data, setData] = useState<any[]>([])
+    const { data } = props
     const [loop, setLoop] = useState(false)
     const [currentIndex, setCurrentIndex] = useState(0)
     const [currentGlobalIndex, setCurrentGlobalIndex] = useState(0)
@@ -29,18 +29,6 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const theme = useTheme();
     const { xl } = useBreakpoints()
     const styles = stylesFn(theme, Platform.OS == "web" && xl);
-
-    useEffect(() => {
-        if (!props.data || props.data.length < 3) {
-            Console.error("CarouselScroller requires at least 3 items to function properly", "CarouselScroller");
-            return;
-        }
-        if (data.length != 0) return
-
-        setData(props.data.slice(0, 5));
-        setCurrentItemId(props.data[0][props.objectKey]);
-        Console.log("CarouselScroller initialized with data length:", props.data.length);
-    }, [props.data])
 
     const carouselRef = useRef<ICarouselInstance>(null);
 
@@ -56,54 +44,23 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         }, 2000);
     }, []);
 
-    if (props.data.length < 3) {
-        Console.error("CarouselScroller requires at least 3 items to function properly", "CarouselScroller");
-        return null
-    }
 
     const handleSwipe = (direction: 'accept' | 'reject') => {
         if (direction === 'accept') {
             Console.log("Accepted item at index:", currentIndex);
-            // Handle accept action
             carouselRef.current?.next();
         } else if (direction === 'reject') {
             Console.log("Rejected item at index:", currentIndex);
-            // Handle reject action
             carouselRef.current?.prev();
         }
     }
 
     const refreshCarousel = (index: number) => {
         Console.log("Refreshing carousel at index:", index, currentGlobalIndex, props.data.length);
-        const key = data[index][props.objectKey]
-        setCurrentItemId(key);
-        const globalIndex = props.data.findIndex((item) => item[props.objectKey] === key)
-        if (globalIndex == -1)
-            return;
-        if (globalIndex >= props.data.length - 2) {
+        setCurrentIndex(index);
+        if (currentIndex == data.length - 2) {
             props.onLoadMore?.();
         }
-        setCurrentIndex(index);
-        setCurrentGlobalIndex(globalIndex);
-        setLoop(globalIndex > 0);
-
-        setData((prevData) => {
-            const newData = [...prevData];
-            // const itemToMove = newData.splice(globalIndex, 1)[0];
-            // newData.push(itemToMove);
-            let previousIndex = index - 2;
-            if (previousIndex < 0)
-                previousIndex = data.length + previousIndex;
-            let nextIndex = index + 2;
-            if (nextIndex >= data.length)
-                nextIndex = (nextIndex - data.length);
-
-            if (globalIndex - 2 >= 0)
-                newData[previousIndex] = props.data[globalIndex - 2];
-            if (globalIndex + 2 < props.data.length)
-                newData[nextIndex] = props.data[globalIndex + 2];
-            return [...newData];
-        });
     }
 
     return (
@@ -117,7 +74,14 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     width={props.width}
                     height={props.height}
                     data={data}
-                    renderItem={props.renderItem}
+                    renderItem={({ item, index }) => {
+                        if (Math.abs(currentIndex - index) > 2) {
+                            return <View></View>
+                        } else {
+                            // @ts-ignore
+                            return props.renderItem({ item, index })
+                        }
+                    }}
                     mode="parallax"
                     style={{
                         paddingVertical: 16
