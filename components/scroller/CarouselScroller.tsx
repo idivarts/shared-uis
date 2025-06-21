@@ -1,3 +1,4 @@
+import { IOScroll } from '@/shared-libs/contexts/scroll-context';
 import { Console } from '@/shared-libs/utils/console';
 import useBreakpoints from '@/shared-libs/utils/use-breakpoints';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
@@ -7,7 +8,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useCarouselInViewContext } from './CarouselInViewContext';
-import styles from '@/shared-uis/styles/dropdown/Dropdown.styles';
 
 interface IProps<T = any> {
     data: T[];
@@ -87,8 +87,12 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         if (Math.abs(currentIndex - index) > 1) {
                             return <View></View>
                         } else {
-                            // @ts-ignore
-                            return props.renderItem({ item, index })
+                            return <IOScroll setRef={index == currentIndex}>
+                                {
+                                    // @ts-ignore
+                                    props.renderItem({ item, index })
+                                }
+                            </IOScroll>
                         }
                     }}
                     mode="parallax"
