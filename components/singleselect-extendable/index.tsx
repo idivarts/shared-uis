@@ -19,7 +19,7 @@ export interface SingleSelectExtendableProps {
   buttonIcon?: React.ReactNode;
   buttonLabel?: string;
   initialItemsList: string[];
-  initialMultiselectItemsList: string[];
+  initialSelectItemsList: string[];
   onSelectedItemsChange: (items?: string) => void;
   selectedItem: string;
   theme: Theme;
@@ -29,12 +29,12 @@ export const SingleSelectExtendable: React.FC<SingleSelectExtendableProps> = ({
   buttonIcon,
   buttonLabel,
   initialItemsList,
-  initialMultiselectItemsList,
+  initialSelectItemsList,
   onSelectedItemsChange,
   selectedItem,
   theme,
 }) => {
-  const [totalMultiselectItems, setTotalMultiselectItems] = useState<string[]>(initialMultiselectItemsList);
+  const [totalMultiselectItems, setTotalMultiselectItems] = useState<string[]>(initialSelectItemsList);
   const [selectedSingleItem, setSelectedSingleItem] = useState<string | undefined>(selectedItem);
   const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
 
