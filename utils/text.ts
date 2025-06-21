@@ -1,5 +1,6 @@
-export const truncateText = (text: string, length: number) => {
-  if (!text) return "";
+export const truncateText = (html: string, length: number) => {
+  if (!html) return "";
 
-  return text.length > length ? text.slice(0, length) + "..." : text;
+  const strippedText = html.replace(/<[^>]+>/g, "").trim();
+  return strippedText.length > length ? strippedText.slice(0, length) + "..." : strippedText;
 };
