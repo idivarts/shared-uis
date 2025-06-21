@@ -15,27 +15,27 @@ import Colors from "@/shared-uis/constants/Colors";
 import BottomSheetContainer from '../bottom-sheet';
 import { Text, View } from '../theme/Themed';
 
-export interface MultiSelectExtendableProps {
+export interface SingleSelectExtendableProps {
   buttonIcon?: React.ReactNode;
   buttonLabel?: string;
   initialItemsList: string[];
   initialMultiselectItemsList: string[];
-  onSelectedItemsChange: (items: string[]) => void;
-  selectedItems: string[];
+  onSelectedItemsChange: (items?: string) => void;
+  selectedItem: string;
   theme: Theme;
 }
 
-export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
+export const SingleSelectExtendable: React.FC<SingleSelectExtendableProps> = ({
   buttonIcon,
   buttonLabel,
   initialItemsList,
   initialMultiselectItemsList,
   onSelectedItemsChange,
-  selectedItems,
+  selectedItem,
   theme,
 }) => {
   const [totalMultiselectItems, setTotalMultiselectItems] = useState<string[]>(initialMultiselectItemsList);
-  const [selectedMultiselectItems, setSelectedMultiselectItems] = useState<string[]>(selectedItems);
+  const [selectedSingleItem, setSelectedSingleItem] = useState<string | undefined>(selectedItem);
   const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
 
   const [searchText, setSearchText] = useState('');
@@ -57,25 +57,27 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
   }, [searchText, itemsList]);
 
   const handleAddItem = () => {
+    setIsModalVisible(false)
     if (searchText.trim() === '') {
       return;
     }
     const updatedItems = [...itemsList, searchText];
     setItemsList(updatedItems);
     setTotalMultiselectItems([...totalMultiselectItems, searchText]);
-    setSelectedMultiselectItems([...selectedMultiselectItems, searchText]);
-    onSelectedItemsChange([...selectedMultiselectItems, searchText]);
+    setSelectedSingleItem(searchText);
+    onSelectedItemsChange(searchText);
 
     setSearchText('');
   };
 
   const toggleSelection = (item: string) => {
-    if (selectedMultiselectItems.includes(item)) {
-      setSelectedMultiselectItems(selectedMultiselectItems.filter(i => i !== item));
-      onSelectedItemsChange(selectedMultiselectItems.filter(i => i !== item));
+    setIsModalVisible(false)
+    if (selectedSingleItem != item) {
+      setSelectedSingleItem(item);
+      onSelectedItemsChange(item);
     } else {
-      setSelectedMultiselectItems([...selectedMultiselectItems, item]);
-      onSelectedItemsChange([...selectedMultiselectItems, item]);
+      setSelectedSingleItem(undefined);
+      onSelectedItemsChange(undefined);
     }
   }
 
@@ -84,7 +86,6 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
     // Remove item from selected items if it's already selected
     // Add item to total items if it's not already in the list
     // Send updated selected items to parent component
-
     toggleSelection(item);
     if (!totalMultiselectItems.includes(item)) {
       setTotalMultiselectItems([...totalMultiselectItems, item]);
@@ -119,7 +120,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                   style={[
                     styles.chip,
                     {
-                      backgroundColor: selectedMultiselectItems.includes(item) ? Colors(theme).primary : Colors(theme).tag,
+                      backgroundColor: selectedSingleItem == item ? Colors(theme).primary : Colors(theme).tag,
                     },
                   ]}
                 >
@@ -127,7 +128,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                     style={[
                       styles.chipText,
                       {
-                        color: selectedMultiselectItems.includes(item) ? Colors(theme).white : Colors(theme).text,
+                        color: selectedSingleItem == item ? Colors(theme).white : Colors(theme).text,
                       },
                     ]}
                   >
@@ -138,7 +139,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                     color={Colors(theme).white}
                     size={16}
                     style={{
-                      display: selectedMultiselectItems.includes(item) ? 'flex' : 'none',
+                      display: selectedSingleItem == item ? 'flex' : 'none',
                     }}
                   />
                 </View>
@@ -223,7 +224,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                       onPress={() => handleSelectItem(item)}
                     >
                       <Text style={styles.itemText}>{item}</Text>
-                      {selectedMultiselectItems.includes(item) && (
+                      {selectedSingleItem == item && (
                         <FontAwesomeIcon
                           icon={faCheck}
                           color={Colors(theme).primary}
