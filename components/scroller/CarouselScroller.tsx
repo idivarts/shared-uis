@@ -1,8 +1,9 @@
 import { Console } from '@/shared-libs/utils/console';
 import { faArrowLeft, faArrowRight, faPeopleRoof } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { Theme, useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useCarouselInViewContext } from './CarouselInViewContext';
 
@@ -23,6 +24,9 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const [currentGlobalIndex, setCurrentGlobalIndex] = useState(0)
     const [showOverlay, setShowOverlay] = useState(true);
     const { setCurrentItemId } = useCarouselInViewContext()
+
+    const theme = useTheme();
+    const styles = stylesFn(theme, Platform.OS == "web");
 
     useEffect(() => {
         if (!props.data || props.data.length < 3) {
@@ -104,35 +108,37 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     }
 
     return (
-        <View style={{ position: 'relative', height: "100%" }}>
-            <Carousel
-                ref={carouselRef}
-                loop={loop}
-                vertical={props.vertical}
-                onSnapToItem={refreshCarousel}
-                width={props.width}
-                height={props.height}
-                data={data}
-                renderItem={props.renderItem}
-                mode="parallax"
-                // modeConfig={{
-                //     parallaxScrollingScale: 0.95,
-                //     parallaxAdjacentItemScale: 0.8,
-                // }}
-                style={{
-                    transform: [props.vertical ? { translateY: 3 } : { translateX: 5 }],
-                    paddingVertical: 16
-                }}
-            />
-            {showOverlay && (
-                <View style={styles.overlay}>
-                    <Text style={styles.overlayText}>
-                        Swipe {props.vertical ? 'down' : 'left'} to explore more {props.vertical ? '⬇️' : '⬅️'}
-                    </Text>
-                </View>
-            )}
+        <>
+            <View style={{ position: 'relative', height: "100%", alignSelf: "center" }}>
+                <Carousel
+                    ref={carouselRef}
+                    loop={loop}
+                    vertical={props.vertical}
+                    onSnapToItem={refreshCarousel}
+                    width={props.width}
+                    height={props.height}
+                    data={data}
+                    renderItem={props.renderItem}
+                    mode="parallax"
+                    // modeConfig={{
+                    //     parallaxScrollingScale: 0.95,
+                    //     parallaxAdjacentItemScale: 0.8,
+                    // }}
+                    style={{
+                        transform: [props.vertical ? { translateY: 3 } : { translateX: 5 }],
+                        paddingVertical: 16
+                    }}
+                />
+                {showOverlay && (
+                    <View style={styles.overlay}>
+                        <Text style={styles.overlayText}>
+                            Swipe {props.vertical ? 'down' : 'left'} to explore more {props.vertical ? '⬇️' : '⬅️'}
+                        </Text>
+                    </View>
+                )}
+            </View>
             {!props.vertical &&
-                <View style={styles.floatingButtonsContainer}>
+                (Platform.OS == "web" ? <View style={styles.floatingButtonsContainer}>
                     <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
                         <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Previous</Text>
@@ -145,15 +151,35 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Next</Text>
                     </TouchableOpacity>
-                </View>
+                </View> : <View style={styles.floatingButtonsContainer}>
+                    <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
+                        <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
+                        <Text style={styles.buttonLabel}>Previous</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[currentIndex], currentGlobalIndex)}>
+                        <FontAwesomeIcon icon={faPeopleRoof} size={32} color="#fff" />
+                        <Text style={styles.buttonLabel}>View</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
+                        <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
+                        <Text style={styles.buttonLabel}>Next</Text>
+                    </TouchableOpacity>
+                </View>)
             }
-        </View>
+        </>
     )
 
 }
 
-const styles = StyleSheet.create({
-    floatingButtonsContainer: {
+const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
+    floatingButtonsContainer: isWeb ? {
+        position: 'absolute',
+        bottom: 20,
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-evenly',
+        zIndex: 999,
+    } : {
         position: 'absolute',
         bottom: 20,
         width: '100%',
