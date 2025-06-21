@@ -167,13 +167,13 @@ const styles = StyleSheet.create({
         padding: 16,
     },
     acceptButton: {
-        backgroundColor: 'rgba(144, 238, 144, 0.8)', // pastel green with transparency
+        backgroundColor: 'rgba(144, 238, 144, 1)', // pastel green with transparency
     },
     rejectButton: {
-        backgroundColor: 'rgba(214, 138, 222, 0.8)', // pastel red/pink with transparency
+        backgroundColor: 'rgba(214, 138, 222, 1)', // pastel red/pink with transparency
     },
     profileButton: {
-        backgroundColor: 'rgba(173, 216, 230, 0.8)', // pastel blue with transparency
+        backgroundColor: 'rgba(173, 216, 230, 1)', // pastel blue with transparency
     },
     buttonLabel: {
         fontSize: 12,
