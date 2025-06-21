@@ -161,6 +161,10 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     }
   }
 
+  if (Math.abs((currentIndex || 0) - index) > 1) {
+    return <View style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}></View>
+  }
+
   if (item?.type.includes("image")) {
     const mImage = <ImageComponent
       url={item.url}
