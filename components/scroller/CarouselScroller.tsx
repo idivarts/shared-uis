@@ -20,15 +20,21 @@ interface IProps<T = any> {
 }
 const CarouselScroller: React.FC<IProps> = (props) => {
     const { data } = props
-    const [loop, setLoop] = useState(false)
     const [currentIndex, setCurrentIndex] = useState(0)
-    const [currentGlobalIndex, setCurrentGlobalIndex] = useState(0)
     const [showOverlay, setShowOverlay] = useState(true);
     const { setCurrentItemId } = useCarouselInViewContext()
 
     const theme = useTheme();
     const { xl } = useBreakpoints()
     const styles = stylesFn(theme, Platform.OS == "web" && xl);
+    useEffect(() => {
+        if (!props.data || props.data.length > 0) {
+            Console.error("CarouselScroller requires at least 1 items to function properly", "CarouselScroller");
+            return;
+        }
+        setCurrentItemId(props.data[0][props.objectKey]);
+        Console.log("CarouselScroller initialized with data length:", props.data.length);
+    }, [props.data])
 
     const carouselRef = useRef<ICarouselInstance>(null);
 
@@ -56,7 +62,9 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     }
 
     const refreshCarousel = (index: number) => {
-        Console.log("Refreshing carousel at index:", index, currentGlobalIndex, props.data.length);
+        Console.log("Refreshing carousel at index:", index, props.data.length);
+        const key = data[index][props.objectKey]
+        setCurrentItemId(key);
         setCurrentIndex(index);
         if (currentIndex == data.length - 2) {
             props.onLoadMore?.();
@@ -68,7 +76,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
             <View style={{ position: 'relative', height: "100%", alignSelf: "center" }}>
                 <Carousel
                     ref={carouselRef}
-                    loop={loop}
+                    loop={false}
                     vertical={props.vertical}
                     onSnapToItem={refreshCarousel}
                     width={props.width}
