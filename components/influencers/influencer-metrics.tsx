@@ -1,7 +1,9 @@
+import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Colors from "@/shared-uis/constants/Colors";
 import { convertToKUnits } from "@/shared-uis/utils/conversion";
 import {
+  faArrowUpWideShort,
   faChartLine,
   faFaceSmile,
   faPeopleRoof,
@@ -14,25 +16,29 @@ import { Text, View } from "../theme/Themed";
 
 type CardActionsProps = {
   user: Partial<IUsers> & { id?: string }
+  social?: ISocials
   action?: React.ReactNode;
 };
 
-export const InfluencerMetrics = ({ user, action = null }: CardActionsProps) => {
+export const InfluencerMetrics = ({ user, social, action = null }: CardActionsProps) => {
   const metrics = {
     followers: user.backend?.followers || 0,
     reach: user.backend?.reach || 0,
+    engagement: user.backend?.engagement || 0,
     rating: user.backend?.rating || 0,
   };
   const theme = useTheme();
-
-  if (!metrics.followers && !metrics.rating && !metrics.rating) {
+  const followers = convertToKUnits(metrics.followers) || social?.instaProfile?.approxMetrics?.followers || "";
+  const reach = convertToKUnits(metrics.reach) || social?.instaProfile?.approxMetrics?.views || "";
+  const interations = convertToKUnits(metrics.engagement) || social?.instaProfile?.approxMetrics?.interactions || "";
+  if (!followers && !reach && !metrics.rating) {
     return null
   }
 
   return (
     <View style={styles.container}>
       <View style={styles.metrics}>
-        {!!metrics.followers &&
+        {!!followers &&
           <View style={styles.metric}>
             <FontAwesomeIcon
               icon={faPeopleRoof}
@@ -40,10 +46,10 @@ export const InfluencerMetrics = ({ user, action = null }: CardActionsProps) => 
               size={16}
             />
             <Text style={styles.metricText}>
-              {convertToKUnits(metrics.followers)}
+              {followers}
             </Text>
           </View>}
-        {!!metrics.reach &&
+        {!!reach &&
           <View style={styles.metric}>
             <FontAwesomeIcon
               icon={faChartLine}
@@ -51,7 +57,18 @@ export const InfluencerMetrics = ({ user, action = null }: CardActionsProps) => 
               size={16}
             />
             <Text style={styles.metricText}>
-              {convertToKUnits(metrics.reach)}
+              {reach}
+            </Text>
+          </View>}
+        {!!interations &&
+          <View style={styles.metric}>
+            <FontAwesomeIcon
+              icon={faArrowUpWideShort}
+              color={Colors(theme).primary}
+              size={16}
+            />
+            <Text style={styles.metricText}>
+              {interations}
             </Text>
           </View>}
         {!!metrics.rating &&
