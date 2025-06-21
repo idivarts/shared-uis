@@ -34,7 +34,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         }
         setCurrentItemId(props.data[currentIndex][props.objectKey]);
         Console.log("CarouselScroller initialized with data length:", props.data.length);
-    }, [props.data])
+    }, [])
 
     const carouselRef = useRef<ICarouselInstance>(null);
 
