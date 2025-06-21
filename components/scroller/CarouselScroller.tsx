@@ -83,7 +83,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     height={props.height}
                     data={data}
                     renderItem={({ item, index }) => {
-                        if (Math.abs(currentIndex - index) > 2) {
+                        if (Math.abs(currentIndex - index) > 1) {
                             return <View></View>
                         } else {
                             // @ts-ignore
@@ -91,6 +91,11 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         }
                     }}
                     mode="parallax"
+                    modeConfig={{
+                        parallaxScrollingScale: 0.95,
+                        parallaxScrollingOffset: 0,
+                        parallaxAdjacentItemScale: 0.85,
+                    }}
                     style={{
                         paddingVertical: 16
                     }}
@@ -120,10 +125,6 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Previous</Text>
                     </TouchableOpacity>
-                    {/* <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[currentIndex], currentGlobalIndex)}>
-                        <FontAwesomeIcon icon={faPeopleRoof} size={32} color="#fff" />
-                        <Text style={styles.buttonLabel}>View</Text>
-                    </TouchableOpacity> */}
                     <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
                         <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Next</Text>
