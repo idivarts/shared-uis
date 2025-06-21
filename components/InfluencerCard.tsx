@@ -16,7 +16,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { collection, doc, getDoc } from "firebase/firestore";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
   Pressable,
@@ -46,6 +46,9 @@ interface InfluencerCardPropsType {
 }
 
 const InfluencerCard = (props: InfluencerCardPropsType) => {
+  const startX = useRef(0);
+  const startY = useRef(0);
+
   const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
   const [previewImage, setPreviewImage] = useState(false);
   const [socialHandle, setSocialHandle] = useState("")
@@ -127,8 +130,14 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
       >
         <View style={[styles.header]}>
           <Pressable
-            onPress={() => {
-              if (props.openProfile) {
+            onPressIn={(e) => {
+              startX.current = e.nativeEvent.pageX;
+              startY.current = e.nativeEvent.pageY;
+            }}
+            onPressOut={(e) => {
+              const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+              const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+              if (dx < 5 && dy < 5 && props.openProfile) {
                 props.openProfile(influencer);
               }
             }}
@@ -140,8 +149,14 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </Pressable>
           <Pressable
             style={styles.nameContainer}
-            onPress={() => {
-              if (props.openProfile) {
+            onPressIn={(e) => {
+              startX.current = e.nativeEvent.pageX;
+              startY.current = e.nativeEvent.pageY;
+            }}
+            onPressOut={(e) => {
+              const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+              const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+              if (dx < 5 && dy < 5 && props.openProfile) {
                 props.openProfile(influencer);
               }
             }}
@@ -154,10 +169,18 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </Pressable>
 
           <Pressable
-            onPress={() => {
-              props.ToggleModal?.();
-              if (props?.setSelectedInfluencer) {
-                props.setSelectedInfluencer(props.influencer);
+            onPressIn={(e) => {
+              startX.current = e.nativeEvent.pageX;
+              startY.current = e.nativeEvent.pageY;
+            }}
+            onPressOut={(e) => {
+              const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+              const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+              if (dx < 5 && dy < 5) {
+                props.ToggleModal?.();
+                if (props?.setSelectedInfluencer) {
+                  props.setSelectedInfluencer(props.influencer);
+                }
               }
             }}
           >
@@ -177,15 +200,20 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         />
 
         <View style={styles.content}>
-          <InfluencerMetrics user={influencer} action={props.cardActionNode} />
-
           <Pressable
-            onPress={() => {
-              if (props.openProfile) {
+            onPressIn={(e) => {
+              startX.current = e.nativeEvent.pageX;
+              startY.current = e.nativeEvent.pageY;
+            }}
+            onPressOut={(e) => {
+              const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+              const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+              if (dx < 5 && dy < 5 && props.openProfile) {
                 props.openProfile(influencer);
               }
             }}
           >
+            <InfluencerMetrics user={influencer} action={props.cardActionNode} />
             <Text>
               <RenderHTML
                 contentWidth={screenWidth}
