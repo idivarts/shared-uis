@@ -37,7 +37,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         }
         if (data.length != 0) return
 
-        setData(props.data.slice(0, 3));
+        setData(props.data.slice(0, 5));
         setCurrentItemId(props.data[0][props.objectKey]);
         Console.log("CarouselScroller initialized with data length:", props.data.length);
     }, [props.data])
@@ -83,7 +83,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         const globalIndex = props.data.findIndex((item) => item[props.objectKey] === key)
         if (globalIndex == -1)
             return;
-        if (globalIndex >= props.data.length - 3) {
+        if (globalIndex >= props.data.length - 2) {
             props.onLoadMore?.();
         }
         setCurrentIndex(index);
@@ -94,17 +94,17 @@ const CarouselScroller: React.FC<IProps> = (props) => {
             const newData = [...prevData];
             // const itemToMove = newData.splice(globalIndex, 1)[0];
             // newData.push(itemToMove);
-            let previousIndex = index - 1;
+            let previousIndex = index - 2;
             if (previousIndex < 0)
-                previousIndex = data.length - 1;
-            let nextIndex = index + 1;
+                previousIndex = data.length + previousIndex;
+            let nextIndex = index + 2;
             if (nextIndex >= data.length)
-                nextIndex = 0;
+                nextIndex = (nextIndex - data.length);
 
-            if (globalIndex - 1 >= 0)
-                newData[previousIndex] = props.data[globalIndex - 1];
-            if (globalIndex + 1 < props.data.length)
-                newData[nextIndex] = props.data[globalIndex + 1];
+            if (globalIndex - 2 >= 0)
+                newData[previousIndex] = props.data[globalIndex - 2];
+            if (globalIndex + 2 < props.data.length)
+                newData[nextIndex] = props.data[globalIndex + 2];
             return [...newData];
         });
     }
