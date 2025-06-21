@@ -1,6 +1,6 @@
 import { Console } from '@/shared-libs/utils/console';
 import useBreakpoints from '@/shared-libs/utils/use-breakpoints';
-import { faArrowLeft, faArrowRight, faPeopleRoof } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme, useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
@@ -155,10 +155,10 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Previous</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[currentIndex], currentGlobalIndex)}>
+                    {/* <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[currentIndex], currentGlobalIndex)}>
                         <FontAwesomeIcon icon={faPeopleRoof} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>View</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
                         <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Next</Text>
