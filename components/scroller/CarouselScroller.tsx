@@ -32,7 +32,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
             Console.error("CarouselScroller requires at least 1 items to function properly", "CarouselScroller");
             return;
         }
-        setCurrentItemId(props.data[0][props.objectKey]);
+        setCurrentItemId(props.data[currentIndex][props.objectKey]);
         Console.log("CarouselScroller initialized with data length:", props.data.length);
     }, [props.data])
 
