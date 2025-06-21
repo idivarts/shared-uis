@@ -14,6 +14,7 @@ import { Dimensions, Platform, Pressable } from "react-native";
 // import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
+import { useCarouselInViewContext } from "../scroller/CarouselInViewContext";
 import { View } from "../theme/Themed";
 
 export interface MediaItem {
@@ -29,6 +30,7 @@ interface RenderMediaItemProps {
   item: MediaItem;
   width?: number;
   cKey?: string;
+  parentId?: string
   shape?: "circle" | "square";
   size?: "small" | "medium" | "large";
 }
@@ -42,6 +44,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   currentIndex,
   width,
   cKey,
+  parentId,
   shape = "square",
   size = "large",
 }) => {
@@ -57,6 +60,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   const { scrollRef, scrollHeight } = useScrollContext()
   const [topPosition, setTopPosition] = useState<number | null>(null)
   const [bottomPosition, setBottomPosition] = useState<number | null>(null)
+  const { currentItemId } = useCarouselInViewContext()
 
   useEffect(() => {
     if (currentIndex == index && inView && isFocused) {
@@ -100,6 +104,16 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       }
     }
   }, [videoRef.current, nativeVideoRef.current])
+
+  useEffect(() => {
+    if (!parentId)
+      return;
+    if (parentId == currentItemId) {
+      setInView(true);
+    } else {
+      setInView(false);
+    }
+  }, [currentItemId])
 
   useEffect(() => {
     if (topPosition == null || bottomPosition == null || scrollHeight === undefined) {

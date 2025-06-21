@@ -22,6 +22,7 @@ interface CarouselProps {
   data: MediaItem[];
   theme: Theme;
   width?: number;
+  parentId?: string;
   onImagePress?: (data: MediaItem) => void;
 
   // To be removed later
@@ -132,6 +133,7 @@ const Carousel: React.FC<CarouselProps> = ({
               cKey={"carousel" + key}
               item={item}
               key={index}
+              parentId={props.parentId}
             />
           )}
           style={[styles.carouselContainer]}

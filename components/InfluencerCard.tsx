@@ -173,6 +173,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           data={images}
           onImagePress={onImagePress}
           theme={theme}
+          parentId={influencer.id}
         />
 
         <View style={styles.content}>

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
+import { useCarouselInViewContext } from './CarouselInViewContext';
 
 interface IProps<T = any> {
     data: T[];
@@ -21,6 +22,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [currentGlobalIndex, setCurrentGlobalIndex] = useState(0)
     const [showOverlay, setShowOverlay] = useState(true);
+    const { setCurrentItemId } = useCarouselInViewContext()
 
     useEffect(() => {
         if (!props.data || props.data.length < 3) {
@@ -30,6 +32,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         if (data.length != 0) return
 
         setData(props.data.slice(0, 3));
+        setCurrentItemId(props.data[0][props.objectKey]);
         Console.log("CarouselScroller initialized with data length:", props.data.length);
     }, [props.data])
 
@@ -69,6 +72,8 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         // if (!data[index])
         //     return;
         const key = data[index][props.objectKey]
+        setCurrentItemId(key);
+
         const globalIndex = props.data.findIndex((item) => item[props.objectKey] === key)
         if (globalIndex == -1)
             return;
