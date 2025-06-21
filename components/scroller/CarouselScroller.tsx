@@ -74,12 +74,9 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     }
 
     const refreshCarousel = (index: number) => {
-        Console.log("Refreshing carousel at index:", index);
-        // if (!data[index])
-        //     return;
+        Console.log("Refreshing carousel at index:", index, currentGlobalIndex, props.data.length);
         const key = data[index][props.objectKey]
         setCurrentItemId(key);
-
         const globalIndex = props.data.findIndex((item) => item[props.objectKey] === key)
         if (globalIndex == -1)
             return;
@@ -88,7 +85,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         }
         setCurrentIndex(index);
         setCurrentGlobalIndex(globalIndex);
-        setLoop(globalIndex > 0 && globalIndex < props.data.length - 1);
+        setLoop(globalIndex > 0);
 
         setData((prevData) => {
             const newData = [...prevData];
@@ -122,10 +119,6 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     data={data}
                     renderItem={props.renderItem}
                     mode="parallax"
-                    // modeConfig={{
-                    //     parallaxScrollingScale: 0.95,
-                    //     parallaxAdjacentItemScale: 0.8,
-                    // }}
                     style={{
                         paddingVertical: 16
                     }}
