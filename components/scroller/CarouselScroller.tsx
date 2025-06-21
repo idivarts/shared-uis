@@ -1,4 +1,5 @@
 import { Console } from '@/shared-libs/utils/console';
+import useBreakpoints from '@/shared-libs/utils/use-breakpoints';
 import { faArrowLeft, faArrowRight, faPeopleRoof } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme, useTheme } from '@react-navigation/native';
@@ -26,7 +27,8 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const { setCurrentItemId } = useCarouselInViewContext()
 
     const theme = useTheme();
-    const styles = stylesFn(theme, Platform.OS == "web");
+    const { xl } = useBreakpoints()
+    const styles = stylesFn(theme, Platform.OS == "web" && xl);
 
     useEffect(() => {
         if (!props.data || props.data.length < 3) {
@@ -125,7 +127,6 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     //     parallaxAdjacentItemScale: 0.8,
                     // }}
                     style={{
-                        transform: [props.vertical ? { translateY: 3 } : { translateX: 5 }],
                         paddingVertical: 16
                     }}
                 />
@@ -138,20 +139,18 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                 )}
             </View>
             {!props.vertical &&
-                (Platform.OS == "web" ? <View style={styles.floatingButtonsContainer}>
-                    <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
-                        <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
-                        <Text style={styles.buttonLabel}>Previous</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[currentIndex], currentGlobalIndex)}>
-                        <FontAwesomeIcon icon={faPeopleRoof} size={32} color="#fff" />
-                        <Text style={styles.buttonLabel}>View</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
-                        <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
-                        <Text style={styles.buttonLabel}>Next</Text>
-                    </TouchableOpacity>
-                </View> : <View style={styles.floatingButtonsContainer}>
+                (Platform.OS == "web" ? <>
+                    <View style={styles.floatingButtonsContainer}>
+                        <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
+                            <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
+                            <Text style={styles.buttonLabel}>Previous</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
+                            <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
+                            <Text style={styles.buttonLabel}>Next</Text>
+                        </TouchableOpacity>
+                    </View>
+                </> : <View style={styles.floatingButtonsContainer}>
                     <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
                         <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
                         <Text style={styles.buttonLabel}>Previous</Text>
@@ -174,11 +173,12 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
     floatingButtonsContainer: isWeb ? {
         position: 'absolute',
-        bottom: 20,
+        bottom: "40%",
         width: '100%',
         flexDirection: 'row',
-        justifyContent: 'space-evenly',
-        zIndex: 999,
+        justifyContent: 'space-between',
+        paddingHorizontal: 100,
+        pointerEvents: 'box-none',
     } : {
         position: 'absolute',
         bottom: 20,
@@ -187,7 +187,16 @@ const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
         justifyContent: 'space-evenly',
         zIndex: 999,
     },
-    floatingButton: {
+    floatingButton: isWeb ? {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 120,
+        height: 120,
+        borderRadius: 32,
+        backgroundColor: '#ccc',
+        elevation: 5,
+        padding: 16,
+    } : {
         alignItems: 'center',
         justifyContent: 'center',
         width: 64,
@@ -203,7 +212,18 @@ const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
     rejectButton: {
         backgroundColor: 'rgba(214, 138, 222, 1)', // pastel red/pink with transparency
     },
-    profileButton: {
+    profileButton: isWeb ? {
+        backgroundColor: 'rgba(173, 216, 230, 1)', // pastel blue with transparency
+        position: 'absolute',
+        right: "50%",
+        bottom: 0,
+        transform: [{ translateX: 60 }],
+        width: 120,
+        height: 60,
+        borderRadius: 32,
+        elevation: 5,
+        padding: 16,
+    } : {
         backgroundColor: 'rgba(173, 216, 230, 1)', // pastel blue with transparency
     },
     buttonLabel: {
