@@ -86,6 +86,9 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     renderItem={({ item, index }) => {
                         if (Math.abs(currentIndex - index) > 1) {
                             return <View></View>
+                        } else if (props.vertical) {
+                            // @ts-ignore
+                            return props.renderItem({ item, index })
                         } else {
                             return <IOScroll setRef={index == currentIndex}>
                                 {
