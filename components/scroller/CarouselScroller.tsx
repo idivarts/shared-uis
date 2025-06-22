@@ -28,7 +28,8 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 
     const theme = useTheme();
     const { xl } = useBreakpoints()
-    const styles = stylesFn(theme, Platform.OS == "web" && xl);
+    const isWeb = Platform.OS == "web" && xl
+    const styles = stylesFn(theme, isWeb);
     useEffect(() => {
         if (!props.data || props.data.length == 0) {
             Console.error("CarouselScroller requires at least 1 items to function properly", "CarouselScroller");
@@ -100,7 +101,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         }
                     }}
                     mode="parallax"
-                    modeConfig={Platform.OS == "web" ? {
+                    modeConfig={isWeb ? {
                         parallaxScrollingScale: 0.95,
                         parallaxScrollingOffset: 0,
                         parallaxAdjacentItemScale: 0.85,
@@ -122,7 +123,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                 )}
             </View>
             {!props.vertical &&
-                (Platform.OS == "web" ? <>
+                (isWeb ? <>
                     <View style={styles.floatingButtonsContainer}>
                         <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
                             <FontAwesomeIcon icon={faArrowLeft} size={32} color={Colors(theme).white} />
