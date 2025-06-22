@@ -102,7 +102,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     }}
                     mode="parallax"
                     modeConfig={isWeb ? {
-                        parallaxScrollingScale: 0.95,
+                        parallaxScrollingScale: 1,
                         parallaxScrollingOffset: 0,
                         parallaxAdjacentItemScale: 0.85,
                     } : {
