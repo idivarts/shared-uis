@@ -24,7 +24,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const { data } = props
     const [currentIndex, setCurrentIndex] = useState(0)
     const [showOverlay, setShowOverlay] = useState(true);
-    const { setCurrentItemId } = useCarouselInViewContext()
+    const { setCurrentItemId, containerHeight } = useCarouselInViewContext()
 
     const theme = useTheme();
     const { xl } = useBreakpoints()
@@ -83,7 +83,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     vertical={props.vertical}
                     onSnapToItem={refreshCarousel}
                     width={props.width}
-                    height={props.height}
+                    height={containerHeight || props.height}
                     data={data}
                     renderItem={({ item, index }) => {
                         if (Math.abs(currentIndex - index) > 2) {
@@ -223,7 +223,7 @@ const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
         position: 'absolute',
         top: '50%',
         left: '50%',
-        transform: [{ translateX: -75 }, { translateY: -25 }],
+        transform: [{ translateX: -100 }, { translateY: -25 }],
         backgroundColor: 'rgba(0, 0, 0, 0.2)',
         paddingHorizontal: 20,
         paddingVertical: 12,
