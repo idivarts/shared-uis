@@ -1,6 +1,7 @@
 import { IOScroll } from '@/shared-libs/contexts/scroll-context';
 import { Console } from '@/shared-libs/utils/console';
 import useBreakpoints from '@/shared-libs/utils/use-breakpoints';
+import Colors from '@/shared-uis/constants/Colors';
 import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme, useTheme } from '@react-navigation/native';
@@ -41,9 +42,9 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 
     useEffect(() => {
         setTimeout(() => {
-            carouselRef.current?.scrollTo({ index: 1, animated: true });
+            carouselRef.current?.scrollTo({ index: currentIndex + 1, animated: true });
             setTimeout(() => {
-                carouselRef.current?.scrollTo({ index: 0, animated: true });
+                carouselRef.current?.scrollTo({ index: currentIndex, animated: true });
             }, 300);
         }, 500); // delay to ensure initial mount
         setTimeout(() => {
@@ -84,7 +85,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     height={props.height}
                     data={data}
                     renderItem={({ item, index }) => {
-                        if (Math.abs(currentIndex - index) > 1) {
+                        if (Math.abs(currentIndex - index) > 2) {
                             return <View></View>
                         } else if (props.vertical) {
                             // @ts-ignore
@@ -99,10 +100,14 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         }
                     }}
                     mode="parallax"
-                    modeConfig={{
+                    modeConfig={Platform.OS == "web" ? {
                         parallaxScrollingScale: 0.95,
                         parallaxScrollingOffset: 0,
                         parallaxAdjacentItemScale: 0.85,
+                    } : {
+                        parallaxScrollingScale: 0.90,
+                        parallaxScrollingOffset: 50,
+                        parallaxAdjacentItemScale: 0.80,
                     }}
                     style={{
                         paddingVertical: 16
@@ -120,23 +125,23 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                 (Platform.OS == "web" ? <>
                     <View style={styles.floatingButtonsContainer}>
                         <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
-                            <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
+                            <FontAwesomeIcon icon={faArrowLeft} size={32} color={Colors(theme).white} />
                             <Text style={styles.buttonLabel}>Previous</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
-                            <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
+                            <FontAwesomeIcon icon={faArrowRight} size={32} color={Colors(theme).white} />
                             <Text style={styles.buttonLabel}>Next</Text>
                         </TouchableOpacity>
                     </View>
                 </> : <View style={styles.floatingButtonsContainer}>
-                    <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
-                        <FontAwesomeIcon icon={faArrowLeft} size={32} color="#fff" />
+                    {/* <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
+                        <FontAwesomeIcon icon={faArrowLeft} size={32} color={Colors(theme).white} />
                         <Text style={styles.buttonLabel}>Previous</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
-                        <FontAwesomeIcon icon={faArrowRight} size={32} color="#fff" />
+                        <FontAwesomeIcon icon={faArrowRight} size={32} color={Colors(theme).white} />
                         <Text style={styles.buttonLabel}>Next</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                 </View>)
             }
         </>
@@ -167,8 +172,12 @@ const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
         width: 120,
         height: 120,
         borderRadius: 32,
-        backgroundColor: '#ccc',
-        elevation: 5,
+        backgroundColor: Colors(theme).gray200,
+        shadowColor: Colors(theme).black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 6,
         padding: 16,
     } : {
         alignItems: 'center',
@@ -176,33 +185,37 @@ const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: '#ccc',
-        elevation: 5,
+        backgroundColor: Colors(theme).gray200,
+        shadowColor: Colors(theme).black,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 3,
+        elevation: 6,
         padding: 16,
     },
     acceptButton: {
-        backgroundColor: 'rgba(144, 238, 144, 1)', // pastel green with transparency
+        backgroundColor: Colors(theme).primary, // pastel green with transparency
     },
     rejectButton: {
-        backgroundColor: 'rgba(214, 138, 222, 1)', // pastel red/pink with transparency
+        backgroundColor: Colors(theme).yellow100, // pastel red/pink with transparency
     },
-    profileButton: isWeb ? {
-        backgroundColor: 'rgba(173, 216, 230, 1)', // pastel blue with transparency
-        position: 'absolute',
-        right: "50%",
-        bottom: 0,
-        transform: [{ translateX: 60 }],
-        width: 120,
-        height: 60,
-        borderRadius: 32,
-        elevation: 5,
-        padding: 16,
-    } : {
-        backgroundColor: 'rgba(173, 216, 230, 1)', // pastel blue with transparency
-    },
+    // profileButton: isWeb ? {
+    //     backgroundColor: 'rgba(173, 216, 230, 1)', // pastel blue with transparency
+    //     position: 'absolute',
+    //     right: "50%",
+    //     bottom: 0,
+    //     transform: [{ translateX: 60 }],
+    //     width: 120,
+    //     height: 60,
+    //     borderRadius: 32,
+    //     elevation: 5,
+    //     padding: 16,
+    // } : {
+    //     backgroundColor: 'rgba(173, 216, 230, 1)', // pastel blue with transparency
+    // },
     buttonLabel: {
         fontSize: 12,
-        color: 'white',
+        color: Colors(theme).white,
         marginTop: 4,
     },
     overlay: {
@@ -217,7 +230,7 @@ const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
         zIndex: 10,
     },
     overlayText: {
-        color: '#fff',
+        color: Colors(theme).white,
         fontSize: 16,
         fontWeight: '500',
     },
