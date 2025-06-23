@@ -30,7 +30,7 @@ export const InfluencerMetrics = ({ user, social, action = null }: CardActionsPr
   const followers = convertToKUnits(metrics.followers) || social?.instaProfile?.approxMetrics?.followers || "";
   const reach = convertToKUnits(metrics.reach) || social?.instaProfile?.approxMetrics?.views || "";
   const interations = convertToKUnits(metrics.engagement) || social?.instaProfile?.approxMetrics?.interactions || "";
-  if (!followers && !reach && !metrics.rating) {
+  if (!followers && !reach && !interations) { // && !metrics.rating
     return null
   }
 
