@@ -8,10 +8,10 @@ import {
   faPeopleRoof
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { useTheme } from "@react-navigation/native";
+import { Theme, useTheme } from "@react-navigation/native";
 import React from "react";
-import { StyleSheet } from "react-native";
-import { Text, View } from "../theme/Themed";
+import { StyleSheet, View } from "react-native";
+import { Text } from "react-native-paper";
 
 type CardActionsProps = {
   user: Partial<IUsers> & { id?: string }
@@ -33,6 +33,8 @@ export const InfluencerMetrics = ({ user, social, action = null }: CardActionsPr
   if (!followers && !reach && !metrics.rating) {
     return null
   }
+
+  const styles = stylesFn(theme)
 
   return (
     <View style={styles.container}>
@@ -91,7 +93,7 @@ export const InfluencerMetrics = ({ user, social, action = null }: CardActionsPr
   );
 };
 
-const styles = StyleSheet.create({
+const stylesFn = (theme: Theme) => StyleSheet.create({
   container: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -115,11 +117,12 @@ const styles = StyleSheet.create({
   },
   metricLabel: {
     fontSize: 12,
-    color: '#888',
+    color: Colors(theme).textSecondary,
     lineHeight: 16,
   },
   metricText: {
     fontSize: 14,
+    color: Colors(theme).text,
     fontWeight: 'bold',
   },
 });
