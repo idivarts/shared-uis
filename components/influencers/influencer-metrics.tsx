@@ -5,8 +5,7 @@ import { convertToKUnits } from "@/shared-uis/utils/conversion";
 import {
   faArrowUpWideShort,
   faChartLine,
-  faFaceSmile,
-  faPeopleRoof,
+  faPeopleRoof
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -43,45 +42,49 @@ export const InfluencerMetrics = ({ user, social, action = null }: CardActionsPr
             <FontAwesomeIcon
               icon={faPeopleRoof}
               color={Colors(theme).primary}
-              size={16}
+              size={24}
             />
-            <Text style={styles.metricText}>
-              {followers}
-            </Text>
+            <View style={styles.metricContent}>
+              <Text style={styles.metricText}>{followers}</Text>
+              <Text style={styles.metricLabel}>Followers</Text>
+            </View>
           </View>}
         {!!reach &&
           <View style={styles.metric}>
             <FontAwesomeIcon
               icon={faChartLine}
               color={Colors(theme).primary}
-              size={16}
+              size={24}
             />
-            <Text style={styles.metricText}>
-              {reach}
-            </Text>
+            <View style={styles.metricContent}>
+              <Text style={styles.metricText}>{reach}</Text>
+              <Text style={styles.metricLabel}>Reach</Text>
+            </View>
           </View>}
         {!!interations &&
           <View style={styles.metric}>
             <FontAwesomeIcon
               icon={faArrowUpWideShort}
               color={Colors(theme).primary}
-              size={16}
+              size={24}
             />
-            <Text style={styles.metricText}>
-              {interations}
-            </Text>
+            <View style={styles.metricContent}>
+              <Text style={styles.metricText}>{interations}</Text>
+              <Text style={styles.metricLabel}>Interactions</Text>
+            </View>
           </View>}
-        {!!metrics.rating &&
+        {/* {!!metrics.rating &&
           <View style={styles.metric}>
             <FontAwesomeIcon
               icon={faFaceSmile}
               color={Colors(theme).primary}
-              size={16}
+              size={24}
             />
-            <Text style={styles.metricText}>
-              {metrics.rating}
-            </Text>
-          </View>}
+            <View style={styles.metricContent}>
+              <Text style={styles.metricText}>{metrics.rating}</Text>
+              <Text style={styles.metricLabel}>Rating</Text>
+            </View>
+          </View>} */}
       </View>
       {action}
     </View>
@@ -104,10 +107,19 @@ const styles = StyleSheet.create({
   metric: {
     flexDirection: "row",
     alignItems: "center",
-    marginRight: 16,
+    marginRight: 24,
+  },
+  metricContent: {
+    marginLeft: 8,
+    alignItems: 'flex-start',
+  },
+  metricLabel: {
+    fontSize: 12,
+    color: '#888',
+    lineHeight: 16,
   },
   metricText: {
-    marginLeft: 4,
     fontSize: 14,
+    fontWeight: 'bold',
   },
 });
