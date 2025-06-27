@@ -213,7 +213,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               }
             }}
           >
-            <InfluencerMetrics user={influencer} action={props.cardActionNode} social={socials} />
+            <InfluencerMetrics user={influencer} social={socials} />
+            {props.cardActionNode && <View style={{ paddingVertical: 16 }}>
+              {props.cardActionNode}
+            </View>}
             <Text>
               <RenderHTML
                 contentWidth={screenWidth}
