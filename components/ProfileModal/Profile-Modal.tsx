@@ -4,18 +4,13 @@ import { Console } from "@/shared-libs/utils/console";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
-import { convertToKUnits } from "@/shared-uis/utils/conversion";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
-  faArrowTrendUp,
-  faArrowUpWideShort,
   faClock,
   faClose,
   faEnvelope,
   faLocation,
-  faPeopleRoof,
-  faPhone,
-  faStar
+  faPhone
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
@@ -30,6 +25,7 @@ import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
+import { InfluencerMetrics } from "../influencers/influencer-metrics";
 import SelectGroup from "../select/select-group";
 
 interface ProfileBottomSheetProps {
@@ -77,10 +73,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
 
   const screenWidth = Dimensions.get("window").width;
-
-  const followers = convertToKUnits(influencer?.backend?.followers || 0) || primarySocial?.instaProfile?.approxMetrics?.followers || "";
-  const reach = convertToKUnits(influencer?.backend?.reach || 0) || primarySocial?.instaProfile?.approxMetrics?.views || "";
-  const interations = convertToKUnits(influencer?.backend?.engagement || 0) || primarySocial?.instaProfile?.approxMetrics?.interactions || "";
 
   const fetchPrimarySocialMedia = async () => {
     try {
@@ -160,6 +152,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 {mediaProcessing && mediaProcessing.length > 0 && (
                   <Carousel data={mediaProcessing || []} theme={theme} />
                 )}
+                <View style={{ paddingHorizontal: 16 }}>
+                  <InfluencerMetrics user={influencer} social={primarySocial} />
+                </View>
               </View>}
 
             <View style={[{ flex: 1 }, isTwoColumn ? {} : { marginTop: 16 }]}>
@@ -279,62 +274,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     </View>
                   )}
 
-
-                  <View style={styles.divider} />
-
-                  {/* Reach */}
-                  {followers &&
-                    <View style={styles.row}>
-                      <FontAwesomeIcon
-                        icon={faPeopleRoof}
-                        size={16}
-                        color={Colors(theme).primary}
-                        style={styles.icon}
-                      />
-                      <Text style={styles.subTextHeading}>
-                        {followers} Followers
-                      </Text>
-                    </View>}
-
-                  {reach &&
-                    <View style={styles.row}>
-                      <FontAwesomeIcon
-                        icon={faArrowTrendUp}
-                        size={16}
-                        color={Colors(theme).primary}
-                        style={styles.icon}
-                      />
-                      <Text style={styles.subTextHeading}>
-                        {reach} Reach
-                      </Text>
-                    </View>}
-
-                  {/* Engagement */}
-                  {interations &&
-                    <View style={styles.row}>
-                      <FontAwesomeIcon
-                        icon={faArrowUpWideShort}
-                        size={16}
-                        color={Colors(theme).primary}
-                        style={styles.icon}
-                      />
-                      <Text style={styles.subTextHeading}>
-                        {interations} Engagement
-                      </Text>
-                    </View>}
-
-                  {/* Rating */}
-                  <View style={styles.row}>
-                    <FontAwesomeIcon
-                      icon={faStar}
-                      size={16}
-                      color={Colors(theme).primary}
-                      style={styles.icon}
-                    />
-                    <Text style={styles.subTextHeading}>
-                      {influencer?.backend?.rating || 0} Rating
-                    </Text>
-                  </View>
                 </View>
               </View>
 
