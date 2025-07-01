@@ -146,7 +146,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         {previewType.value === "Preview" ? (
           <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: isTwoColumn ? 20 : 0 }}>
             {isTwoColumn ?
-              <View style={[styles.carouselContainer, { flex: 1, borderColor: Colors(theme).border, borderWidth: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
+              <View style={[styles.carouselContainer, { flex: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
                 <InfluencerCard
                   // @ts-ignore
                   influencer={{ ...influencer, socials: [primarySocial?.isInstagram ? primarySocial?.instaProfile?.username : primarySocial?.fbProfile?.name] }}
@@ -155,7 +155,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 />
               </View> :
               <View style={[styles.carouselContainer,
-              { borderColor: Colors(theme).border, borderWidth: 1 },
               Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } :
                 { alignSelf: "center" }]}>
                 {mediaProcessing && mediaProcessing.length > 0 && (
