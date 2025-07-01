@@ -25,8 +25,7 @@ export const stylesFn = (theme: any) =>
       bottom: 20,
     },
     header: {
-      padding: 20,
-      paddingTop: 0,
+      paddingHorizontal: 20,
       flexDirection: "row",
       alignItems: "center",
     },
@@ -85,6 +84,7 @@ export const stylesFn = (theme: any) =>
     chipContainer: {
       flexDirection: "row",
       paddingHorizontal: 20,
+      paddingTop: 8,
       flexWrap: "wrap",
     },
     chip: {
