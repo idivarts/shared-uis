@@ -157,7 +157,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 </View>
               </View>}
 
-            <View style={[{ flex: 1 }, isTwoColumn ? {} : { marginTop: 16 }]}>
+            <View style={[{ flex: 1, marginTop: 16 }]}>
               <View style={[styles.header]}>
                 <View style={styles.profileInfo}>
                   <Text style={styles.name}>{influencer?.name}</Text>
