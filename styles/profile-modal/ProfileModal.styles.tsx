@@ -37,7 +37,7 @@ export const stylesFn = (theme: any) =>
       fontSize: 26,
       fontWeight: "bold",
       color: Colors(theme).text,
-      marginBottom: 5,
+      marginBottom: 16,
     },
     subText: {
       color: Colors(theme).text,
