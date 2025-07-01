@@ -277,15 +277,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 </View>
               </View>
 
-              {actionCard}
-
               {influencer?.profile?.category?.length !== 0 && (
                 <View
                   style={[
                     styles.chipContainer,
-                    {
-                      paddingTop: actionCard ? 20 : 0,
-                    },
                   ]}
                 >
                   {influencer?.profile?.category &&
@@ -296,6 +291,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     ))}
                 </View>
               )}
+              {actionCard}
+
               <View style={styles.aboutContainer}>
                 {influencer?.profile?.content?.about ? (
                   <View style={styles.aboutCard}>
