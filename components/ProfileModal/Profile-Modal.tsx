@@ -142,7 +142,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 <InfluencerCard
                   // @ts-ignore
                   influencer={{ ...influencer, socials: [primarySocial?.isInstagram ? primarySocial?.instaProfile?.username : primarySocial?.fbProfile?.name] }}
-                  ToggleModal={() => { }}
                   type="explore"
                 />
               </View> :

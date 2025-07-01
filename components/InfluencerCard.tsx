@@ -168,28 +168,29 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               </Text>}
           </Pressable>
 
-          <Pressable
-            onPressIn={(e) => {
-              startX.current = e.nativeEvent.pageX;
-              startY.current = e.nativeEvent.pageY;
-            }}
-            onPressOut={(e) => {
-              const dx = Math.abs(e.nativeEvent.pageX - startX.current);
-              const dy = Math.abs(e.nativeEvent.pageY - startY.current);
-              if (dx < 5 && dy < 5) {
-                props.ToggleModal?.();
-                if (props?.setSelectedInfluencer) {
-                  props.setSelectedInfluencer(props.influencer);
+          {props.ToggleModal &&
+            <Pressable
+              onPressIn={(e) => {
+                startX.current = e.nativeEvent.pageX;
+                startY.current = e.nativeEvent.pageY;
+              }}
+              onPressOut={(e) => {
+                const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+                const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+                if (dx < 5 && dy < 5) {
+                  props.ToggleModal?.();
+                  if (props?.setSelectedInfluencer) {
+                    props.setSelectedInfluencer(props.influencer);
+                  }
                 }
-              }
-            }}
-          >
-            <FontAwesomeIcon
-              icon={faEllipsis}
-              size={24}
-              color={Colors(theme).text}
-            />
-          </Pressable>
+              }}
+            >
+              <FontAwesomeIcon
+                icon={faEllipsis}
+                size={24}
+                color={Colors(theme).text}
+              />
+            </Pressable>}
         </View>
 
         <Carousel
