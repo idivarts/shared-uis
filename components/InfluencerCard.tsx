@@ -218,25 +218,23 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             {props.cardActionNode && <View style={{ paddingVertical: 16 }}>
               {props.cardActionNode}
             </View>}
-            <Text>
-              <RenderHTML
-                contentWidth={screenWidth}
-                source={{
-                  html:
-                    truncateText(
-                      influencer?.profile?.content?.about as string,
-                      160
-                    ) || "<p>No content available.</p>",
-                }}
-                defaultTextProps={{
-                  style: {
-                    color: Colors(theme).text,
-                    fontSize: 16,
-                    lineHeight: 22,
-                  },
-                }}
-              />
-            </Text>
+            {influencer?.profile?.content?.about &&
+              <Text>
+                <RenderHTML
+                  contentWidth={screenWidth}
+                  source={{
+                    html:
+                      truncateText(influencer?.profile?.content?.about as string, 160),
+                  }}
+                  defaultTextProps={{
+                    style: {
+                      color: Colors(theme).text,
+                      fontSize: 16,
+                      lineHeight: 22,
+                    },
+                  }}
+                />
+              </Text>}
           </Pressable>
         </View>
         {props.footerNode}
