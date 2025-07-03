@@ -1,6 +1,7 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
+import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
@@ -14,7 +15,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
-import { useRouter } from "expo-router";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, Image, Linking, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
@@ -58,7 +58,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const styles = stylesFn(theme);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
   const { openModal } = useConfirmationModel()
-  const router = useRouter()
+  const router = useMyNavigation()
 
   const mediaProcessing = carouselMedia
     ? carouselMedia
