@@ -26,7 +26,6 @@ import {
   ViewStyle
 } from "react-native";
 import { Avatar, Card } from "react-native-paper";
-import RenderHTML from "react-native-render-html";
 import Colors from "../constants/Colors";
 import { MAX_WIDTH_WEB } from "./carousel/carousel-util";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
@@ -219,21 +218,12 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
               {props.cardActionNode}
             </View>}
             {influencer?.profile?.content?.about &&
-              <Text>
-                <RenderHTML
-                  contentWidth={screenWidth}
-                  source={{
-                    html:
-                      truncateText(influencer?.profile?.content?.about as string, 160),
-                  }}
-                  defaultTextProps={{
-                    style: {
-                      color: Colors(theme).text,
-                      fontSize: 16,
-                      lineHeight: 22,
-                    },
-                  }}
-                />
+              <Text style={{
+                color: Colors(theme).text,
+                fontSize: 16,
+                lineHeight: 22,
+              }}>
+                {truncateText(influencer?.profile?.content?.about as string, 160)}
               </Text>}
           </Pressable>
         </View>
