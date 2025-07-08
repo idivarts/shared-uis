@@ -23,6 +23,7 @@ interface IProps<T = any> {
 const CarouselScroller: React.FC<IProps> = (props) => {
     const { data } = props
     const [currentIndex, setCurrentIndex] = useState(0)
+    const [isInitiated, setIsInitiated] = useState(false)
     const [showOverlay, setShowOverlay] = useState(true);
     const { setCurrentItemId, containerHeight } = useCarouselInViewContext()
 
@@ -30,28 +31,33 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const { xl } = useBreakpoints()
     const isWeb = Platform.OS == "web" && xl
     const styles = stylesFn(theme, isWeb);
-    useEffect(() => {
-        if (!props.data || props.data.length == 0) {
-            Console.error("CarouselScroller requires at least 1 items to function properly", "CarouselScroller");
-            return;
-        }
-        setCurrentItemId(props.data[currentIndex][props.objectKey]);
-        Console.log("CarouselScroller initialized with data length:", props.data.length);
-    }, [])
 
     const carouselRef = useRef<ICarouselInstance>(null);
 
     useEffect(() => {
+        if (!props.data || props.data.length == 0) {
+            Console.error("CarouselScroller requires at least 1 items to function properly", "CarouselScroller");
+            return;
+        } else
+            setIsInitiated(true)
+        if (isInitiated)
+            return;
+
+        setCurrentItemId(props.data[currentIndex][props.objectKey]);
+        Console.log("CarouselScroller initialized with data length:", props.data.length);
+
         setTimeout(() => {
-            carouselRef.current?.scrollTo({ index: currentIndex + 1, animated: true });
-            setTimeout(() => {
-                carouselRef.current?.scrollTo({ index: currentIndex, animated: true });
-            }, 300);
+            if (currentIndex + 1 < data.length) {
+                carouselRef.current?.scrollTo({ index: currentIndex + 1, animated: true });
+                setTimeout(() => {
+                    carouselRef.current?.scrollTo({ index: currentIndex, animated: true });
+                }, 300);
+            }
         }, 500); // delay to ensure initial mount
         setTimeout(() => {
             setShowOverlay(false);
         }, 2000);
-    }, []);
+    }, [data]);
 
 
     const handleSwipe = (direction: 'accept' | 'reject') => {
