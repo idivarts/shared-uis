@@ -303,14 +303,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                           influencer?.profile?.content?.about ||
                           "<p>No content available.</p>",
                       }}
-                      defaultTextProps={{
-                        style: {
-                          color: theme.dark
-                            ? Colors(theme).text
-                            : Colors(theme).gray300,
-                          fontSize: 16,
-                          lineHeight: 22,
-                        },
+                      baseStyle={{
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
                       }}
                     />
                   </View>
@@ -326,14 +324,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                           influencer?.profile?.content?.socialMediaHighlight ||
                           "<p>No content available.</p>",
                       }}
-                      defaultTextProps={{
-                        style: {
-                          color: theme.dark
-                            ? Colors(theme).text
-                            : Colors(theme).gray300,
-                          fontSize: 16,
-                          lineHeight: 22,
-                        },
+                      baseStyle={{
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
                       }}
                     />
                   </View>
@@ -348,14 +344,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                           influencer?.profile?.content?.collaborationGoals ||
                           "<p>No content available.</p>",
                       }}
-                      defaultTextProps={{
-                        style: {
-                          color: theme.dark
-                            ? Colors(theme).text
-                            : Colors(theme).gray300,
-                          fontSize: 16,
-                          lineHeight: 22,
-                        },
+                      baseStyle={{
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
                       }}
                     />
                   </View>
@@ -370,14 +364,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                           influencer?.profile?.content?.audienceInsights ||
                           "<p>No content available.</p>",
                       }}
-                      defaultTextProps={{
-                        style: {
-                          color: theme.dark
-                            ? Colors(theme).text
-                            : Colors(theme).gray300,
-                          fontSize: 16,
-                          lineHeight: 22,
-                        },
+                      baseStyle={{
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
                       }}
                     />
                   </View>
@@ -392,14 +384,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                           influencer?.profile?.content?.funFactAboutUser ||
                           "<p>No content available.</p>",
                       }}
-                      defaultTextProps={{
-                        style: {
-                          color: theme.dark
-                            ? Colors(theme).text
-                            : Colors(theme).gray300,
-                          fontSize: 16,
-                          lineHeight: 22,
-                        },
+                      baseStyle={{
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
                       }}
                     />
                   </View>
