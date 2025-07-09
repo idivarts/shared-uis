@@ -89,7 +89,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   useEffect(() => {
     if (Platform.OS === 'web' && videoRef.current) {
       const rect = videoRef.current.getBoundingClientRect();
-      console.log("Scroll Calculations :", cKey, rect.top, rect.bottom, rect.left, rect.right);
+      // console.log("Scroll Calculations :", cKey, rect.top, rect.bottom, rect.left, rect.right);
       setTopPosition(rect.top)
       setBottomPosition(rect.bottom)
     }
@@ -97,7 +97,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       const handle = findNodeHandle(nativeVideoRef.current);
       if (handle) {
         UIManager.measure(handle, (x, y, width, height, pageX, pageY) => {
-          console.log("Scroll Calculations :", cKey, { x, y, width, height, pageX, pageY });
+          // console.log("Scroll Calculations :", cKey, { x, y, width, height, pageX, pageY });
           setTopPosition(pageY);
           setBottomPosition(pageY + height);
         });
