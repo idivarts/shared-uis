@@ -178,7 +178,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       ]}
       shape={shape}
       size={size}
-      resizeMode={Platform.OS === "web" ? "contain" : "cover"}
+      resizeMode={"contain"}
       resizeMethod={"resize"}
       onLoadEnd={() => setIsLoading(false)}
       onError={() => {
@@ -283,7 +283,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
                 width: width || "100%",
               },
             ]}
-            resizeMode={ResizeMode.COVER}
+            resizeMode={ResizeMode.CONTAIN}
             isLooping={false}
             useNativeControls
             shouldPlay={true}
