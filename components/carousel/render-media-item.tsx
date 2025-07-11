@@ -64,27 +64,29 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
 
   useEffect(() => {
     if (currentIndex == index && inView && isFocused) {
-      if (videoRef.current) {
-        videoRef.current.play();
-        if (index != 0)
-          setIsMuted(false)
-        // setIsMuted(false)
-      }
-      if (nativeVideoRef.current) {
-        nativeVideoRef.current.playAsync();
-        if (index != 0)
-          setIsMuted(false)
-        // setIsMuted(false)
-      }
-    } else {
-      if (videoRef.current) {
-        videoRef.current.pause();
-      }
-      if (nativeVideoRef.current) {
-        nativeVideoRef.current.pauseAsync();
+      if (!parentId || parentId == currentItemId) {
+        if (videoRef.current) {
+          videoRef.current.play();
+          if (index != 0)
+            setIsMuted(false)
+          // setIsMuted(false)
+        }
+        if (nativeVideoRef.current) {
+          nativeVideoRef.current.playAsync();
+          if (index != 0)
+            setIsMuted(false)
+          // setIsMuted(false)
+        }
+      } else {
+        if (videoRef.current) {
+          videoRef.current.pause();
+        }
+        if (nativeVideoRef.current) {
+          nativeVideoRef.current.pauseAsync();
+        }
       }
     }
-  }, [currentIndex, inView, isFocused])
+  }, [currentIndex, inView, isFocused, currentItemId])
 
   useEffect(() => {
     if (Platform.OS === 'web' && videoRef.current) {
