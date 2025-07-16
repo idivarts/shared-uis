@@ -41,6 +41,7 @@ interface ProfileBottomSheetProps {
   isPhoneMasked?: boolean;
   theme: Theme;
   showCampaignGoals?: boolean;
+  showInfluencerGoals?: boolean
 }
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
@@ -55,7 +56,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   posts = [],
   isInstagram,
   isPhoneMasked = true,
-  showCampaignGoals = true
+  showCampaignGoals = true,
+  showInfluencerGoals = false
 }) => {
   const styles = stylesFn(theme);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
@@ -344,6 +346,26 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       source={{
                         html:
                           influencer?.profile?.content?.collaborationGoals ||
+                          "<p>No content available.</p>",
+                      }}
+                      baseStyle={{
+                        color: theme.dark
+                          ? Colors(theme).text
+                          : Colors(theme).gray300,
+                        fontSize: 16,
+                        lineHeight: 22,
+                      }}
+                    />
+                  </View>
+                ) : null}
+                {(showInfluencerGoals && influencer?.profile?.content?.influencerConectionGoals) ? (
+                  <View style={styles.aboutCard}>
+                    <Title style={styles.cardColor}>Influencer Connection Goals</Title>
+                    <RenderHTML
+                      contentWidth={screenWidth}
+                      source={{
+                        html:
+                          influencer?.profile?.content?.influencerConectionGoals ||
                           "<p>No content available.</p>",
                       }}
                       baseStyle={{
