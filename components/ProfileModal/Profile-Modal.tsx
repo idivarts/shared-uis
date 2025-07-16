@@ -40,6 +40,7 @@ interface ProfileBottomSheetProps {
   isInstagram?: boolean;
   isPhoneMasked?: boolean;
   theme: Theme;
+  showCampaignGoals?: boolean;
 }
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
@@ -53,7 +54,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   loadingPosts,
   posts = [],
   isInstagram,
-  isPhoneMasked = true
+  isPhoneMasked = true,
+  showCampaignGoals = true
 }) => {
   const styles = stylesFn(theme);
   const [primarySocial, setPrimarySocial] = useState<ISocials>();
@@ -334,7 +336,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     />
                   </View>
                 ) : null}
-                {influencer?.profile?.content?.collaborationGoals ? (
+                {(showCampaignGoals && influencer?.profile?.content?.collaborationGoals) ? (
                   <View style={styles.aboutCard}>
                     <Title style={styles.cardColor}>Campaign Goals</Title>
                     <RenderHTML
