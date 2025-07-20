@@ -53,6 +53,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
   const [socialHandle, setSocialHandle] = useState("")
 
   const influencer = props.influencer;
+  const type = props.type;
   const theme = useTheme();
   const styles = stylesFn(theme);
   const [socials, setSocials] = useState<ISocials | undefined>(undefined)
@@ -217,13 +218,21 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             {props.cardActionNode && <View style={{ paddingVertical: 16 }}>
               {props.cardActionNode}
             </View>}
-            {influencer?.profile?.content?.about &&
+            {influencer?.profile?.content?.about && type != "influencers" &&
               <Text style={{
                 color: Colors(theme).text,
                 fontSize: 16,
                 lineHeight: 22,
               }}>
                 {truncateText(influencer?.profile?.content?.about as string, 160)}
+              </Text>}
+            {type == "influencers" &&
+              <Text style={{
+                color: Colors(theme).text,
+                fontSize: 16,
+                lineHeight: 22,
+              }}>
+                {truncateText((influencer?.profile?.content?.influencerConectionGoals ? influencer?.profile?.content?.influencerConectionGoals : influencer?.profile?.content?.about) as string, 160)}
               </Text>}
           </Pressable>
         </View>
