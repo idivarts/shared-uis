@@ -238,7 +238,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                 gap: 8,
               }}>
                 {props.customTaxonomies.map((tag, index) => (
-                  <Chip><Text>{tag}</Text></Chip>
+                  <Chip style={{ backgroundColor: Colors(theme).primary }}><Text style={{ color: Colors(theme).white }}>{tag}</Text></Chip>
                 ))}
               </View>}
             {type == "influencers" &&
