@@ -25,7 +25,7 @@ import {
   View,
   ViewStyle
 } from "react-native";
-import { Avatar, Card } from "react-native-paper";
+import { Avatar, Card, Chip } from "react-native-paper";
 import Colors from "../constants/Colors";
 import { MAX_WIDTH_WEB } from "./carousel/carousel-util";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
@@ -34,6 +34,8 @@ type User = IUsers & { id?: string }
 interface InfluencerCardPropsType {
   influencer: User;
   customAttachments?: Attachment[]
+  customText?: string;
+  customTaxonomies?: string[]
   openProfile?: (influencer: User) => void;
   setSelectedInfluencer?: React.Dispatch<React.SetStateAction<User | null>>;
   ToggleModal?: () => void;
@@ -218,14 +220,27 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             {props.cardActionNode && <View style={{ paddingVertical: 16 }}>
               {props.cardActionNode}
             </View>}
-            {influencer?.profile?.content?.about && type != "influencers" &&
+            {(props.customText || influencer?.profile?.content?.about) && type != "influencers" &&
               <Text style={{
                 color: Colors(theme).text,
                 fontSize: 16,
                 lineHeight: 22,
               }}>
-                {truncateText(influencer?.profile?.content?.about as string, 160)}
+                {props.customText ? props.customText :
+                  truncateText(influencer?.profile?.content?.about as string, 160)}
               </Text>}
+            {props.customTaxonomies && props.customTaxonomies.length > 0 &&
+              <View style={{
+                flexDirection: "row",
+                marginTop: 10,
+                flexWrap: "wrap",
+                rowGap: 10,
+                gap: 8,
+              }}>
+                {props.customTaxonomies.map((tag, index) => (
+                  <Chip><Text>{tag}</Text></Chip>
+                ))}
+              </View>}
             {type == "influencers" &&
               <Text style={{
                 color: Colors(theme).text,
