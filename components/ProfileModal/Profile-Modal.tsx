@@ -38,6 +38,7 @@ interface ProfileBottomSheetProps {
   loadingPosts?: boolean;
   posts?: any[];
   isInstagram?: boolean;
+  isEmailMasked?: boolean;
   isPhoneMasked?: boolean;
   theme: Theme;
   showCampaignGoals?: boolean;
@@ -55,6 +56,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   loadingPosts,
   posts = [],
   isInstagram,
+  isEmailMasked = false,
   isPhoneMasked = true,
   showCampaignGoals = true,
   showInfluencerGoals = false
@@ -198,7 +200,20 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <Pressable
                       style={styles.row}
                       onPress={() => {
-                        Linking.openURL(`mailto:${influencer?.email}`);
+                        if (isEmailMasked) {
+                          if (closeModal) {
+                            closeModal()
+                            openModal({
+                              title: "Email Unavailable",
+                              description: "You can only get the influencers email if they apply on your collaboration",
+                              confirmAction: () => {
+                                router.push("/collaborations")
+                              },
+                              confirmText: "Post Collaboration"
+                            })
+                          }
+                        } else
+                          Linking.openURL(`mailto:${influencer?.email}`);
                       }}
                     >
                       <FontAwesomeIcon
@@ -207,9 +222,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         color={Colors(theme).primary}
                         style={styles.icon}
                       />
-                      <Text style={styles.subTextHeading}>
+                      {isEmailMasked ? <>
+                        <Text style={styles.subTextHeading}>
+                          {influencer?.email.slice(0, 4) + "****"}
+                        </Text>
+                      </> : <Text style={styles.subTextHeading}>
                         {influencer?.email}
-                      </Text>
+                      </Text>}
                     </Pressable>
                   )}
 
