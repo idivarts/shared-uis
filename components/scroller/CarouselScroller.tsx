@@ -17,9 +17,14 @@ interface IProps<T = any> {
     width: number;
     height: number;
     vertical: boolean;
+    onWheel?: (event: any) => void;
     onLoadMore?: () => void;
     onPressView?: (item: T, index: number) => void;
 }
+const TIME_BETWEEN_SWIPE = 1000
+const wheelLockRef = {
+    current: 0
+};
 const CarouselScroller: React.FC<IProps> = (props) => {
     const { data } = props
     const [currentIndex, setCurrentIndex] = useState(0)
@@ -33,6 +38,30 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const styles = stylesFn(theme, isWeb);
 
     const carouselRef = useRef<ICarouselInstance>(null);
+    const containerRef = useRef<any>(null);
+
+    const handleWheel = (event: any) => {
+        // Trigger your callback if provided
+        if (typeof props.onWheel === 'function') {
+            props.onWheel(event);
+        }
+        // Only handle wheel-driven navigation once per gesture
+        if (!props.vertical) return; // Only using wheel to drive vertical carousel here
+        if (wheelLockRef.current > (Date.now() - TIME_BETWEEN_SWIPE)) return; // Ignore if we're waiting for the snap to finish
+
+        const delta = event?.deltaY ?? 0;
+        const THRESHOLD = 10; // small noise guard for trackpads
+
+        if (delta > THRESHOLD) {
+            console.log("Next Data called", delta, wheelLockRef.current, Date.now());
+            wheelLockRef.current = Date.now();
+            console.log("Next Data called - Updating Ref", wheelLockRef.current);
+            carouselRef.current?.next();
+        } else if (delta < -THRESHOLD) {
+            wheelLockRef.current = Date.now();
+            carouselRef.current?.prev();
+        }
+    }
 
     useEffect(() => {
         if (!props.data || props.data.length == 0) {
@@ -59,6 +88,20 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         }, 2000);
     }, [data]);
 
+    useEffect(() => {
+        if (Platform.OS !== 'web') return;
+        const node = containerRef.current as any;
+        if (!node) return;
+
+        const listener = (e: any) => {
+            handleWheel(e);
+        };
+        // Attach only inside this container so it fires when the cursor is over the carousel area
+        node.addEventListener('wheel', listener, { passive: true });
+        return () => {
+            try { node.removeEventListener('wheel', listener as any); } catch { }
+        };
+    }, [containerRef.current, props.onWheel]);
 
     const handleSwipe = (direction: 'accept' | 'reject') => {
         if (direction === 'accept') {
@@ -75,6 +118,8 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         const key = data[index][props.objectKey]
         setCurrentItemId(key);
         setCurrentIndex(index);
+        // Unlock wheel after the carousel has snapped to the new index
+        // wheelLockRef.current = 0;
         if (currentIndex == data.length - 2) {
             props.onLoadMore?.();
         }
@@ -82,7 +127,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 
     return (
         <>
-            <View style={{ position: 'relative', height: "100%", alignSelf: "center" }}>
+            <View ref={containerRef} style={{ position: 'relative', height: "100%", alignSelf: "center" }}>
                 <Carousel
                     ref={carouselRef}
                     loop={false}
