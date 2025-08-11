@@ -257,7 +257,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             }}
             src={item.url}
             style={{ width: "100%", height: "100%" }}
-            muted={isMuted}
+            muted
             controls
             onLoadedMetadata={() => setIsLoading(false)}
             // onLoad={() => setIsLoading(false)}
