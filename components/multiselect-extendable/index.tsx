@@ -144,24 +144,15 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                 </View>
               </Pressable>
             ))}
+            <Pressable onPress={openBottomSheet} style={styles.addChip}>
+              <Text style={styles.addChipText}>{buttonLabel || 'Add'}</Text>
+              {buttonIcon ? (
+                buttonIcon
+              ) : (
+                <FontAwesomeIcon icon={faPlus} color={Colors(theme).primary} size={14} />
+              )}
+            </Pressable>
           </View>
-          <Pressable
-            style={styles.addLanguageButton}
-            onPress={openBottomSheet}
-          >
-            <Text style={styles.addLanguageText}>
-              {buttonLabel || 'Add'}
-            </Text>
-            {
-              buttonIcon ? buttonIcon : (
-                <FontAwesomeIcon
-                  icon={faPlus}
-                  color={Colors(theme).primary}
-                  size={14}
-                />
-              )
-            }
-          </Pressable>
         </View>
       </View>
       {
@@ -267,19 +258,18 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     marginRight: 4,
     color: Colors(theme).white,
   },
-  addLanguageButton: {
-    backgroundColor: Colors(theme).background,
-    borderRadius: 100,
+  addChip: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors(theme).tag,
+    borderRadius: 10,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
     borderWidth: 1,
     borderColor: Colors(theme).primary,
-    padding: 12,
-    flexDirection: 'row',
     gap: 8,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
   },
-  addLanguageText: {
+  addChipText: {
     fontSize: 14,
     color: Colors(theme).primary,
   },
@@ -310,7 +300,7 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     marginBottom: 16,
   },
   itemsList: {
-    maxHeight: 320,
+    maxHeight: 450,
     borderRadius: 10,
   },
   item: {
