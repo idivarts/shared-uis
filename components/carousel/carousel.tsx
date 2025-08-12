@@ -15,7 +15,7 @@ import {
 } from "react-native-reanimated-carousel";
 import { stylesFn } from "../../styles/carousel/Carousel.styles";
 import { View } from "../theme/Themed";
-import getMediaDimensions, { MAX_HEIGHT_WEB, MAX_WIDTH_WEB } from "./carousel-util";
+import { MAX_HEIGHT_WEB, MAX_WIDTH_WEB } from "./carousel-util";
 import RenderMediaItem, { MediaItem } from "./render-media-item";
 
 interface CarouselProps {
@@ -74,12 +74,12 @@ const Carousel: React.FC<CarouselProps> = ({
 
   useEffect(() => {
     if (data && data.length > 0 && Platform.OS !== "web") {
-      getMediaDimensions(data[0].url, data[0].type).then((dimensions: any) => {
-        if (dimensions) {
-          setCarouselHeight(dimensions.height);
-          setCarouselWidth(dimensions.width);
-        }
-      });
+      // getMediaDimensions(data[0].url, data[0].type).then((dimensions: any) => {
+      //   if (dimensions) {
+      //     setCarouselHeight(dimensions.height);
+      //     setCarouselWidth(dimensions.width);
+      //   }
+      // });
     }
   }, [data]);
 
@@ -89,7 +89,7 @@ const Carousel: React.FC<CarouselProps> = ({
   const [carouselHeight, setCarouselHeight] = useState<any>(Platform.OS === "web"
     ? (MAX_WIDTH_WEB < screenWidth ? MAX_HEIGHT_WEB : screenWidth)
     : mWidth);
-  const [carouselWidth, setCarouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : mWidth))
+  const [carouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : mWidth))
 
   useEffect(() => {
     if (containerHeight) {

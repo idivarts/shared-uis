@@ -249,7 +249,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                 lineHeight: 22,
               }}>
                 {props.customText ? props.customText :
-                  truncateText(influencer?.profile?.content?.about as string, 160)}
+                  truncateText(influencer?.profile?.content?.about as string, 80)}
               </Text>}
             {props.customTaxonomies && props.customTaxonomies.length > 0 &&
               <View style={{
@@ -269,7 +269,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                 fontSize: 16,
                 lineHeight: 22,
               }}>
-                {truncateText((influencer?.profile?.content?.influencerConectionGoals ? influencer?.profile?.content?.influencerConectionGoals : influencer?.profile?.content?.about) as string, 160)}
+                {truncateText((influencer?.profile?.content?.influencerConectionGoals ? influencer?.profile?.content?.influencerConectionGoals : influencer?.profile?.content?.about) as string, 80)}
               </Text>}
           </Pressable>
           {props.footerNode}
