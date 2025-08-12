@@ -209,8 +209,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           </View>
         </View>
 
-        <View
-          style={[styles.body]}
+        <View style={[props.fullHeight && styles.body]}
           onLayout={(event) => {
             const next = Math.round(event.nativeEvent.layout.height);
             setBodyHeight((prev) => (prev === next ? prev : next));

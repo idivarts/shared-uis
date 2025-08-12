@@ -142,7 +142,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             </Pressable>
           </View>}
         {previewType.value === "Preview" ? (
-          <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: isTwoColumn ? 20 : 0 }}>
+          <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: isTwoColumn ? 20 : 0, alignItems: isTwoColumn ? "flex-start" : undefined }}>
             {isTwoColumn ?
               <View style={[styles.carouselContainer, { flex: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
                 <InfluencerCard
