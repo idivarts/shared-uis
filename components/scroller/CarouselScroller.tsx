@@ -157,13 +157,13 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                         parallaxScrollingOffset: 0,
                         parallaxAdjacentItemScale: 0.85,
                     } : {
-                        parallaxScrollingScale: 0.90,
+                        parallaxScrollingScale: 1,
                         parallaxScrollingOffset: 50,
                         parallaxAdjacentItemScale: 0.80,
                     }}
-                    style={{
-                        paddingVertical: 16
-                    }}
+                // style={{
+                //     paddingVertical: 16
+                // }}
                 />
                 {showOverlay && (
                     <View style={styles.overlay}>

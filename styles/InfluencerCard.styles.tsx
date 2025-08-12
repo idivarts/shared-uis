@@ -8,9 +8,15 @@ export const stylesFn = (theme: Theme) =>
       backgroundColor: Colors(theme).card,
       shadowColor: Colors(theme).white,
       borderRadius: 0,
-      paddingVertical: 16,
+      paddingVertical: 24,
+      // Make the card fill available space and stack children vertically
+      flex: 1,
+      flexDirection: "column",
     },
     header: {
+      // Header should take only the space it needs
+      flexShrink: 0,
+      flexGrow: 0,
       paddingBottom: 16,
       paddingHorizontal: 16,
       gap: 10,
@@ -18,9 +24,19 @@ export const stylesFn = (theme: Theme) =>
       alignItems: "center",
       justifyContent: "space-between",
     },
+    body: {
+      flex: 1,
+      // Ensure the flex child can shrink properly in nested layouts
+      minHeight: 0,
+    },
     content: {
+      // Footer should take only the space it needs at the bottom
+      flexShrink: 0,
+      flexGrow: 0,
       paddingTop: 8,
       paddingHorizontal: 16,
+      // position: "absolute",
+      // bottom: 0,
     },
     statItem: {
       alignItems: "center",

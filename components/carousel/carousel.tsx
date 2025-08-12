@@ -33,9 +33,8 @@ interface CarouselProps {
 
 const Carousel: React.FC<CarouselProps> = ({
   // carouselContainerStyle,
-  // containerHeight,
+  containerHeight,
   // carouselWidth,
-
   onImagePress,
   data,
   theme,
@@ -92,6 +91,11 @@ const Carousel: React.FC<CarouselProps> = ({
     : mWidth);
   const [carouselWidth, setCarouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : mWidth))
 
+  useEffect(() => {
+    if (containerHeight) {
+      setCarouselHeight(containerHeight - 20);
+    }
+  }, [containerHeight])
   if (data.length == 0) {
     return null;
   }

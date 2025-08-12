@@ -25,7 +25,7 @@ import {
   View,
   ViewStyle
 } from "react-native";
-import { Avatar, Card, Chip } from "react-native-paper";
+import { Avatar, Chip } from "react-native-paper";
 import Colors from "../constants/Colors";
 import { MAX_WIDTH_WEB } from "./carousel/carousel-util";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
@@ -42,8 +42,10 @@ interface InfluencerCardPropsType {
   type: string;
   cardActionNode?: any
   footerNode?: any
+  topHeaderNode?: any,
   style?: StyleProp<ViewStyle>,
   xl?: boolean;
+  fullHeight?: boolean;
 }
 
 const InfluencerCard = (props: InfluencerCardPropsType) => {
@@ -63,6 +65,9 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
   const [images, setImages] = useState((props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
     processRawAttachment(attachment)
   ) || [])
+
+  const [bodyHeight, setBodyHeight] = useState<number>(0);
+
   useEffect(() => {
     let mImg = []
     if (!props.customAttachments) {
@@ -106,14 +111,11 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
 
   return (
     <>
-      <Card
+      <View
         style={[
           styles.card,
           props.style,
-          // props.xl && 
-          {
-            maxWidth: MAX_WIDTH_WEB,
-            alignSelf: "center",
+          props.fullHeight ? { height: "100%" } : {
             borderRadius: 20,
             borderColor: Colors(theme).border,
             borderWidth: 1,
@@ -125,12 +127,15 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             shadowOpacity: 0.25,
             shadowRadius: 3.84,
             elevation: 5,
+          },
+          {
+            maxWidth: MAX_WIDTH_WEB,
+            alignSelf: "center",
             overflow: "hidden"
           }
-        ]}
-        mode="contained"
-      >
+        ]}>
         <View style={[styles.header]}>
+          {props.topHeaderNode}
           <Pressable
             onPressIn={(e) => {
               startX.current = e.nativeEvent.pageX;
@@ -195,12 +200,21 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
             </Pressable>}
         </View>
 
-        <Carousel
-          data={images}
-          onImagePress={onImagePress}
-          theme={theme}
-          parentId={influencer.id}
-        />
+        <View
+          style={[styles.body]}
+          onLayout={(event) => {
+            const next = Math.round(event.nativeEvent.layout.height);
+            setBodyHeight((prev) => (prev === next ? prev : next));
+          }}
+        >
+          <Carousel
+            data={images}
+            onImagePress={onImagePress}
+            theme={theme}
+            parentId={influencer.id}
+            containerHeight={bodyHeight > 0 ? bodyHeight : undefined}
+          />
+        </View>
 
         <View style={styles.content}>
           <Pressable
@@ -250,9 +264,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                 {truncateText((influencer?.profile?.content?.influencerConectionGoals ? influencer?.profile?.content?.influencerConectionGoals : influencer?.profile?.content?.about) as string, 160)}
               </Text>}
           </Pressable>
+          {props.footerNode}
         </View>
-        {props.footerNode}
-      </Card>
+
+      </View>
 
       {previewImage &&
         <AssetPreviewModal
