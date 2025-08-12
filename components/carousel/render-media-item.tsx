@@ -180,7 +180,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
       ]}
       shape={shape}
       size={size}
-      resizeMode={"contain"}
+      resizeMode={"cover"}
       resizeMethod={"resize"}
       onLoadEnd={() => setIsLoading(false)}
       onError={() => {
