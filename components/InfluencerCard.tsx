@@ -135,69 +135,78 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
           }
         ]}>
         <View style={[styles.header]}>
-          {props.topHeaderNode}
-          <Pressable
-            onPressIn={(e) => {
-              startX.current = e.nativeEvent.pageX;
-              startY.current = e.nativeEvent.pageY;
-            }}
-            onPressOut={(e) => {
-              const dx = Math.abs(e.nativeEvent.pageX - startX.current);
-              const dy = Math.abs(e.nativeEvent.pageY - startY.current);
-              if (dx < 5 && dy < 5 && props.openProfile) {
-                props.openProfile(influencer);
-              }
-            }}
-          >
-            <Avatar.Image
-              size={50}
-              source={imageUrl(influencer.profileImage)}
-            />
-          </Pressable>
-          <Pressable
-            style={styles.nameContainer}
-            onPressIn={(e) => {
-              startX.current = e.nativeEvent.pageX;
-              startY.current = e.nativeEvent.pageY;
-            }}
-            onPressOut={(e) => {
-              const dx = Math.abs(e.nativeEvent.pageX - startX.current);
-              const dy = Math.abs(e.nativeEvent.pageY - startY.current);
-              if (dx < 5 && dy < 5 && props.openProfile) {
-                props.openProfile(influencer);
-              }
-            }}
-          >
-            <Text style={styles.name}>{influencer.name}</Text>
-            {socialHandle &&
-              <Text style={styles.handle}>
-                {socialHandle}
-              </Text>}
-          </Pressable>
-
-          {props.ToggleModal &&
-            <Pressable
-              onPressIn={(e) => {
-                startX.current = e.nativeEvent.pageX;
-                startY.current = e.nativeEvent.pageY;
-              }}
-              onPressOut={(e) => {
-                const dx = Math.abs(e.nativeEvent.pageX - startX.current);
-                const dy = Math.abs(e.nativeEvent.pageY - startY.current);
-                if (dx < 5 && dy < 5) {
-                  props.ToggleModal?.();
-                  if (props?.setSelectedInfluencer) {
-                    props.setSelectedInfluencer(props.influencer);
+          <View>
+            {props.topHeaderNode}
+            <View style={{
+              gap: 10,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}>
+              <Pressable
+                onPressIn={(e) => {
+                  startX.current = e.nativeEvent.pageX;
+                  startY.current = e.nativeEvent.pageY;
+                }}
+                onPressOut={(e) => {
+                  const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+                  const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+                  if (dx < 5 && dy < 5 && props.openProfile) {
+                    props.openProfile(influencer);
                   }
-                }
-              }}
-            >
-              <FontAwesomeIcon
-                icon={faEllipsis}
-                size={24}
-                color={Colors(theme).text}
-              />
-            </Pressable>}
+                }}
+              >
+                <Avatar.Image
+                  size={50}
+                  source={imageUrl(influencer.profileImage)}
+                />
+              </Pressable>
+              <Pressable
+                style={styles.nameContainer}
+                onPressIn={(e) => {
+                  startX.current = e.nativeEvent.pageX;
+                  startY.current = e.nativeEvent.pageY;
+                }}
+                onPressOut={(e) => {
+                  const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+                  const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+                  if (dx < 5 && dy < 5 && props.openProfile) {
+                    props.openProfile(influencer);
+                  }
+                }}
+              >
+                <Text style={styles.name}>{influencer.name}</Text>
+                {socialHandle &&
+                  <Text style={styles.handle}>
+                    {socialHandle}
+                  </Text>}
+              </Pressable>
+
+              {props.ToggleModal &&
+                <Pressable
+                  onPressIn={(e) => {
+                    startX.current = e.nativeEvent.pageX;
+                    startY.current = e.nativeEvent.pageY;
+                  }}
+                  onPressOut={(e) => {
+                    const dx = Math.abs(e.nativeEvent.pageX - startX.current);
+                    const dy = Math.abs(e.nativeEvent.pageY - startY.current);
+                    if (dx < 5 && dy < 5) {
+                      props.ToggleModal?.();
+                      if (props?.setSelectedInfluencer) {
+                        props.setSelectedInfluencer(props.influencer);
+                      }
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon
+                    icon={faEllipsis}
+                    size={24}
+                    color={Colors(theme).text}
+                  />
+                </Pressable>}
+            </View>
+          </View>
         </View>
 
         <View

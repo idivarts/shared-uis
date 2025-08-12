@@ -19,10 +19,6 @@ export const stylesFn = (theme: Theme) =>
       flexGrow: 0,
       paddingBottom: 16,
       paddingHorizontal: 16,
-      gap: 10,
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "space-between",
     },
     body: {
       flex: 1,
