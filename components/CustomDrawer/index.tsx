@@ -13,7 +13,7 @@ import { View } from "../theme/Themed";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
-export const OpenDrawerSubject = new Subject()
+export const OpenDrawerSubject = new Subject<boolean | undefined>()
 
 const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: React.ReactNode, DrawerContent: any, isFixed: boolean }) => {
 
@@ -34,8 +34,8 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
     }, [drawerVisible]);
 
     useEffect(() => {
-        OpenDrawerSubject.subscribe(() => {
-            setDrawerVisible(true)
+        OpenDrawerSubject.subscribe((open = true) => {
+            setDrawerVisible(open)
         })
     }, [])
 
