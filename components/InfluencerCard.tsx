@@ -1,3 +1,4 @@
+import { SOCIAL_ACCESS_RESTRICTED } from "@/shared-constants/app";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
@@ -27,6 +28,7 @@ import {
 } from "react-native";
 import { Avatar, Chip } from "react-native-paper";
 import Colors from "../constants/Colors";
+import { maskHandle, maskName } from "../utils/masks";
 import { MAX_WIDTH_WEB } from "./carousel/carousel-util";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
 
@@ -45,6 +47,7 @@ interface InfluencerCardPropsType {
   topHeaderNode?: any,
   style?: StyleProp<ViewStyle>,
   xl?: boolean;
+  isOnFreePlan?: boolean;
   fullHeight?: boolean;
 }
 
@@ -77,7 +80,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
       if (socials && socials.socialScreenShots && socials.socialScreenShots.length > 0) {
         const sdata = socials.socialScreenShots?.map(s => ({
           type: "image",
-          url: s
+          url: props.isOnFreePlan ? SOCIAL_ACCESS_RESTRICTED : s
         }))
         mImg.push(...sdata)
       }
@@ -175,10 +178,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                   }
                 }}
               >
-                <Text style={styles.name}>{influencer.name}</Text>
+                <Text style={styles.name}>{props.isOnFreePlan ? maskName(influencer.name) : influencer.name}</Text>
                 {socialHandle &&
                   <Text style={styles.handle}>
-                    {socialHandle}
+                    {props.isOnFreePlan ? maskHandle(socialHandle) : socialHandle}
                   </Text>}
               </Pressable>
 
