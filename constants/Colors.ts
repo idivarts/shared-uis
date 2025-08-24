@@ -42,6 +42,10 @@ export const ColorsStatic = {
 
   shimmerOverlayDark: 'rgba(255, 255, 255, 0.3)',
   shimmerOverlayLight: 'rgba(0, 0, 0, 0.1)',
+
+  primaryLight: "#D9E4F2",
+  primaryDark: "#1A3B5C",
+  surface: "#EEF4FB",
 }
 
 export default (theme: Theme) => ({
