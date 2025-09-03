@@ -48,6 +48,7 @@ interface InfluencerCardPropsType {
   style?: StyleProp<ViewStyle>,
   xl?: boolean;
   isOnFreePlan?: boolean;
+  lockProfile?: boolean;
   fullHeight?: boolean;
 }
 
@@ -80,7 +81,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
       if (socials && socials.socialScreenShots && socials.socialScreenShots.length > 0) {
         const sdata = socials.socialScreenShots?.map(s => ({
           type: "image",
-          url: props.isOnFreePlan ? SOCIAL_ACCESS_RESTRICTED : s
+          url: (props.isOnFreePlan || props.lockProfile) ? SOCIAL_ACCESS_RESTRICTED : s
         }))
         mImg.push(...sdata)
       }
@@ -178,10 +179,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                   }
                 }}
               >
-                <Text style={styles.name}>{props.isOnFreePlan ? maskName(influencer.name) : influencer.name}</Text>
+                <Text style={styles.name}>{(props.isOnFreePlan || props.lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
                 {socialHandle &&
                   <Text style={styles.handle}>
-                    {props.isOnFreePlan ? maskHandle(socialHandle) : socialHandle}
+                    {(props.isOnFreePlan || props.lockProfile) ? maskHandle(socialHandle) : socialHandle}
                   </Text>}
               </Pressable>
 

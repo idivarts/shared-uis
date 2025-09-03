@@ -39,6 +39,7 @@ interface ProfileBottomSheetProps {
   loadingPosts?: boolean;
   posts?: any[];
   isOnFreePlan?: boolean;
+  lockProfile?: boolean;
   isInstagram?: boolean;
   isEmailMasked?: boolean;
   isPhoneMasked?: boolean;
@@ -58,6 +59,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   loadingPosts,
   posts = [],
   isOnFreePlan = false,
+  lockProfile = false,
   isInstagram,
   isEmailMasked = false,
   isPhoneMasked = true,
@@ -153,6 +155,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                   influencer={{ ...influencer, socials: [primarySocial?.isInstagram ? primarySocial?.instaProfile?.username : primarySocial?.fbProfile?.name] }}
                   type="explore"
                   isOnFreePlan={isOnFreePlan}
+                  lockProfile={lockProfile}
                 />
               </View> :
               <View style={[styles.carouselContainer,
@@ -169,7 +172,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             <View style={[{ flex: 1, marginTop: 16 }]}>
               <View style={[styles.header]}>
                 <View style={styles.profileInfo}>
-                  <Text style={styles.name}>{isOnFreePlan ? maskName(influencer.name) : influencer.name}</Text>
+                  <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
 
                   <Pressable
                     style={styles.row}
@@ -207,8 +210,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     />
                     <Text style={styles.subTextHeading}>
                       {primarySocial?.isInstagram
-                        ? "@" + (isOnFreePlan ? maskHandle(primarySocial?.instaProfile?.username || "") : primarySocial?.instaProfile?.username)
-                        : (isOnFreePlan ? maskHandle(primarySocial?.fbProfile?.name || "") : primarySocial?.fbProfile?.name)}
+                        ? "@" + ((isOnFreePlan || lockProfile) ? maskHandle(primarySocial?.instaProfile?.username || "") : primarySocial?.instaProfile?.username)
+                        : ((isOnFreePlan || lockProfile) ? maskHandle(primarySocial?.fbProfile?.name || "") : primarySocial?.fbProfile?.name)}
                     </Text>
                   </Pressable>
 
@@ -286,7 +289,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         color={Colors(theme).primary}
                         style={styles.icon}
                       />
-                      {(isPhoneMasked || isOnFreePlan) ? <>
+                      {(isPhoneMasked || isOnFreePlan || lockProfile) ? <>
                         <Text style={styles.subTextHeading}>
                           {maskPhone(influencer?.phoneNumber)}
                         </Text>
@@ -567,6 +570,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               ToggleModal={() => { }}
               type="explore"
               isOnFreePlan={isOnFreePlan}
+              lockProfile={lockProfile}
             />
           </View>
         )}
