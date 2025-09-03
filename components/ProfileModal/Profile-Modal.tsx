@@ -222,6 +222,18 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         upgradeNow()
                         return;
                       }
+                      if (lockProfile) {
+                        closeModal?.()
+                        openModal({
+                          title: "Social Unavailable",
+                          description: "You can only get the influencers socials if they apply on your collaboration",
+                          confirmAction: () => {
+                            router.push("/collaborations")
+                          },
+                          confirmText: "Post Collaboration"
+                        })
+                        return;
+                      }
 
                       Linking.openURL(
                         primarySocial?.isInstagram
@@ -253,18 +265,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <Pressable
                       style={styles.row}
                       onPress={() => {
-                        if (isEmailMasked || isOnFreePlan) {
+                        if (isEmailMasked || isOnFreePlan || lockProfile) {
                           if (closeModal) {
                             closeModal()
                             if (isOnFreePlan) {
-                              openModal({
-                                title: "Upgrade your Plan Now",
-                                description: "You can only get the influencers email after you subscribe to a paid plan",
-                                confirmAction: () => {
-                                  router.push("/billing")
-                                },
-                                confirmText: "Upgrade now"
-                              })
+                              upgradeNow()
                             } else
                               openModal({
                                 title: "Email Unavailable",
@@ -285,7 +290,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         color={Colors(theme).primary}
                         style={styles.icon}
                       />
-                      {(isEmailMasked || isOnFreePlan) ? <>
+                      {(isEmailMasked || isOnFreePlan || lockProfile) ? <>
                         <Text style={styles.subTextHeading}>
                           {maskEmail(influencer?.email)}
                         </Text>
@@ -300,7 +305,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <Pressable
                       style={styles.row}
                       onPress={() => {
-                        if (isPhoneMasked || isOnFreePlan) {
+                        if (isPhoneMasked || isOnFreePlan || lockProfile) {
                           if (closeModal) {
                             closeModal()
                             openModal({
