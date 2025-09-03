@@ -19,8 +19,9 @@ import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import { ActivityIndicator, Dimensions, Image, Linking, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
-import { Chip, Title } from "react-native-paper";
+import { Button, Chip, Title } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
+import { Subject } from "rxjs";
 import { useConfirmationModel } from "../ConfirmationModal";
 import InfluencerCard from "../InfluencerCard";
 import Carousel from "../carousel/carousel";
@@ -33,7 +34,7 @@ interface ProfileBottomSheetProps {
   actionCard?: React.ReactNode;
   carouselMedia?: MediaItem[];
   FireStoreDB: Firestore;
-  influencer: IUsers;
+  influencer: IUsers & { id: string };
   isBrandsApp: boolean;
   closeModal?: () => void;
   loadingPosts?: boolean;
@@ -47,6 +48,9 @@ interface ProfileBottomSheetProps {
   showCampaignGoals?: boolean;
   showInfluencerGoals?: boolean
 }
+
+export const ProfileModalUnlockRequest = new Subject<string>()
+export const ProfileModalSendMessage = new Subject<string>()
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   actionCard,
@@ -82,6 +86,32 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     value: "Preview",
   });
 
+  const [loading, setLoading] = useState(false)
+
+  const unlockProfile = () => {
+    setLoading(true)
+    ProfileModalUnlockRequest.next(influencer?.id || "")
+  }
+  const sendMessage = () => {
+    setLoading(true)
+    ProfileModalSendMessage.next(influencer?.id || "")
+  }
+
+  const upgradeNow = () => {
+    closeModal?.()
+    openModal({
+      title: "Upgrade your Plan Now",
+      description: "You can only get the access to influencers social media after you subscribe to a paid plan",
+      confirmAction: () => {
+        router.push("/billing")
+      },
+      confirmText: "Upgrade now"
+    })
+  }
+
+  useEffect(() => {
+    setLoading(false)
+  }, [lockProfile])
 
   const screenWidth = Dimensions.get("window").width;
 
@@ -94,7 +124,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
       const fetchSocialRef = doc(
         FirestoreDB,
         "users",
-        //@ts-ignore
         influencer.id,
         "socials",
         userPrimaryID
@@ -172,21 +201,25 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             <View style={[{ flex: 1, marginTop: 16 }]}>
               <View style={[styles.header]}>
                 <View style={styles.profileInfo}>
-                  <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
+                  <View style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 24,
+                    marginBottom: 16,
+                  }}>
+                    <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
+                    {!isOnFreePlan ? <>
+                      {lockProfile ?
+                        <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
+                        <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}
+                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}
+                  </View>
 
                   <Pressable
                     style={styles.row}
                     onPress={() => {
                       if (isOnFreePlan) {
-                        closeModal?.()
-                        openModal({
-                          title: "Upgrade your Plan Now",
-                          description: "You can only get the access to influencers social media after you subscribe to a paid plan",
-                          confirmAction: () => {
-                            router.push("/billing")
-                          },
-                          confirmText: "Upgrade now"
-                        })
+                        upgradeNow()
                         return;
                       }
 
