@@ -36,6 +36,7 @@ interface ProfileBottomSheetProps {
   FireStoreDB: Firestore;
   influencer: IUsers & { id: string };
   isBrandsApp: boolean;
+  showCardPreviewTab?: boolean;
   closeModal?: () => void;
   loadingPosts?: boolean;
   posts?: any[];
@@ -58,6 +59,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   FireStoreDB: FirestoreDB,
   influencer,
   isBrandsApp,
+  showCardPreviewTab = false,
   closeModal,
   theme,
   loadingPosts,
@@ -216,11 +218,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     marginBottom: 16,
                   }}>
                     <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
-                    {!isOnFreePlan ? <>
+                    {isBrandsApp && <>{!isOnFreePlan ? <>
                       {lockProfile ?
                         <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
                         <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}
-                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}
+                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>}
                   </View>
 
                   <Pressable
@@ -316,14 +318,22 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         if (isPhoneMasked || isOnFreePlan || lockProfile) {
                           if (closeModal) {
                             closeModal()
-                            openModal({
-                              title: "Phone Access Unavailable",
-                              description: "You can only get the influencers phone number if they apply on your collaboration",
-                              confirmAction: () => {
-                                router.push("/collaborations")
-                              },
-                              confirmText: "Post Collaboration"
-                            })
+                            if (isBrandsApp)
+                              openModal({
+                                title: "Phone Access Unavailable",
+                                description: "You can only get the influencers phone number if they apply on your collaboration",
+                                confirmAction: () => {
+                                  router.push("/collaborations")
+                                },
+                                confirmText: "Post Collaboration"
+                              })
+                            else
+                              openModal({
+                                title: "Phone Access Unavailable",
+                                description: "You can only get the influencers phone number if they accept your invitation to connect",
+                                confirmAction: () => { },
+                                confirmText: "Understood"
+                              })
                           }
                         } else
                           Linking.openURL(`tel:${influencer?.phoneNumber}`);
@@ -622,7 +632,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           </View>
         )}
       </ScrollView>
-      {(!isBrandsApp && !isTwoColumn) && (
+      {(showCardPreviewTab && !isTwoColumn) && (
         <View
           style={{
             padding: 10,
