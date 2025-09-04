@@ -93,7 +93,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     ProfileModalUnlockRequest.next({
       influencerId: influencer?.id || "",
       callback: (success: boolean) => {
-
+        setLoading(false)
       }
     })
   }
@@ -119,10 +119,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
       confirmText: "Upgrade now"
     })
   }
-
-  useEffect(() => {
-    setLoading(false)
-  }, [lockProfile])
 
   const screenWidth = Dimensions.get("window").width;
 
