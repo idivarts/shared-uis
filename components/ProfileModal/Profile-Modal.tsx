@@ -49,8 +49,8 @@ interface ProfileBottomSheetProps {
   showInfluencerGoals?: boolean
 }
 
-export const ProfileModalUnlockRequest = new Subject<string>()
-export const ProfileModalSendMessage = new Subject<string>()
+export const ProfileModalUnlockRequest = new Subject<{ influencerId: string, callback: Function }>()
+export const ProfileModalSendMessage = new Subject<{ influencerId: string, callback: Function }>()
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   actionCard,
@@ -90,11 +90,22 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
   const unlockProfile = () => {
     setLoading(true)
-    ProfileModalUnlockRequest.next(influencer?.id || "")
+    ProfileModalUnlockRequest.next({
+      influencerId: influencer?.id || "",
+      callback: (success: boolean) => {
+
+      }
+    })
   }
   const sendMessage = () => {
     setLoading(true)
-    ProfileModalSendMessage.next(influencer?.id || "")
+    ProfileModalSendMessage.next({
+      influencerId: influencer?.id || "",
+      callback: (success: boolean) => {
+        if (success)
+          closeModal?.()
+      }
+    })
   }
 
   const upgradeNow = () => {
