@@ -615,6 +615,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
               influencer={influencer}
               ToggleModal={() => { }}
               type="explore"
+              fullHeight={true}
               isOnFreePlan={isOnFreePlan}
               lockProfile={lockProfile}
             />
