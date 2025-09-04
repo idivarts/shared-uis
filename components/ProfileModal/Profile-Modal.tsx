@@ -102,6 +102,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     ProfileModalSendMessage.next({
       influencerId: influencer?.id || "",
       callback: (success: boolean) => {
+        setLoading(false)
         if (success)
           closeModal?.()
       }
