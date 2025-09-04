@@ -26,7 +26,8 @@ export const ApplicationActionBar: React.FC<{
     ) => {
         try {
             if (!application) return;
-
+            if (!application.id)
+                return
             const applicationRef = doc(
                 FirestoreDB,
                 "collaborations",
