@@ -13,7 +13,7 @@ import { Text, View } from "../theme/Themed";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
   shape?: "circle" | "square";
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "extraLarge";
   url: string;
   altText: string;
   placeholder?: string;
@@ -36,12 +36,13 @@ const ImageComponent: FC<ImageComponentProps> = ({
     small: IMAGE_SMALL,
     medium: IMAGE_MEDIUM,
     large: IMAGE_LARGE,
+    extraLarge: Dimensions.get("window").width
   };
 
   const containerStyle: ImageStyle = {
-    width: size !== "large" ? dimensions[size] : Dimensions.get("window").width,
+    width: size !== "extraLarge" ? dimensions[size] : Dimensions.get("window").width,
     height:
-      size !== "large"
+      size !== "extraLarge"
         ? dimensions[size]
         : Platform.OS === "web"
           ? 580

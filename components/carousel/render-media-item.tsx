@@ -32,7 +32,7 @@ interface RenderMediaItemProps {
   cKey?: string;
   parentId?: string
   shape?: "circle" | "square";
-  size?: "small" | "medium" | "large";
+  size?: "small" | "medium" | "large" | "extraLarge";
 }
 let uHeight = 0
 
@@ -46,7 +46,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
   cKey,
   parentId,
   shape = "square",
-  size = "large",
+  size = "extraLarge",
 }) => {
   const theme = useTheme();
   const styles = stylesFn(theme);
