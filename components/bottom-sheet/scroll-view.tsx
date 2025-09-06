@@ -7,6 +7,7 @@ import {
     StyleSheet,
     View,
 } from "react-native";
+import Toast from "react-native-toast-message";
 
 interface BottomSheetContainerProps extends PropsWithChildren {
     isVisible: boolean;
@@ -60,6 +61,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                         {children}
                     </BottomSheetScrollView>
                 </BottomSheet>
+                <Toast />
             </View>
         </Modal>
     );
