@@ -1,3 +1,4 @@
+import { IS_MONETIZATION_DONE } from "@/shared-constants/app";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
@@ -221,7 +222,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     {isBrandsApp && <>{!isOnFreePlan ? <>
                       {lockProfile ?
                         <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
-                        <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}
+                        <>{IS_MONETIZATION_DONE && <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}</>}
                     </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>}
                   </View>
 
