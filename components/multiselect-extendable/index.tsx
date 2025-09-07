@@ -112,7 +112,6 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
               <Pressable
                 key={item}
                 onPress={() => toggleSelection(item)}
-                style={styles.removeButton}
               >
                 <View
                   key={item}
@@ -272,9 +271,6 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
   addChipText: {
     fontSize: 14,
     color: Colors(theme).primary,
-  },
-  removeButton: {
-    marginLeft: 8,
   },
   bottomSheetContent: {
     padding: 16,
