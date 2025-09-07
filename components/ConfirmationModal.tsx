@@ -95,21 +95,23 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
             <Text style={styles.modalTitle}>{title}</Text>}
           <Text style={styles.modalText}>{description}</Text>
           <View style={styles.buttonContainer}>
-            <Button
-              mode="contained"
-              onPress={handleConfirm}
-              style={styles.button}
-              loading={loading} // You can manage loading state if needed
-            >
-              {confirmText}
-            </Button>
-            <Button
-              mode="contained"
-              onPress={handleCancel}
-              style={styles.buttonSecondary}
-            >
-              <Text style={styles.secondaryText}>{cancelText}</Text>
-            </Button>
+            {confirmText &&
+              <Button
+                mode="contained"
+                onPress={handleConfirm}
+                style={styles.button}
+                loading={loading} // You can manage loading state if needed
+              >
+                {confirmText}
+              </Button>}
+            {cancelText &&
+              <Button
+                mode="contained"
+                onPress={handleCancel}
+                style={styles.buttonSecondary}
+              >
+                <Text style={styles.secondaryText}>{cancelText}</Text>
+              </Button>}
           </View>
         </View>
       </View>
