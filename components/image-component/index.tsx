@@ -129,4 +129,9 @@ const ImageComponent: FC<ImageComponentProps> = ({
   return renderContent();
 };
 
+export const FacebookImageComponent: FC<ImageComponentProps> = (props) => {
+  return <ImageComponent  {...props}
+    url={`https://be.trendly.now/discovery/image-relay?url=${encodeURIComponent(props.url)}`} />
+}
+
 export default ImageComponent;
