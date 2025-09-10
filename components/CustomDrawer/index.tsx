@@ -34,9 +34,12 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
     }, [drawerVisible]);
 
     useEffect(() => {
-        OpenDrawerSubject.subscribe((open = true) => {
+        const subs = OpenDrawerSubject.subscribe((open = true) => {
             setDrawerVisible(open)
         })
+        return () => {
+            subs.unsubscribe()
+        }
     }, [])
 
     return (
