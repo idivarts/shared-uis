@@ -9,6 +9,7 @@ import { imageUrl, imageUrlWithHeic } from "@/shared-uis/utils/url";
 import { useTheme } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
 import { Dimensions, Image, ImageProps, ImageStyle, Platform } from "react-native";
+import { Avatar } from "react-native-paper";
 import { Text, View } from "../theme/Themed";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
@@ -130,8 +131,9 @@ const ImageComponent: FC<ImageComponentProps> = ({
 };
 
 export const FacebookImageComponent: FC<ImageComponentProps> = (props) => {
-  return <ImageComponent  {...props}
-    url={`https://be.trendly.now/discovery/image-relay?url=${encodeURIComponent(props.url)}`} />
+  return <Avatar.Image {...props} size={44} source={{ uri: `https://be.trendly.now/discovery/image-relay?url=${encodeURIComponent(props.url)}` }} />
+  // return <ImageComponent  {...props}
+  //   url={`https://be.trendly.now/discovery/image-relay?url=${encodeURIComponent(props.url)}`} />
 }
 
 export default ImageComponent;
