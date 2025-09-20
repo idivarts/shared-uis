@@ -112,18 +112,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     })
   }
 
-  const upgradeNow = () => {
-    closeModal?.()
-    openModal({
-      title: "Upgrade your Plan Now",
-      description: "You can only get the access to influencers social media after you subscribe to a paid plan",
-      confirmAction: () => {
-        router.push("/billing")
-      },
-      confirmText: "Upgrade now"
-    })
-  }
-
   const screenWidth = Dimensions.get("window").width;
 
   const fetchPrimarySocialMedia = async () => {
@@ -219,20 +207,16 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     marginBottom: 16,
                   }}>
                     <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
-                    {isBrandsApp && <>{!isOnFreePlan ? <>
+                    {isBrandsApp && <>
                       {lockProfile ?
                         <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
                         <>{IS_MONETIZATION_DONE && <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}</>}
-                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>}
+                    </>}
                   </View>
 
                   <Pressable
                     style={styles.row}
                     onPress={() => {
-                      if (isOnFreePlan) {
-                        upgradeNow()
-                        return;
-                      }
                       if (lockProfile) {
                         closeModal?.()
                         openModal({
@@ -279,17 +263,14 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         if (isEmailMasked || isOnFreePlan || lockProfile) {
                           if (closeModal) {
                             closeModal()
-                            if (isOnFreePlan) {
-                              upgradeNow()
-                            } else
-                              openModal({
-                                title: "Email Unavailable",
-                                description: "You can only get the influencers email if they apply on your collaboration",
-                                confirmAction: () => {
-                                  router.push("/collaborations")
-                                },
-                                confirmText: "Post Collaboration"
-                              })
+                            openModal({
+                              title: "Email Unavailable",
+                              description: "You can only get the influencers email if they apply on your collaboration",
+                              confirmAction: () => {
+                                router.push("/collaborations")
+                              },
+                              confirmText: "Post Collaboration"
+                            })
                           }
                         } else
                           Linking.openURL(`mailto:${influencer?.email}`);
