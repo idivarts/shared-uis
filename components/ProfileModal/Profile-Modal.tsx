@@ -112,6 +112,18 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     })
   }
 
+  const upgradeNow = () => {
+    closeModal?.()
+    openModal({
+      title: "Upgrade your Plan Now",
+      description: "You can only get the access to influencers social media after you subscribe to a paid plan",
+      confirmAction: () => {
+        router.push("/billing")
+      },
+      confirmText: "Upgrade now"
+    })
+  }
+
   const screenWidth = Dimensions.get("window").width;
 
   const fetchPrimarySocialMedia = async () => {
@@ -207,16 +219,20 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     marginBottom: 16,
                   }}>
                     <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
-                    {isBrandsApp && <>
+                    {isBrandsApp && <>{!isOnFreePlan ? <>
                       {lockProfile ?
                         <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
                         <>{IS_MONETIZATION_DONE && <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}</>}
-                    </>}
+                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>}
                   </View>
 
                   <Pressable
                     style={styles.row}
                     onPress={() => {
+                      if (isOnFreePlan) {
+                        upgradeNow()
+                        return;
+                      }
                       if (lockProfile) {
                         closeModal?.()
                         openModal({
