@@ -140,7 +140,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         ]}>
         <View style={[styles.header]}>
           <View>
-            {props.topHeaderNode}
+            {[props.topHeaderNode, " Jerry"]}
             <View style={{
               gap: 10,
               flexDirection: "row",
@@ -160,10 +160,12 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                   }
                 }}
               >
+           
                 <Avatar.Image
                   size={50}
                   source={imageUrl(influencer.profileImage)}
                 />
+                     <Text>Jerry</Text>
               </Pressable>
               <Pressable
                 style={styles.nameContainer}

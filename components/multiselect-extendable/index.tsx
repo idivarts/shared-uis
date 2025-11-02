@@ -130,7 +130,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                       },
                     ]}
                   >
-                    {item}
+                    {[item, " Jerry"]}
                   </Text>
                   <FontAwesomeIcon
                     icon={faCheck}
