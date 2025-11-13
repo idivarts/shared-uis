@@ -1,7 +1,5 @@
 import { Theme } from "@react-navigation/native";
 
-
-
 export const ColorsStatic = {
   primary: "rgb(5, 68, 99)",
   secondary: "rgb(83, 139, 166)",
@@ -41,58 +39,59 @@ export const ColorsStatic = {
   outlineLight: "rgb(5, 68, 99)",
   modalBackgroundLight: "rgb(255, 255, 255)",
 
-  shimmerOverlayDark: 'rgba(255, 255, 255, 0.3)',
-  shimmerOverlayLight: 'rgba(0, 0, 0, 0.1)',
+  shimmerOverlayDark: "rgba(255, 255, 255, 0.3)",
+  shimmerOverlayLight: "rgba(0, 0, 0, 0.1)",
 
   primaryLight: "#D9E4F2",
   primaryDark: "#1A3B5C",
   surface: "#EEF4FB",
-}
+  Editblue: "#2563EB",
+};
 
 export default (theme: Theme) => ({
   ...theme.colors,
   ...ColorsStatic,
   ...(theme.dark
     ? {
-      primary: ColorsStatic.secondary, // Main accent color
-      card: ColorsStatic.eerieBlack, // Card background color
-      text: ColorsStatic.white, // Primary text color
-      textSecondary: ColorsStatic.gray300, // Secondary text, captions
-      tint: ColorsStatic.secondary, // Tint for icons/buttons
-      tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
-      tabIconSelected: ColorsStatic.secondary, // Active tab icons
-      onSurface: ColorsStatic.gray300, // Surface overlay color
-      tag: ColorsStatic.gray100, // Tag background
-      tagForeground: ColorsStatic.white, // Tag text/icon color
-      outline: ColorsStatic.gray300, // Borders and outlines
-      background: ColorsStatic.black, // App background
-      reverseBackground: ColorsStatic.white, // Opposite of background for contrast
-      modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
+        primary: ColorsStatic.secondary, // Main accent color
+        card: ColorsStatic.eerieBlack, // Card background color
+        text: ColorsStatic.white, // Primary text color
+        textSecondary: ColorsStatic.gray300, // Secondary text, captions
+        tint: ColorsStatic.secondary, // Tint for icons/buttons
+        tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
+        tabIconSelected: ColorsStatic.secondary, // Active tab icons
+        onSurface: ColorsStatic.gray300, // Surface overlay color
+        tag: ColorsStatic.gray100, // Tag background
+        tagForeground: ColorsStatic.white, // Tag text/icon color
+        outline: ColorsStatic.gray300, // Borders and outlines
+        background: ColorsStatic.black, // App background
+        reverseBackground: ColorsStatic.white, // Opposite of background for contrast
+        modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
 
-      backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
-      shimmerBackground: ColorsStatic.gray100,
-      shimmerOverlay: ColorsStatic.shimmerOverlayDark,
-      InfluencerStatCard: ColorsStatic.secondary
-    }
+        backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
+        shimmerBackground: ColorsStatic.gray100,
+        shimmerOverlay: ColorsStatic.shimmerOverlayDark,
+        InfluencerStatCard: ColorsStatic.secondary,
+      }
     : {
-      primary: ColorsStatic.primary, // Main accent color
-      card: ColorsStatic.white, // Card background color
-      text: ColorsStatic.black, // Primary text color
-      textSecondary: ColorsStatic.gray100, // Secondary text, captions
-      tint: ColorsStatic.primary, // Tint for icons/buttons
-      tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
-      tabIconSelected: ColorsStatic.primary, // Active tab icons
-      onSurface: ColorsStatic.gray300, // Surface overlay color
-      tag: ColorsStatic.gray200, // Tag background
-      tagForeground: ColorsStatic.black, // Tag text/icon color
-      outline: ColorsStatic.gray300, // Borders and outlines
-      background: ColorsStatic.white, // App background
-      reverseBackground: ColorsStatic.black, // Opposite of background for contrast
-      modalBackground: ColorsStatic.white, // Modal or overlay background
+        primary: ColorsStatic.primary, // Main accent color
+        card: ColorsStatic.white, // Card background color
+        text: ColorsStatic.black, // Primary text color
+        textSecondary: ColorsStatic.gray100, // Secondary text, captions
+        tint: ColorsStatic.primary, // Tint for icons/buttons
+        tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
+        tabIconSelected: ColorsStatic.primary, // Active tab icons
+        onSurface: ColorsStatic.gray300, // Surface overlay color
+        tag: ColorsStatic.gray200, // Tag background
+        tagForeground: ColorsStatic.black, // Tag text/icon color
+        outline: ColorsStatic.gray300, // Borders and outlines
+        background: ColorsStatic.white, // App background
+        reverseBackground: ColorsStatic.black, // Opposite of background for contrast
+        modalBackground: ColorsStatic.white, // Modal or overlay background
 
-      backdrop: ColorsStatic.backdrop, // Backdrop color for modals
-      shimmerBackground: ColorsStatic.gray200,
-      shimmerOverlay: ColorsStatic.shimmerOverlayLight,
-      InfluencerStatCard: ColorsStatic.white
-    }),
+        backdrop: ColorsStatic.backdrop, // Backdrop color for modals
+        shimmerBackground: ColorsStatic.gray200,
+        shimmerOverlay: ColorsStatic.shimmerOverlayLight,
+        InfluencerStatCard: ColorsStatic.white,
+      }),
 });
