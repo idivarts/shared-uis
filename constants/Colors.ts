@@ -1,6 +1,7 @@
 import { Theme } from "@react-navigation/native";
 
 
+
 export const ColorsStatic = {
   primary: "rgb(5, 68, 99)",
   secondary: "rgb(83, 139, 166)",
@@ -71,6 +72,7 @@ export default (theme: Theme) => ({
       backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
       shimmerBackground: ColorsStatic.gray100,
       shimmerOverlay: ColorsStatic.shimmerOverlayDark,
+      InfluencerStatCard: ColorsStatic.secondary
     }
     : {
       primary: ColorsStatic.primary, // Main accent color
@@ -91,5 +93,6 @@ export default (theme: Theme) => ({
       backdrop: ColorsStatic.backdrop, // Backdrop color for modals
       shimmerBackground: ColorsStatic.gray200,
       shimmerOverlay: ColorsStatic.shimmerOverlayLight,
+      InfluencerStatCard: ColorsStatic.white
     }),
 });
