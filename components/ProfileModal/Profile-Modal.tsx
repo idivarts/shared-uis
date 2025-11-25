@@ -36,6 +36,7 @@ interface ProfileBottomSheetProps {
   carouselMedia?: MediaItem[];
   FireStoreDB: Firestore;
   influencer: IUsers & { id: string };
+  social?: ISocials
   isBrandsApp: boolean;
   showCardPreviewTab?: boolean;
   closeModal?: () => void;
@@ -59,6 +60,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   carouselMedia,
   FireStoreDB: FirestoreDB,
   influencer,
+  social,
   isBrandsApp,
   showCardPreviewTab = false,
   closeModal,
@@ -74,7 +76,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   showInfluencerGoals = false
 }) => {
   const styles = stylesFn(theme);
-  const [primarySocial, setPrimarySocial] = useState<ISocials>();
+  const [primarySocial, setPrimarySocial] = useState<ISocials>(social as ISocials);
   const { openModal } = useConfirmationModel()
   const router = useMyNavigation()
 
@@ -127,6 +129,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const screenWidth = Dimensions.get("window").width;
 
   const fetchPrimarySocialMedia = async () => {
+    if (primarySocial)
+      return;
+
     try {
       const userPrimaryID = influencer.primarySocial;
       if (!userPrimaryID) {
