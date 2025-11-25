@@ -32,6 +32,7 @@ import { InfluencerMetrics } from "../influencers/influencer-metrics";
 import SelectGroup from "../select/select-group";
 
 interface ProfileBottomSheetProps {
+  actionButton?: React.ReactNode;
   actionCard?: React.ReactNode;
   carouselMedia?: MediaItem[];
   FireStoreDB: Firestore;
@@ -60,6 +61,7 @@ export const ProfileModalSendMessage = new Subject<{ influencerId: string, callb
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   actionCard,
+  actionButton,
   carouselMedia,
   FireStoreDB: FirestoreDB,
   influencer,
@@ -227,11 +229,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     marginBottom: 16,
                   }}>
                     <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
-                    {isBrandsApp && <>{!isOnFreePlan ? <>
+                    {actionButton != undefined ? actionButton : (isBrandsApp && <>{!isOnFreePlan ? <>
                       {lockProfile ?
                         <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
                         <>{IS_MONETIZATION_DONE && <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}</>}
-                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>}
+                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>)}
                   </View>
 
                   <Pressable
