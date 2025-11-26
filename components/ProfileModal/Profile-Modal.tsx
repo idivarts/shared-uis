@@ -32,10 +32,14 @@ import { InfluencerMetrics } from "../influencers/influencer-metrics";
 import SelectGroup from "../select/select-group";
 
 interface ProfileBottomSheetProps {
+  actionButton?: React.ReactNode;
   actionCard?: React.ReactNode;
   carouselMedia?: MediaItem[];
   FireStoreDB: Firestore;
-  influencer: IUsers & { id: string };
+  influencer: IUsers & {
+    id: string, // Note: additional fields from discovery page
+  };
+  social?: ISocials
   isBrandsApp: boolean;
   showCardPreviewTab?: boolean;
   closeModal?: () => void;
@@ -56,9 +60,11 @@ export const ProfileModalSendMessage = new Subject<{ influencerId: string, callb
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   actionCard,
+  actionButton,
   carouselMedia,
   FireStoreDB: FirestoreDB,
   influencer,
+  social,
   isBrandsApp,
   showCardPreviewTab = false,
   closeModal,
@@ -74,7 +80,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   showInfluencerGoals = false
 }) => {
   const styles = stylesFn(theme);
-  const [primarySocial, setPrimarySocial] = useState<ISocials>();
+  const [primarySocial, setPrimarySocial] = useState<ISocials>(social as ISocials);
   const { openModal } = useConfirmationModel()
   const router = useMyNavigation()
 
@@ -127,6 +133,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   const screenWidth = Dimensions.get("window").width;
 
   const fetchPrimarySocialMedia = async () => {
+    if (primarySocial)
+      return;
+
     try {
       const userPrimaryID = influencer.primarySocial;
       if (!userPrimaryID) {
@@ -219,11 +228,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     marginBottom: 16,
                   }}>
                     <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
-                    {isBrandsApp && <>{!isOnFreePlan ? <>
+                    {actionButton != undefined ? actionButton : (isBrandsApp && <>{!isOnFreePlan ? <>
                       {lockProfile ?
                         <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
                         <>{IS_MONETIZATION_DONE && <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}</>}
-                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>}
+                    </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>)}
                   </View>
 
                   <Pressable

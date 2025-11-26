@@ -15,7 +15,7 @@ import { Dimensions, Platform, Pressable } from "react-native";
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
 import { useCarouselInViewContext } from "../scroller/CarouselInViewContext";
-import { View } from "../theme/Themed";
+import { Text, View } from "../theme/Themed";
 
 export interface MediaItem {
   type: string;
@@ -224,6 +224,67 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     );
   }
 
+  if (item?.type.includes("reel")) {
+    const mImage = <ImageComponent
+      url={item.url}
+      altText="Media"
+      style={[
+        styles.media,
+        {
+          height: height || 250,
+          width: width || "100%",
+        },
+      ]}
+      shape={shape}
+      size={size}
+      resizeMode={"cover"}
+      resizeMethod={"resize"}
+      onLoadEnd={() => setIsLoading(false)}
+      onError={() => {
+        setIsError(true);
+      }}
+    />
+
+    const AnimatedImageView = <Animated.View
+      style={{
+        position: "relative",
+      }}
+    >
+      {Platform.OS == "web" ? (
+        mImage
+      ) : (
+        <Zoomable maxPanPointers={2}>
+          {mImage}
+        </Zoomable>
+      )}
+      <View>
+        <Text>
+          This is Reel component. Yet to be developeed. Needs Play button with redirect to the link
+        </Text>
+      </View>
+      <LoadingCircle />
+    </Animated.View>
+
+    return (
+      <TapGestureHandler
+        onHandlerStateChange={({ nativeEvent }) => {
+          if (nativeEvent.state === State.ACTIVE && handleImagePress) {
+            handleImagePress(item);
+          }
+        }}
+      >
+        <PanGestureHandler
+          onGestureEvent={({ nativeEvent }) => {
+            scrollBy(nativeEvent)
+            // element?.current?.scrollBy(0, -nativeEvent.translationY * 0.05);
+          }}
+          activeOffsetY={[-5, 5]}
+        >
+          {AnimatedImageView}
+        </PanGestureHandler>
+      </TapGestureHandler >
+    );
+  }
 
   return <>
     <Pressable
