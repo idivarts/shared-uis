@@ -37,8 +37,7 @@ interface ProfileBottomSheetProps {
   carouselMedia?: MediaItem[];
   FireStoreDB: Firestore;
   influencer: IUsers & {
-    id: string,
-    gender?: string, quality?: number // Note: additional fields from discovery page
+    id: string, // Note: additional fields from discovery page
   };
   social?: ISocials
   isBrandsApp: boolean;
