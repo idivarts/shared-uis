@@ -38,7 +38,7 @@ interface ProfileBottomSheetProps {
   FireStoreDB: Firestore;
   influencer: IUsers & {
     id: string,
-    gender?: string, quality?: number // Note: additional fields from discovery page
+    gender?: string, quality?: number, socialVerified?: boolean // Note: additional fields from discovery page
   };
   social?: ISocials
   isBrandsApp: boolean;
