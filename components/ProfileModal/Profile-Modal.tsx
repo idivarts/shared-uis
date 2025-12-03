@@ -1,5 +1,6 @@
 import { IS_MONETIZATION_DONE } from "@/shared-constants/app";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
+import { ISocialAnalytics as ITrendlyAnalytics, ISocials as ITrendlySocial } from "@/shared-libs/firestore/trendly-pro/models/bq-socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
@@ -53,6 +54,8 @@ interface ProfileBottomSheetProps {
   theme: Theme;
   showCampaignGoals?: boolean;
   showInfluencerGoals?: boolean
+  trendlySocial?: ITrendlySocial | null;
+  trendlyAnalytics?: ITrendlyAnalytics | null;
 }
 
 export const ProfileModalUnlockRequest = new Subject<{ influencerId: string, callback: Function }>()
@@ -77,7 +80,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   isEmailMasked = false,
   isPhoneMasked = true,
   showCampaignGoals = true,
-  showInfluencerGoals = false
+  showInfluencerGoals = false,
+  trendlySocial = null,
+  trendlyAnalytics = null
 }) => {
   const styles = stylesFn(theme);
   const [primarySocial, setPrimarySocial] = useState<ISocials>(social as ISocials);
@@ -166,6 +171,15 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
   const { width } = useWindowDimensions();
   const isTwoColumn = Platform.OS == "web" ? (width > 768) : false; // Adjus
+  const formatDate = (epoch?: number | null) => {
+    if (!epoch) return "—";
+    try {
+      return new Date(epoch * 1000).toLocaleString();
+    } catch {
+      return `${epoch}`;
+    }
+  };
+  const qualityValue = trendlySocial?.quality_score ?? trendlyAnalytics?.quality;
 
   return (
     <View
@@ -199,13 +213,22 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
           <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: isTwoColumn ? 20 : 0, alignItems: isTwoColumn ? "flex-start" : undefined }}>
             {isTwoColumn ?
               <View style={[styles.carouselContainer, { flex: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
-                <InfluencerCard
-                  // @ts-ignore
-                  influencer={{ ...influencer, socials: [primarySocial?.isInstagram ? primarySocial?.instaProfile?.username : primarySocial?.fbProfile?.name] }}
-                  type="explore"
-                  isOnFreePlan={isOnFreePlan}
-                  lockProfile={lockProfile}
-                />
+                {mediaProcessing && mediaProcessing.length > 0 ? (
+                  <>
+                    <Carousel data={mediaProcessing || []} theme={theme} />
+                    <View style={{ paddingHorizontal: 16 }}>
+                      <InfluencerMetrics user={influencer} social={primarySocial} />
+                    </View>
+                  </>
+                ) : (
+                  <InfluencerCard
+                    // @ts-ignore
+                    influencer={{ ...influencer, socials: [primarySocial?.isInstagram ? primarySocial?.instaProfile?.username : primarySocial?.fbProfile?.name] }}
+                    type="explore"
+                    isOnFreePlan={isOnFreePlan}
+                    lockProfile={lockProfile}
+                  />
+                )}
               </View> :
               <View style={[styles.carouselContainer,
               Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } :
@@ -279,6 +302,38 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         : ((isOnFreePlan || lockProfile) ? maskHandle(primarySocial?.fbProfile?.name || "") : primarySocial?.fbProfile?.name)}
                     </Text>
                   </Pressable>
+
+                  {trendlySocial && (
+                    <View style={{ flexDirection: "row", flexWrap: "wrap", marginTop: 8 }}>
+                      {!!trendlySocial.gender && trendlySocial.gender !== "unknown" && (
+                        <Chip
+                          style={{ marginRight: 8, marginBottom: 8 }}
+                          icon="account"
+                          mode="outlined"
+                        >
+                          {trendlySocial.gender}
+                        </Chip>
+                      )}
+                      {typeof qualityValue === "number" && (
+                        <Chip
+                          style={{ marginRight: 8, marginBottom: 8 }}
+                          icon="star"
+                          mode="outlined"
+                        >
+                          Quality: {qualityValue}/100
+                        </Chip>
+                      )}
+                      {trendlySocial.profile_verified && (
+                        <Chip
+                          style={{ marginRight: 8, marginBottom: 8 }}
+                          icon="check-decagram"
+                          mode="outlined"
+                        >
+                          Verified
+                        </Chip>
+                      )}
+                    </View>
+                  )}
 
                   {/* Email */}
                   {influencer?.email && (
@@ -375,7 +430,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                       </Text>
                     </View>
                   )}
-                  {influencer?.location && (
+                  {(influencer?.location || trendlySocial?.location) && (
                     <View style={styles.row}>
                       <FontAwesomeIcon
                         icon={faLocation}
@@ -384,7 +439,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         style={styles.icon}
                       />
                       <Text style={styles.subTextHeading}>
-                        {influencer?.location}
+                        {influencer?.location || trendlySocial?.location}
                       </Text>
                     </View>
                   )}
@@ -407,6 +462,18 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 </View>
               )}
               {actionCard}
+              {trendlySocial && (
+                <View style={{ paddingHorizontal: 16, marginTop: 12 }}>
+                  <Title style={[styles.cardColor, { marginBottom: 8 }]}>Profile Meta</Title>
+                  <View style={{ gap: 6 }}>
+                    <Text style={styles.subTextHeading}>ID: {trendlySocial.id}</Text>
+                    <Text style={styles.subTextHeading}>Platform: {trendlySocial.social_type || "—"}</Text>
+                    <Text style={styles.subTextHeading}>
+                      Last Updated: {formatDate(trendlySocial.last_update_time ? trendlySocial.last_update_time / 1000000 : undefined)}
+                    </Text>
+                  </View>
+                </View>
+              )}
 
               <View style={styles.aboutContainer}>
                 {influencer?.profile?.content?.about ? (

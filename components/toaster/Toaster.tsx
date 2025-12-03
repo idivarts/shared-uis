@@ -11,6 +11,7 @@ export const showToast = (
     text2: description,
     text1Style: { fontSize: 14 },
     text2Style: { fontSize: 12 },
+    
   });
 };
 
