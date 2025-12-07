@@ -25,7 +25,7 @@ export const stylesFn = (theme: any) =>
       bottom: 20,
     },
     header: {
-      paddingHorizontal: 20,
+      paddingHorizontal: 12,
       flexDirection: "row",
       alignItems: "center",
     },
