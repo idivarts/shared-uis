@@ -40,7 +40,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
-import { Button, Chip, Icon, Title } from "react-native-paper";
+import { Button, Chip, Title } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
 import { Subject } from "rxjs";
 import { useConfirmationModel } from "../ConfirmationModal";
@@ -50,7 +50,6 @@ import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
 import SelectGroup from "../select/select-group";
-import Entypo from "@expo/vector-icons/Entypo";
 
 interface ProfileBottomSheetProps {
   actionButton?: React.ReactNode;
@@ -77,6 +76,7 @@ interface ProfileBottomSheetProps {
   trendlySocial?: ITrendlySocial | null;
   trendlyAnalytics?: ITrendlyAnalytics | null;
   isDiscoverView?: boolean;
+  editMetricsButton?: React.ReactNode;
 }
 
 export const ProfileModalUnlockRequest = new Subject<{
@@ -98,6 +98,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
   isBrandsApp,
   showCardPreviewTab = false,
   closeModal,
+  editMetricsButton,
   theme,
   loadingPosts,
   posts = [],
@@ -482,6 +483,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <Button mode="contained" onPress={() => {}}>
                       Invite Now
                     </Button>
+                    {editMetricsButton}
                   </View>
                 </View>
                 {/* <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -619,45 +621,31 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
                 {/* Analytics area from parent (HeaderCards, Averages, Reels) */}
                 {actionCard}
+
+                {/* Profile meta (ID, platform, last updated) */}
+                {trendlySocial && (
+                  <View style={{ marginTop: 16 }}>
+                    <Title style={[styles.cardColor, { marginBottom: 4 }]}>
+                      Profile Meta
+                    </Title>
+                    <Text style={styles.subTextHeading}>
+                      ID: {trendlySocial.id}
+                    </Text>
+                    <Text style={styles.subTextHeading}>
+                      Platform: {trendlySocial.social_type || "—"}
+                    </Text>
+                    <Text style={styles.subTextHeading}>
+                      Last Updated:{" "}
+                      {formatDate(
+                        trendlySocial.last_update_time
+                          ? trendlySocial.last_update_time / 1000000
+                          : undefined
+                      )}
+                    </Text>
+                  </View>
+                )}
               </View>
             </View>
-            {/* Profile meta (ID, platform, last updated) */}
-            {trendlySocial && (
-              <View style={{ marginTop: 16 }}>
-                <Title
-                  style={[
-                    styles.cardColor,
-                    { marginBottom: 4, alignSelf: "flex-start" },
-                  ]}
-                >
-                  Profile Meta
-                </Title>
-                <View
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-evenly",
-                    alignSelf: "flex-start",
-                    columnGap: 20,
-                  }}
-                >
-                  <Text style={styles.subTextHeading}>
-                    ID: {trendlySocial.id}
-                  </Text>
-                  <Text style={styles.subTextHeading}>
-                    Platform: {trendlySocial.social_type || "—"}
-                  </Text>
-                  <Text style={styles.subTextHeading}>
-                    Last Updated:{" "}
-                    {formatDate(
-                      trendlySocial.last_update_time
-                        ? trendlySocial.last_update_time / 1000000
-                        : undefined
-                    )}
-                  </Text>
-                </View>
-              </View>
-            )}
           </View>
         )}
         {!isDiscoverView && (
