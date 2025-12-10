@@ -47,6 +47,17 @@ export const ColorsStatic = {
   primaryLight: "#D9E4F2",
   primaryDark: "#1A3B5C",
   surface: "#EEF4FB",
+
+  // Toast colors
+  toastSuccess: "#4caf50",
+  toastSuccessBg: "#1a472a",
+  toastError: "#f44336",
+  toastErrorBg: "#5f1a1a",
+  toastInfo: "#2196f3",
+  toastInfoBg: "#1a2f4a",
+  toastWarning: "#ff9800",
+  toastWarningBg: "#4a3a1a",
+  toastText: "#ffffff",
 }
 
 export default (theme: Theme) => ({
