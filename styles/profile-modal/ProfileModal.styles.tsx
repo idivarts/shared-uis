@@ -44,7 +44,8 @@ export const stylesFn = (theme: any) =>
     },
     subTextHeading: {
       color: Colors(theme).text,
-      fontSize: 20,
+      fontSize: 16,
+      fontWeight: "200",
     },
     row: {
       flexDirection: "row",
