@@ -8,13 +8,20 @@ import {
 import { imageUrl, imageUrlWithHeic } from "@/shared-uis/utils/url";
 import { useTheme } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
-import { Dimensions, Image, ImageProps, ImageStyle, Platform } from "react-native";
+import {
+  Dimensions,
+  Image,
+  ImageProps,
+  ImageSourcePropType,
+  ImageStyle,
+  Platform,
+} from "react-native";
 import { Text, View } from "../theme/Themed";
 
 interface ImageComponentProps extends Omit<ImageProps, "source"> {
   shape?: "circle" | "square";
   size?: "small" | "medium" | "large" | "extraLarge";
-  url: string;
+  url: string | ImageSourcePropType;
   altText: string;
   placeholder?: string;
   initials?: string;
@@ -54,39 +61,29 @@ const ImageComponent: FC<ImageComponentProps> = ({
   const [loadFailed, setLoadFailed] = React.useState(false);
   const theme = useTheme();
 
-  const [source, setSource] = useState<any>(null)
+  const [source, setSource] = useState<ImageSourcePropType | null>(null);
   useEffect(() => {
     (async () => {
-      if (url) {
-        const src = await imageUrlWithHeic(url)
-        setSource(src)
+      setLoadFailed(false);
+      if (!url) {
+        setSource(imageUrl(placeholder));
+        return;
       }
-    })()
-  }, [url])
 
-  const renderContent = () => {
-    if (source)
-      return (
-        <Image
-          source={source}
-          style={[containerStyle, style]}
-          height={Platform.OS === "web" ? 580 : 480}
-          {...imageProps}
-        />
-      );
-    else {
-      <Image
-        source={imageUrl(placeholder)}
-        style={[containerStyle, style]}
-        onError={() => {
-          Console.log("Image load failed");
+      if (typeof url === "string") {
+        const src = await imageUrlWithHeic(url);
+        setSource(src);
+        return;
+      }
 
-          setLoadFailed(true);
-        }}
-        resizeMode="cover"
-      />
-    }
-  };
+      if (typeof url === "number") {
+        setSource(url);
+        return;
+      }
+
+      setSource(url);
+    })();
+  }, [url, placeholder]);
 
   if (!url && !initials) {
     return (
@@ -126,7 +123,23 @@ const ImageComponent: FC<ImageComponentProps> = ({
     );
   }
 
-  return renderContent();
+  const fallbackSource = imageUrl(placeholder);
+  const resolvedSource = loadFailed ? fallbackSource : source ?? fallbackSource;
+  const { resizeMode = "cover", onError, ...restImageProps } = imageProps;
+
+  return (
+    <Image
+      source={resolvedSource}
+      style={[containerStyle, style]}
+      resizeMode={resizeMode}
+      onError={(event) => {
+        Console.log("Image load failed");
+        setLoadFailed(true);
+        onError?.(event);
+      }}
+      {...restImageProps}
+    />
+  );
 };
 
 export const FacebookImageComponent: FC<ImageComponentProps> = (props) => {
