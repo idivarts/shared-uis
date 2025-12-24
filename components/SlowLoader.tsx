@@ -2,7 +2,7 @@ import Colors from '@/shared-uis/constants/Colors';
 import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, Image, Text, View } from 'react-native';
-// import LottieView from 'lottie-react-native';
+//  import LottieView from 'lottie-react-native';
 
 const MyMessage = [
     "Loading your Preferences...",

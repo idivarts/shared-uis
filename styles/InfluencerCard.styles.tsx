@@ -3,109 +3,109 @@ import { StyleSheet } from "react-native";
 import Colors from "../constants/Colors";
 
 export const stylesFn = (theme: Theme) =>
-  StyleSheet.create({
-    card: {
-      backgroundColor: Colors(theme).card,
-      shadowColor: Colors(theme).white,
-      borderRadius: 0,
-      paddingVertical: 24,
-      // Make the card fill available space and stack children vertically
-      flex: 1,
-      flexDirection: "column",
-    },
-    header: {
-      // Header should take only the space it needs
-      flexShrink: 0,
-      flexGrow: 0,
-      paddingBottom: 16,
-      paddingHorizontal: 16,
-    },
-    body: {
-      flex: 1,
-      // Ensure the flex child can shrink properly in nested layouts
-      minHeight: 0,
-    },
-    content: {
-      // Footer should take only the space it needs at the bottom
-      flexShrink: 0,
-      flexGrow: 0,
-      paddingTop: 8,
-      paddingHorizontal: 16,
-      // position: "absolute",
-      // bottom: 0,
-    },
-    statItem: {
-      alignItems: "center",
-      flexDirection: "row",
-      gap: 2,
-    },
-    statsText: {
-      marginLeft: 5,
-      color: Colors(theme).text,
-      fontSize: 12,
-    },
+    StyleSheet.create({
+        card: {
+            backgroundColor: Colors(theme).card,
+            shadowColor: Colors(theme).white,
+            borderRadius: 0,
+            paddingVertical: 24,
+            // Make the card fill available space and stack children vertically
+            flex: 1,
+            flexDirection: "column",
+        },
+        header: {
+            // Header should take only the space it needs
+            flexShrink: 0,
+            flexGrow: 0,
+            paddingBottom: 16,
+            paddingHorizontal: 16,
+        },
+        body: {
+            flex: 1,
+            // Ensure the flex child can shrink properly in nested layouts
+            minHeight: 0,
+        },
+        content: {
+            // Footer should take only the space it needs at the bottom
+            flexShrink: 0,
+            flexGrow: 0,
+            paddingTop: 8,
+            paddingHorizontal: 16,
+            // position: "absolute",
+            // bottom: 0,
+        },
+        statItem: {
+            alignItems: "center",
+            flexDirection: "row",
+            gap: 2,
+        },
+        statsText: {
+            marginLeft: 5,
+            color: Colors(theme).text,
+            fontSize: 12,
+        },
 
-    nameContainer: {
-      flex: 1,
-    },
-    name: {
-      fontSize: 16,
-      fontWeight: "bold",
-      color: Colors(theme).text,
-    },
-    handle: {
-      color: "gray",
-    },
-    carouselContainer: {
-      backgroundColor: Colors(theme).card,
-      width: "100%",
-    },
-    indicatorContainer: {
-      backgroundColor: Colors(theme).card,
-      flexDirection: "row",
-      justifyContent: "center",
-      alignItems: "center",
-      width: "100%",
-      marginTop: 10,
-    },
-    loadingIndicatorContainer: {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      justifyContent: "center",
-      alignItems: "center",
-    },
-    indicatorDot: {
-      height: 8,
-      width: 8,
-      borderRadius: 4,
-      marginHorizontal: 4,
-    },
-    activeDot: {
-      backgroundColor: Colors(theme).primary,
-    },
-    media: {
-      alignSelf: "center",
-    },
-    stats: {
-      marginVertical: 10,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    statsContainer: {
-      gap: 20,
-      flexDirection: "row",
-      justifyContent: "space-between",
-    },
-    bio: {
-      fontSize: 14,
-      color: Colors(theme).text,
-    },
-    jobHistory: {
-      color: Colors(theme).primary,
-      textDecorationLine: "underline",
-      marginTop: 10,
-    },
-  });
+        nameContainer: {
+            flex: 1,
+        },
+        name: {
+            fontSize: 16,
+            fontWeight: "bold",
+            color: Colors(theme).text,
+        },
+        handle: {
+            color: "gray",
+        },
+        carouselContainer: {
+            backgroundColor: Colors(theme).card,
+            width: "100%",
+        },
+        indicatorContainer: {
+            backgroundColor: Colors(theme).card,
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100%",
+            marginTop: 10,
+        },
+        loadingIndicatorContainer: {
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: "center",
+            alignItems: "center",
+        },
+        indicatorDot: {
+            height: 8,
+            width: 8,
+            borderRadius: 4,
+            marginHorizontal: 4,
+        },
+        activeDot: {
+            backgroundColor: Colors(theme).primary,
+        },
+        media: {
+            alignSelf: "center",
+        },
+        stats: {
+            marginVertical: 10,
+            flexDirection: "row",
+            justifyContent: "space-between",
+        },
+        statsContainer: {
+            gap: 20,
+            flexDirection: "row",
+            justifyContent: "space-between",
+        },
+        bio: {
+            fontSize: 14,
+            color: Colors(theme).text,
+        },
+        jobHistory: {
+            color: Colors(theme).primary,
+            textDecorationLine: "underline",
+            marginTop: 10,
+        },
+    });

@@ -4,16 +4,16 @@ import { Pressable } from "react-native";
 import styles from "../../styles/dropdown/Dropdown.styles";
 
 interface DropdownOptionProps extends PropsWithChildren {
-  onSelect?: () => void;
+    onSelect?: () => void;
 }
 
 const DropdownOption: React.FC<DropdownOptionProps> = ({
-  children,
-  onSelect,
+    children,
+    onSelect,
 }) => (
-  <Pressable onPress={onSelect} style={styles.dropdownOption}>
-    {children}
-  </Pressable>
+    <Pressable onPress={onSelect} style={styles.dropdownOption}>
+        {children}
+    </Pressable>
 );
 
 export default DropdownOption;

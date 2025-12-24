@@ -13,165 +13,165 @@ import { Platform } from "react-native";
 import { Text, View } from "../theme/Themed";
 
 interface ImageUploadProps {
-  editable?: boolean;
-  initialImage?: string;
-  onUploadImage: (image: string | File) => void;
-  rounded?: boolean;
-  theme: Theme;
+    editable?: boolean;
+    initialImage?: string;
+    onUploadImage: (image: string | File) => void;
+    rounded?: boolean;
+    theme: Theme;
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({
-  editable = true,
-  initialImage,
-  onUploadImage,
-  rounded = false,
-  theme,
+    editable = true,
+    initialImage,
+    onUploadImage,
+    rounded = false,
+    theme,
 }) => {
-  const [image, setImage] = useState<string>(initialImage || "");
-  const [file, setFile] = useState<File | null>(null);
-  const [openModal, setOpenModal] = useState(false);
-  const styles = stylesFn(theme);
-  const inputRef = useRef<HTMLInputElement>(null);
+    const [image, setImage] = useState<string>(initialImage || "");
+    const [file, setFile] = useState<File | null>(null);
+    const [openModal, setOpenModal] = useState(false);
+    const styles = stylesFn(theme);
+    const inputRef = useRef<HTMLInputElement>(null);
 
-  const uploadImage = async () => {
-    try {
-      const { status } =
-        await ImagePickerExpo.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        alert("We need camera permissions");
-        return;
-      }
-
-      const result = await ImagePickerExpo.launchImageLibraryAsync({
-        mediaTypes: ImagePickerExpo.MediaTypeOptions.Images,
-        allowsEditing: true,
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        setImage(result.assets[0].uri);
-        onUploadImage(result.assets[0].uri);
-        setOpenModal(false);
-        Toaster.success("Image is uploaded successfully!");
-      }
-    } catch (error: any) {
-      Toaster.error(`Failed to upload image: ${error.message}`);
-    }
-  };
-
-  const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      const selectedFile = event.target.files[0];
-      setFile(selectedFile);
-      setImage(URL.createObjectURL(selectedFile));
-      onUploadImage(selectedFile);
-    }
-  };
-
-  const removeImage = () => {
-    setImage("");
-    setOpenModal(false);
-    Toaster.success("Image is removed!");
-  };
-
-  return (
-    <Pressable
-      style={styles.container}
-      onPress={() => {
-        if (image) {
-          setOpenModal(true);
-        } else {
-          uploadImage();
-        }
-      }}
-    >
-      <View style={styles.innerContainer}>
-        <Image
-          source={imageUrl(image)}
-          style={[
-            styles.image,
-            {
-              borderRadius: rounded ? 75 : 10,
-            },
-          ]}
-        />
-        {editable && (
-          <Pressable
-            onPress={() => {
-              if (Platform.OS === 'web') {
-                inputRef.current?.click();
+    const uploadImage = async () => {
+        try {
+            const { status } =
+                await ImagePickerExpo.requestMediaLibraryPermissionsAsync();
+            if (status !== "granted") {
+                alert("We need camera permissions");
                 return;
-              }
-
-              if (image) {
-                setOpenModal(true);
-              } else {
-                uploadImage();
-              }
-            }}
-            style={[
-              styles.cameraButton,
-              {
-                borderRadius: rounded ? 24 : 10,
-              },
-            ]}
-          >
-            <FontAwesomeIcon
-              icon={faCamera}
-              size={20}
-              color={Colors(theme).white}
-            />
-            {
-              Platform.OS === 'web' && (
-                <input
-                  ref={inputRef}
-                  type="file"
-                  style={{
-                    backgroundColor: "transparent",
-                    width: 0,
-                    height: 0,
-                    visibility: "hidden",
-                  }}
-                  multiple
-                  onChange={handleFileSelection}
-                  accept="image/*"
-                />
-              )
             }
-          </Pressable>
-        )}
-      </View>
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={openModal}
-        onDismiss={() => setOpenModal(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContent}>
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalTitle}>Upload Image</Text>
-              <Pressable onPress={() => setOpenModal(false)}>
-                <FontAwesomeIcon
-                  icon={faClose}
-                  size={20}
-                  color={Colors(theme).primary}
+
+            const result = await ImagePickerExpo.launchImageLibraryAsync({
+                mediaTypes: ImagePickerExpo.MediaTypeOptions.Images,
+                allowsEditing: true,
+                quality: 1,
+            });
+
+            if (!result.canceled) {
+                setImage(result.assets[0].uri);
+                onUploadImage(result.assets[0].uri);
+                setOpenModal(false);
+                Toaster.success("Image is uploaded successfully!");
+            }
+        } catch (error: any) {
+            Toaster.error(`Failed to upload image: ${error.message}`);
+        }
+    };
+
+    const handleFileSelection = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files) {
+            const selectedFile = event.target.files[0];
+            setFile(selectedFile);
+            setImage(URL.createObjectURL(selectedFile));
+            onUploadImage(selectedFile);
+        }
+    };
+
+    const removeImage = () => {
+        setImage("");
+        setOpenModal(false);
+        Toaster.success("Image is removed!");
+    };
+
+    return (
+        <Pressable
+            style={styles.container}
+            onPress={() => {
+                if (image) {
+                    setOpenModal(true);
+                } else {
+                    uploadImage();
+                }
+            }}
+        >
+            <View style={styles.innerContainer}>
+                <Image
+                    source={imageUrl(image)}
+                    style={[
+                        styles.image,
+                        {
+                            borderRadius: rounded ? 75 : 10,
+                        },
+                    ]}
                 />
-              </Pressable>
+                {editable && (
+                    <Pressable
+                        onPress={() => {
+                            if (Platform.OS === 'web') {
+                                inputRef.current?.click();
+                                return;
+                            }
+
+                            if (image) {
+                                setOpenModal(true);
+                            } else {
+                                uploadImage();
+                            }
+                        }}
+                        style={[
+                            styles.cameraButton,
+                            {
+                                borderRadius: rounded ? 24 : 10,
+                            },
+                        ]}
+                    >
+                        <FontAwesomeIcon
+                            icon={faCamera}
+                            size={20}
+                            color={Colors(theme).white}
+                        />
+                        {
+                            Platform.OS === 'web' && (
+                                <input
+                                    ref={inputRef}
+                                    type="file"
+                                    style={{
+                                        backgroundColor: "transparent",
+                                        width: 0,
+                                        height: 0,
+                                        visibility: "hidden",
+                                    }}
+                                    multiple
+                                    onChange={handleFileSelection}
+                                    accept="image/*"
+                                />
+                            )
+                        }
+                    </Pressable>
+                )}
             </View>
-            <View style={styles.modalButtons}>
-              <Pressable onPress={uploadImage} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Upload</Text>
-              </Pressable>
-              <Pressable onPress={removeImage} style={styles.modalButton}>
-                <Text style={styles.modalButtonText}>Remove</Text>
-              </Pressable>
-            </View>
-          </View>
-        </View>
-      </Modal>
-    </Pressable>
-  );
+            <Modal
+                animationType="fade"
+                transparent={true}
+                visible={openModal}
+                onDismiss={() => setOpenModal(false)}
+            >
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContent}>
+                        <View style={styles.modalHeader}>
+                            <Text style={styles.modalTitle}>Upload Image</Text>
+                            <Pressable onPress={() => setOpenModal(false)}>
+                                <FontAwesomeIcon
+                                    icon={faClose}
+                                    size={20}
+                                    color={Colors(theme).primary}
+                                />
+                            </Pressable>
+                        </View>
+                        <View style={styles.modalButtons}>
+                            <Pressable onPress={uploadImage} style={styles.modalButton}>
+                                <Text style={styles.modalButtonText}>Upload</Text>
+                            </Pressable>
+                            <Pressable onPress={removeImage} style={styles.modalButton}>
+                                <Text style={styles.modalButtonText}>Remove</Text>
+                            </Pressable>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+        </Pressable>
+    );
 };
 
 export default ImageUpload;
