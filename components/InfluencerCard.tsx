@@ -21,7 +21,7 @@ import {
     Pressable,
     StyleProp,
     Text,
-    ViewStyle,
+    ViewStyle
 } from "react-native";
 import { Avatar, Chip } from "react-native-paper";
 import Colors from "../constants/Colors";
@@ -33,17 +33,17 @@ import { View } from "./theme/Themed";
 type User = IUsers & { id?: string };
 interface InfluencerCardPropsType {
     influencer: User;
-    customAttachments?: Attachment[];
+    customAttachments?: Attachment[]
     customText?: string;
-    customTaxonomies?: string[];
+    customTaxonomies?: string[]
     openProfile?: (influencer: User) => void;
     setSelectedInfluencer?: React.Dispatch<React.SetStateAction<User | null>>;
     ToggleModal?: () => void;
     type: string;
-    cardActionNode?: any;
-    footerNode?: any;
-    topHeaderNode?: any;
-    style?: StyleProp<ViewStyle>;
+    cardActionNode?: any
+    footerNode?: any
+    topHeaderNode?: any,
+    style?: StyleProp<ViewStyle>,
     xl?: boolean;
     isOnFreePlan?: boolean;
     lockProfile?: boolean;
@@ -56,71 +56,53 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
 
     const [previewImageUrl, setPreviewImageUrl] = useState<string | null>(null);
     const [previewImage, setPreviewImage] = useState(false);
-    const [socialHandle, setSocialHandle] = useState("");
+    const [socialHandle, setSocialHandle] = useState("")
 
     const influencer = props.influencer;
     const type = props.type;
     const theme = useTheme();
     const styles = stylesFn(theme);
-    const [socials, setSocials] = useState<ISocials | undefined>(undefined);
+    const [socials, setSocials] = useState<ISocials | undefined>(undefined)
 
-    const [images, setImages] = useState(
-        (props.customAttachments || influencer.profile?.attachments)?.map(
-            (attachment) => processRawAttachment(attachment)
-        ) || []
-    );
+    const [images, setImages] = useState((props.customAttachments || influencer.profile?.attachments)?.map((attachment) =>
+        processRawAttachment(attachment)
+    ) || [])
 
     const [bodyHeight, setBodyHeight] = useState<number>(0);
 
     useEffect(() => {
-        let mImg = [];
+        let mImg = []
         if (!props.customAttachments) {
-            mImg =
-                props.influencer.profile?.attachments?.map((attachment) =>
-                    processRawAttachment(attachment)
-                ) || [];
-            if (
-                socials &&
-                socials.socialScreenShots &&
-                socials.socialScreenShots.length > 0
-            ) {
-                const sdata = socials.socialScreenShots?.map((s) => ({
+            mImg = props.influencer.profile?.attachments?.map((attachment) =>
+                processRawAttachment(attachment)
+            ) || []
+            if (socials && socials.socialScreenShots && socials.socialScreenShots.length > 0) {
+                const sdata = socials.socialScreenShots?.map(s => ({
                     type: "image",
-                    url:
-                        props.isOnFreePlan || props.lockProfile
-                            ? SOCIAL_ACCESS_RESTRICTED
-                            : s,
-                }));
-                mImg.push(...sdata);
+                    url: (props.isOnFreePlan || props.lockProfile) ? SOCIAL_ACCESS_RESTRICTED : s
+                }))
+                mImg.push(...sdata)
             }
         } else {
-            mImg =
-                props.customAttachments.map((attachment) =>
-                    processRawAttachment(attachment)
-                ) || [];
+            mImg = props.customAttachments.map((attachment) =>
+                processRawAttachment(attachment)
+            ) || []
         }
-        setImages([...mImg]);
-    }, [props.customAttachments, props.influencer, socials]);
+        setImages([...mImg])
+    }, [props.customAttachments, props.influencer, socials])
 
     const getSocial = async () => {
         if (influencer.primarySocial) {
-            const socialCol = collection(
-                FirestoreDB,
-                "users",
-                influencer.id || AuthApp.currentUser?.uid || "",
-                "socials"
-            );
-            const socialData = await getDoc(doc(socialCol, influencer.primarySocial));
-            const social = socialData.data() as ISocials;
-            setSocialHandle(
-                social.instaProfile?.username || social.fbProfile?.name || ""
-            );
-            setSocials(social);
+            const socialCol = collection(FirestoreDB, "users", influencer.id || AuthApp.currentUser?.uid || "", "socials")
+            const socialData = await getDoc(doc(socialCol, influencer.primarySocial))
+            const social = socialData.data() as ISocials
+            setSocialHandle(social.instaProfile?.username || social.fbProfile?.name || "")
+            setSocials(social)
         }
-    };
+    }
     useEffect(() => {
-        getSocial();
-    }, []);
+        getSocial()
+    }, [])
 
     const screenWidth = Dimensions.get("window").width;
 
@@ -135,39 +117,34 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                 style={[
                     styles.card,
                     props.style,
-                    props.fullHeight
-                        ? { height: "100%" }
-                        : {
-                            borderRadius: 20,
-                            borderColor: Colors(theme).border,
-                            borderWidth: 1,
-                            shadowColor: "#000",
-                            shadowOffset: {
-                                width: 0,
-                                height: 2,
-                            },
-                            shadowOpacity: 0.25,
-                            shadowRadius: 3.84,
-                            elevation: 5,
+                    props.fullHeight ? { height: "100%" } : {
+                        borderRadius: 20,
+                        borderColor: Colors(theme).border,
+                        borderWidth: 1,
+                        shadowColor: "#000",
+                        shadowOffset: {
+                            width: 0,
+                            height: 2,
                         },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 3.84,
+                        elevation: 5,
+                    },
                     {
                         maxWidth: MAX_WIDTH_WEB,
                         alignSelf: "center",
-                        overflow: "hidden",
-                    },
-                ]}
-            >
+                        overflow: "hidden"
+                    }
+                ]}>
                 <View style={[styles.header]}>
                     <View>
                         {props.topHeaderNode}
-                        <View
-                            style={{
-                                gap: 10,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}
-                        >
+                        <View style={{
+                            gap: 10,
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                        }}>
                             <Pressable
                                 onPressIn={(e) => {
                                     startX.current = e.nativeEvent.pageX;
@@ -185,7 +162,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                     size={50}
                                     source={imageUrl(influencer.profileImage)}
                                 />
-                            </Pressable>
+                            </Pressable >
                             <Pressable
                                 style={styles.nameContainer}
                                 onPressIn={(e) => {
@@ -200,21 +177,17 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                     }
                                 }}
                             >
-                                <Text style={styles.name}>
-                                    {props.isOnFreePlan || props.lockProfile
-                                        ? maskName(influencer.name)
-                                        : influencer.name}
-                                </Text>
-                                {socialHandle && (
+                                <Text style={styles.name}>{(props.isOnFreePlan || props.lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
+                                {
+                                    socialHandle &&
                                     <Text style={styles.handle}>
-                                        {props.isOnFreePlan || props.lockProfile
-                                            ? maskHandle(socialHandle)
-                                            : socialHandle}
+                                        {(props.isOnFreePlan || props.lockProfile) ? maskHandle(socialHandle) : socialHandle}
                                     </Text>
-                                )}
-                            </Pressable>
+                                }
+                            </Pressable >
 
-                            {props.ToggleModal && (
+                            {
+                                props.ToggleModal &&
                                 <Pressable
                                     onPressIn={(e) => {
                                         startX.current = e.nativeEvent.pageX;
@@ -236,14 +209,12 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                         size={24}
                                         color={Colors(theme).text}
                                     />
-                                </Pressable>
-                            )}
-                        </View>
-                    </View>
-                </View>
+                                </Pressable>}
+                        </View >
+                    </View >
+                </View >
 
-                <View
-                    style={[props.fullHeight && styles.body]}
+                <View style={[props.fullHeight && styles.body]}
                     onLayout={(event) => {
                         const next = Math.round(event.nativeEvent.layout.height);
                         setBodyHeight((prev) => (prev === next ? prev : next));
@@ -273,74 +244,59 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                         }}
                     >
                         <InfluencerMetrics user={influencer} social={socials} />
-                        {props.cardActionNode && (
-                            <View style={{ paddingVertical: 16 }}>
+                        {
+                            props.cardActionNode && <View style={{ paddingVertical: 16 }}>
                                 {props.cardActionNode}
                             </View>
-                        )}
-                        {(props.customText || influencer?.profile?.content?.about) &&
-                            type != "influencers" && (
-                                <Text
-                                    style={{
-                                        color: Colors(theme).text,
-                                        fontSize: 16,
-                                        lineHeight: 22,
-                                    }}
-                                >
-                                    {props.customText
-                                        ? props.customText
-                                        : truncateText(
-                                            influencer?.profile?.content?.about as string,
-                                            80
-                                        )}
-                                </Text>
-                            )}
-                        {props.customTaxonomies && props.customTaxonomies.length > 0 && (
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    marginTop: 10,
-                                    flexWrap: "wrap",
-                                    rowGap: 10,
-                                    gap: 8,
-                                }}
-                            >
+                        }
+                        {
+                            (props.customText || influencer?.profile?.content?.about) && type != "influencers" &&
+                            <Text style={{
+                                color: Colors(theme).text,
+                                fontSize: 16,
+                                lineHeight: 22,
+                            }}>
+                                {props.customText ? props.customText :
+                                    truncateText(influencer?.profile?.content?.about as string, 80)}
+                            </Text>
+                        }
+                        {
+                            props.customTaxonomies && props.customTaxonomies.length > 0 &&
+                            <View style={{
+                                flexDirection: "row",
+                                marginTop: 10,
+                                flexWrap: "wrap",
+                                rowGap: 10,
+                                gap: 8,
+                            }}>
                                 {props.customTaxonomies.map((tag, index) => (
-                                    <Chip style={{ backgroundColor: Colors(theme).primary }}>
-                                        <Text style={{ color: Colors(theme).white }}>{tag}</Text>
-                                    </Chip>
+                                    <Chip style={{ backgroundColor: Colors(theme).primary }}><Text style={{ color: Colors(theme).white }}>{tag}</Text></Chip>
                                 ))}
                             </View>
-                        )}
-                        {type == "influencers" && (
-                            <Text
-                                style={{
-                                    color: Colors(theme).text,
-                                    fontSize: 16,
-                                    lineHeight: 22,
-                                }}
-                            >
-                                {truncateText(
-                                    (influencer?.profile?.content?.influencerConectionGoals
-                                        ? influencer?.profile?.content?.influencerConectionGoals
-                                        : influencer?.profile?.content?.about) as string,
-                                    80
-                                )}
+                        }
+                        {
+                            type == "influencers" &&
+                            <Text style={{
+                                color: Colors(theme).text,
+                                fontSize: 16,
+                                lineHeight: 22,
+                            }}>
+                                {truncateText((influencer?.profile?.content?.influencerConectionGoals ? influencer?.profile?.content?.influencerConectionGoals : influencer?.profile?.content?.about) as string, 80)}
                             </Text>
-                        )}
-                    </Pressable>
+                        }
+                    </Pressable >
                     {props.footerNode}
-                </View>
-            </View>
+                </View >
 
-            {previewImage && (
+            </View >
+
+            {previewImage &&
                 <AssetPreviewModal
                     previewImage={previewImage}
                     setPreviewImage={setPreviewImage}
                     previewImageUrl={previewImageUrl}
                     theme={theme}
-                />
-            )}
+                />}
         </>
     );
 };
