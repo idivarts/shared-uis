@@ -11,9 +11,7 @@ import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { truncateText } from "@/shared-uis/utils/text";
 import { imageUrl } from "@/shared-uis/utils/url";
-import {
-    faEllipsis
-} from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { collection, doc, getDoc } from "firebase/firestore";
@@ -23,7 +21,6 @@ import {
     Pressable,
     StyleProp,
     Text,
-    View,
     ViewStyle
 } from "react-native";
 import { Avatar, Chip } from "react-native-paper";
@@ -31,8 +28,9 @@ import Colors from "../constants/Colors";
 import { maskHandle, maskName } from "../utils/masks";
 import { MAX_WIDTH_WEB } from "./carousel/carousel-util";
 import { InfluencerMetrics } from "./influencers/influencer-metrics";
+import { View } from "./theme/Themed";
 
-type User = IUsers & { id?: string }
+type User = IUsers & { id?: string };
 interface InfluencerCardPropsType {
     influencer: User;
     customAttachments?: Attachment[]
@@ -160,13 +158,11 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                     }
                                 }}
                             >
-
                                 <Avatar.Image
                                     size={50}
                                     source={imageUrl(influencer.profileImage)}
                                 />
-
-                            </Pressable>
+                            </Pressable >
                             <Pressable
                                 style={styles.nameContainer}
                                 onPressIn={(e) => {
@@ -182,13 +178,16 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                 }}
                             >
                                 <Text style={styles.name}>{(props.isOnFreePlan || props.lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
-                                {socialHandle &&
+                                {
+                                    socialHandle &&
                                     <Text style={styles.handle}>
                                         {(props.isOnFreePlan || props.lockProfile) ? maskHandle(socialHandle) : socialHandle}
-                                    </Text>}
-                            </Pressable>
+                                    </Text>
+                                }
+                            </Pressable >
 
-                            {props.ToggleModal &&
+                            {
+                                props.ToggleModal &&
                                 <Pressable
                                     onPressIn={(e) => {
                                         startX.current = e.nativeEvent.pageX;
@@ -211,9 +210,9 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                         color={Colors(theme).text}
                                     />
                                 </Pressable>}
-                        </View>
-                    </View>
-                </View>
+                        </View >
+                    </View >
+                </View >
 
                 <View style={[props.fullHeight && styles.body]}
                     onLayout={(event) => {
@@ -245,10 +244,13 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                         }}
                     >
                         <InfluencerMetrics user={influencer} social={socials} />
-                        {props.cardActionNode && <View style={{ paddingVertical: 16 }}>
-                            {props.cardActionNode}
-                        </View>}
-                        {(props.customText || influencer?.profile?.content?.about) && type != "influencers" &&
+                        {
+                            props.cardActionNode && <View style={{ paddingVertical: 16 }}>
+                                {props.cardActionNode}
+                            </View>
+                        }
+                        {
+                            (props.customText || influencer?.profile?.content?.about) && type != "influencers" &&
                             <Text style={{
                                 color: Colors(theme).text,
                                 fontSize: 16,
@@ -256,8 +258,10 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                             }}>
                                 {props.customText ? props.customText :
                                     truncateText(influencer?.profile?.content?.about as string, 80)}
-                            </Text>}
-                        {props.customTaxonomies && props.customTaxonomies.length > 0 &&
+                            </Text>
+                        }
+                        {
+                            props.customTaxonomies && props.customTaxonomies.length > 0 &&
                             <View style={{
                                 flexDirection: "row",
                                 marginTop: 10,
@@ -268,20 +272,23 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                 {props.customTaxonomies.map((tag, index) => (
                                     <Chip style={{ backgroundColor: Colors(theme).primary }}><Text style={{ color: Colors(theme).white }}>{tag}</Text></Chip>
                                 ))}
-                            </View>}
-                        {type == "influencers" &&
+                            </View>
+                        }
+                        {
+                            type == "influencers" &&
                             <Text style={{
                                 color: Colors(theme).text,
                                 fontSize: 16,
                                 lineHeight: 22,
                             }}>
                                 {truncateText((influencer?.profile?.content?.influencerConectionGoals ? influencer?.profile?.content?.influencerConectionGoals : influencer?.profile?.content?.about) as string, 80)}
-                            </Text>}
-                    </Pressable>
+                            </Text>
+                        }
+                    </Pressable >
                     {props.footerNode}
-                </View>
+                </View >
 
-            </View>
+            </View >
 
             {previewImage &&
                 <AssetPreviewModal
