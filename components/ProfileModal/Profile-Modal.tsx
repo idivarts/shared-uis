@@ -194,14 +194,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
     const { width } = useWindowDimensions();
     const isTwoColumn = Platform.OS == "web" ? width > 768 : false; // Adjus
-    const formatDate = (epoch?: number | null) => {
-        if (!epoch) return "—";
-        try {
-            return new Date(epoch * 1000).toLocaleString();
-        } catch {
-            return `${epoch}`;
-        }
-    };
 
     return (
         <View
@@ -243,57 +235,25 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         }}
                     >
                         {isTwoColumn ? (
-                            <View
-                                style={[
-                                    styles.carouselContainer,
-                                    { flex: 1 },
-                                    Platform.OS === "web"
-                                        ? { maxWidth: MAX_WIDTH_WEB + 34 }
-                                        : { alignSelf: "center" },
-                                ]}
-                            >
-                                {mediaProcessing && mediaProcessing.length > 0 ? (
-                                    <>
-                                        <Carousel data={mediaProcessing || []} theme={theme} />
-                                        <View style={{ paddingHorizontal: 16 }}>
-                                            <InfluencerMetrics
-                                                user={influencer}
-                                                social={primarySocial}
-                                            />
-                                        </View>
-                                    </>
-                                ) : (
-                                    <InfluencerCard
-                                        // @ts-ignore
-                                        influencer={{
-                                            ...influencer,
-                                        }}
-                                        type="explore"
-                                        isOnFreePlan={isOnFreePlan}
-                                        lockProfile={lockProfile}
-                                    />
-                                )}
-                            </View>
-                        ) : (
-                            <View
-                                style={[
-                                    styles.carouselContainer,
-                                    Platform.OS === "web"
-                                        ? { maxWidth: MAX_WIDTH_WEB + 34 }
-                                        : { alignSelf: "center" },
-                                ]}
-                            >
+                            <View style={[styles.carouselContainer, { flex: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
+                                <InfluencerCard
+                                    // @ts-ignore
+                                    influencer={{ ...influencer, socials: [primarySocial?.isInstagram ? primarySocial?.instaProfile?.username : primarySocial?.fbProfile?.name] }}
+                                    type="explore"
+                                    isOnFreePlan={isOnFreePlan}
+                                    lockProfile={lockProfile}
+                                />
+                            </View>) : (
+                            <View style={[styles.carouselContainer,
+                            Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } :
+                                { alignSelf: "center" }]}>
                                 {mediaProcessing && mediaProcessing.length > 0 && (
                                     <Carousel data={mediaProcessing || []} theme={theme} />
                                 )}
                                 <View style={{ paddingHorizontal: 16 }}>
-                                    <InfluencerMetrics
-                                        user={influencer}
-                                        social={primarySocial}
-                                    />
+                                    <InfluencerMetrics user={influencer} social={primarySocial} />
                                 </View>
-                            </View>
-                        )}
+                            </View>)}
 
                         <View style={[{ flex: 1, marginTop: 16 }]}>
                             <View style={[styles.header]}>
