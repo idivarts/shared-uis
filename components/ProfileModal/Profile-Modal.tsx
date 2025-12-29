@@ -55,7 +55,11 @@ interface ProfileBottomSheetProps {
     influencer: IUsers & {
         id: string; // Note: additional fields from discovery page
     };
-    social?: ISocials;
+    social?: ISocials & Partial<{
+        gender: string,
+        quality: number,
+        isVerified: boolean
+    }>;
     isBrandsApp: boolean;
     showCardPreviewTab?: boolean;
     closeModal?: () => void;
