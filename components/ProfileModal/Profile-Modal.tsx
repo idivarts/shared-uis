@@ -6,20 +6,36 @@ import { useMyNavigation } from "@/shared-libs/utils/router";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
-import { maskEmail, maskHandle, maskName, maskPhone } from "@/shared-uis/utils/masks";
+import {
+    maskEmail,
+    maskHandle,
+    maskName,
+    maskPhone,
+} from "@/shared-uis/utils/masks";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
     faClock,
     faClose,
     faEnvelope,
     faLocation,
-    faPhone
+    faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
-import { ActivityIndicator, Dimensions, Image, Linking, Platform, Pressable, ScrollView, Text, useWindowDimensions, View } from "react-native";
+import {
+    ActivityIndicator,
+    Dimensions,
+    Image,
+    Linking,
+    Platform,
+    Pressable,
+    ScrollView,
+    Text,
+    useWindowDimensions,
+    View,
+} from "react-native";
 import { Button, Chip, Title } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
 import { Subject } from "rxjs";
@@ -37,9 +53,13 @@ interface ProfileBottomSheetProps {
     carouselMedia?: MediaItem[];
     FireStoreDB: Firestore;
     influencer: IUsers & {
-        id: string, // Note: additional fields from discovery page
+        id: string; // Note: additional fields from discovery page
     };
-    social?: ISocials
+    social?: ISocials & Partial<{
+        gender: string,
+        quality: number,
+        isVerified: boolean
+    }>;
     isBrandsApp: boolean;
     showCardPreviewTab?: boolean;
     closeModal?: () => void;
@@ -52,11 +72,18 @@ interface ProfileBottomSheetProps {
     isPhoneMasked?: boolean;
     theme: Theme;
     showCampaignGoals?: boolean;
-    showInfluencerGoals?: boolean
+    showInfluencerGoals?: boolean;
+    // editMetricsButton?: React.ReactNode;
 }
 
-export const ProfileModalUnlockRequest = new Subject<{ influencerId: string, callback: Function }>()
-export const ProfileModalSendMessage = new Subject<{ influencerId: string, callback: Function }>()
+export const ProfileModalUnlockRequest = new Subject<{
+    influencerId: string;
+    callback: Function;
+}>();
+export const ProfileModalSendMessage = new Subject<{
+    influencerId: string;
+    callback: Function;
+}>();
 
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     actionCard,
@@ -68,6 +95,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     isBrandsApp,
     showCardPreviewTab = false,
     closeModal,
+    // editMetricsButton,
     theme,
     loadingPosts,
     posts = [],
@@ -77,12 +105,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     isEmailMasked = false,
     isPhoneMasked = true,
     showCampaignGoals = true,
-    showInfluencerGoals = false
+    showInfluencerGoals = false,
 }) => {
     const styles = stylesFn(theme);
-    const [primarySocial, setPrimarySocial] = useState<ISocials>(social as ISocials);
-    const { openModal } = useConfirmationModel()
-    const router = useMyNavigation()
+    const [primarySocial, setPrimarySocial] = useState<ISocials>();
+    const { openModal } = useConfirmationModel();
+    const router = useMyNavigation();
 
     const mediaProcessing = carouselMedia
         ? carouselMedia
@@ -95,46 +123,51 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         value: "Preview",
     });
 
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        console.log("SOCIAL DATA FETCHED", social);
+
+        setPrimarySocial(social)
+    }, [social])
 
     const unlockProfile = () => {
-        setLoading(true)
+        setLoading(true);
         ProfileModalUnlockRequest.next({
             influencerId: influencer?.id || "",
             callback: (success: boolean) => {
-                setLoading(false)
-            }
-        })
-    }
+                setLoading(false);
+            },
+        });
+    };
     const sendMessage = () => {
-        setLoading(true)
+        setLoading(true);
         ProfileModalSendMessage.next({
             influencerId: influencer?.id || "",
             callback: (success: boolean) => {
-                setLoading(false)
-                if (success)
-                    closeModal?.()
-            }
-        })
-    }
+                setLoading(false);
+                if (success) closeModal?.();
+            },
+        });
+    };
 
     const upgradeNow = () => {
-        closeModal?.()
+        closeModal?.();
         openModal({
             title: "Upgrade your Plan Now",
-            description: "You can only get the access to influencers social media after you subscribe to a paid plan",
+            description:
+                "You can only get the access to influencers social media after you subscribe to a paid plan",
             confirmAction: () => {
-                router.push("/billing")
+                router.push("/billing");
             },
-            confirmText: "Upgrade now"
-        })
-    }
+            confirmText: "Upgrade now",
+        });
+    };
 
     const screenWidth = Dimensions.get("window").width;
 
     const fetchPrimarySocialMedia = async () => {
-        if (primarySocial)
-            return;
+        if (primarySocial) return;
 
         try {
             const userPrimaryID = influencer.primarySocial;
@@ -159,13 +192,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         }
     };
 
-
     useEffect(() => {
         fetchPrimarySocialMedia();
     }, []);
 
     const { width } = useWindowDimensions();
-    const isTwoColumn = Platform.OS == "web" ? (width > 768) : false; // Adjus
+    const isTwoColumn = Platform.OS == "web" ? width > 768 : false; // Adjus
 
     return (
         <View
@@ -184,8 +216,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     paddingBottom: 100,
                 }}
             >
-                {(closeModal && isTwoColumn) &&
-                    <View style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}>
+                {closeModal && isTwoColumn && (
+                    <View
+                        style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}
+                    >
                         <Pressable onPress={closeModal}>
                             <FontAwesomeIcon
                                 icon={faClose}
@@ -194,10 +228,17 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 style={styles.icon}
                             />
                         </Pressable>
-                    </View>}
+                    </View>
+                )}
                 {previewType.value === "Preview" ? (
-                    <View style={{ flexDirection: isTwoColumn ? "row" : "column", padding: isTwoColumn ? 20 : 0, alignItems: isTwoColumn ? "flex-start" : undefined }}>
-                        {isTwoColumn ?
+                    <View
+                        style={{
+                            flexDirection: isTwoColumn ? "row" : "column",
+                            padding: isTwoColumn ? 20 : 0,
+                            alignItems: isTwoColumn ? "flex-start" : undefined,
+                        }}
+                    >
+                        {isTwoColumn ? (
                             <View style={[styles.carouselContainer, { flex: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
                                 <InfluencerCard
                                     // @ts-ignore
@@ -206,7 +247,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     isOnFreePlan={isOnFreePlan}
                                     lockProfile={lockProfile}
                                 />
-                            </View> :
+                            </View>) : (
                             <View style={[styles.carouselContainer,
                             Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } :
                                 { alignSelf: "center" }]}>
@@ -216,42 +257,79 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 <View style={{ paddingHorizontal: 16 }}>
                                     <InfluencerMetrics user={influencer} social={primarySocial} />
                                 </View>
-                            </View>}
+                            </View>)}
 
                         <View style={[{ flex: 1, marginTop: 16 }]}>
                             <View style={[styles.header]}>
                                 <View style={styles.profileInfo}>
-                                    <View style={{
-                                        flexDirection: "row",
-                                        alignItems: "center",
-                                        gap: 24,
-                                        marginBottom: 16,
-                                    }}>
-                                        <Text style={styles.name}>{(isOnFreePlan || lockProfile) ? maskName(influencer.name) : influencer.name}</Text>
-                                        {actionButton != undefined ? actionButton : (isBrandsApp && <>{!isOnFreePlan ? <>
-                                            {lockProfile ?
-                                                <Button mode="outlined" onPress={unlockProfile} loading={loading}>Unlock Profile</Button> :
-                                                <>{IS_MONETIZATION_DONE && <Button mode="contained" onPress={sendMessage} loading={loading}>Send Message</Button>}</>}
-                                        </> : <Button mode="outlined" onPress={upgradeNow}>Unlock Profile</Button>}</>)}
+                                    <View
+                                        style={{
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            gap: 24,
+                                            marginBottom: 16,
+                                        }}
+                                    >
+                                        <Text style={styles.name}>
+                                            {isOnFreePlan || lockProfile
+                                                ? maskName(influencer.name)
+                                                : influencer.name}
+                                        </Text>
+                                        {actionButton != undefined
+                                            ? actionButton
+                                            : isBrandsApp && (
+                                                <>
+                                                    {!isOnFreePlan ? (
+                                                        <>
+                                                            {lockProfile ? (
+                                                                <Button
+                                                                    mode="outlined"
+                                                                    onPress={unlockProfile}
+                                                                    loading={loading}
+                                                                >
+                                                                    Unlock Profile
+                                                                </Button>
+                                                            ) : (
+                                                                <>
+                                                                    {IS_MONETIZATION_DONE && (
+                                                                        <Button
+                                                                            mode="contained"
+                                                                            onPress={sendMessage}
+                                                                            loading={loading}
+                                                                        >
+                                                                            Send Message
+                                                                        </Button>
+                                                                    )}
+                                                                </>
+                                                            )}
+                                                        </>
+                                                    ) : (
+                                                        <Button mode="outlined" onPress={upgradeNow}>
+                                                            Unlock Profile
+                                                        </Button>
+                                                    )}
+                                                </>
+                                            )}
                                     </View>
 
                                     <Pressable
                                         style={styles.row}
                                         onPress={() => {
                                             if (isOnFreePlan) {
-                                                upgradeNow()
+                                                upgradeNow();
                                                 return;
                                             }
                                             if (lockProfile) {
-                                                closeModal?.()
+                                                closeModal?.();
                                                 openModal({
                                                     title: "Social Unavailable",
-                                                    description: "You can only get the influencers socials if they apply on your collaboration",
+                                                    description:
+                                                        "You can only get the influencers socials if they apply on your collaboration",
                                                     confirmAction: () => {
-                                                        router.push("/collaborations")
+                                                        router.push("/collaborations");
                                                     },
-                                                    confirmText: "Post Collaboration"
-                                                })
+                                                    confirmText: "Post Collaboration",
+                                                });
                                                 return;
                                             }
 
@@ -268,17 +346,67 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         }}
                                     >
                                         <FontAwesomeIcon
-                                            icon={primarySocial?.isInstagram ? faInstagram : faFacebook}
+                                            icon={
+                                                primarySocial?.isInstagram
+                                                    ? faInstagram
+                                                    : faFacebook
+                                            }
                                             size={18}
                                             color={Colors(theme).primary}
                                             style={styles.icon}
                                         />
                                         <Text style={styles.subTextHeading}>
                                             {primarySocial?.isInstagram
-                                                ? "@" + ((isOnFreePlan || lockProfile) ? maskHandle(primarySocial?.instaProfile?.username || "") : primarySocial?.instaProfile?.username)
-                                                : ((isOnFreePlan || lockProfile) ? maskHandle(primarySocial?.fbProfile?.name || "") : primarySocial?.fbProfile?.name)}
+                                                ? "@" +
+                                                (isOnFreePlan || lockProfile
+                                                    ? maskHandle(
+                                                        primarySocial?.instaProfile?.username || ""
+                                                    )
+                                                    : primarySocial?.instaProfile?.username)
+                                                : isOnFreePlan || lockProfile
+                                                    ? maskHandle(primarySocial?.fbProfile?.name || "")
+                                                    : primarySocial?.fbProfile?.name}
                                         </Text>
                                     </Pressable>
+
+                                    {/* {trendlySocial && (
+                                        <View
+                                            style={{
+                                                flexDirection: "row",
+                                                flexWrap: "wrap",
+                                                marginTop: 8,
+                                            }}
+                                        >
+                                            {!!trendlySocial.gender &&
+                                                trendlySocial.gender !== "unknown" && (
+                                                    <Chip
+                                                        style={{ marginRight: 8, marginBottom: 8 }}
+                                                        icon="account"
+                                                        mode="outlined"
+                                                    >
+                                                        {trendlySocial.gender}
+                                                    </Chip>
+                                                )}
+                                            {typeof qualityValue === "number" && (
+                                                <Chip
+                                                    style={{ marginRight: 8, marginBottom: 8 }}
+                                                    icon="star"
+                                                    mode="outlined"
+                                                >
+                                                    Quality: {qualityValue}/100
+                                                </Chip>
+                                            )}
+                                            {trendlySocial.profile_verified && (
+                                                <Chip
+                                                    style={{ marginRight: 8, marginBottom: 8 }}
+                                                    icon="check-decagram"
+                                                    mode="outlined"
+                                                >
+                                                    Verified
+                                                </Chip>
+                                            )}
+                                        </View>
+                                    )} */}
 
                                     {/* Email */}
                                     {influencer?.email && (
@@ -287,15 +415,16 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             onPress={() => {
                                                 if (isEmailMasked || isOnFreePlan || lockProfile) {
                                                     if (closeModal) {
-                                                        closeModal()
+                                                        closeModal();
                                                         openModal({
                                                             title: "Email Unavailable",
-                                                            description: "You can only get the influencers email if they apply on your collaboration",
+                                                            description:
+                                                                "You can only get the influencers email if they apply on your collaboration",
                                                             confirmAction: () => {
-                                                                router.push("/collaborations")
+                                                                router.push("/collaborations");
                                                             },
-                                                            confirmText: "Post Collaboration"
-                                                        })
+                                                            confirmText: "Post Collaboration",
+                                                        });
                                                     }
                                                 } else
                                                     Linking.openURL(`mailto:${influencer?.email}`);
@@ -307,13 +436,17 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 color={Colors(theme).primary}
                                                 style={styles.icon}
                                             />
-                                            {(isEmailMasked || isOnFreePlan || lockProfile) ? <>
+                                            {isEmailMasked || isOnFreePlan || lockProfile ? (
+                                                <>
+                                                    <Text style={styles.subTextHeading}>
+                                                        {maskEmail(influencer?.email)}
+                                                    </Text>
+                                                </>
+                                            ) : (
                                                 <Text style={styles.subTextHeading}>
-                                                    {maskEmail(influencer?.email)}
+                                                    {influencer?.email}
                                                 </Text>
-                                            </> : <Text style={styles.subTextHeading}>
-                                                {influencer?.email}
-                                            </Text>}
+                                            )}
                                         </Pressable>
                                     )}
 
@@ -324,23 +457,25 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             onPress={() => {
                                                 if (isPhoneMasked || isOnFreePlan || lockProfile) {
                                                     if (closeModal) {
-                                                        closeModal()
+                                                        closeModal();
                                                         if (isBrandsApp)
                                                             openModal({
                                                                 title: "Phone Access Unavailable",
-                                                                description: "You can only get the influencers phone number if they apply on your collaboration",
+                                                                description:
+                                                                    "You can only get the influencers phone number if they apply on your collaboration",
                                                                 confirmAction: () => {
-                                                                    router.push("/collaborations")
+                                                                    router.push("/collaborations");
                                                                 },
-                                                                confirmText: "Post Collaboration"
-                                                            })
+                                                                confirmText: "Post Collaboration",
+                                                            });
                                                         else
                                                             openModal({
                                                                 title: "Phone Access Unavailable",
-                                                                description: "You can only get the influencers phone number if they accept your invitation to connect",
+                                                                description:
+                                                                    "You can only get the influencers phone number if they accept your invitation to connect",
                                                                 confirmAction: () => { },
-                                                                confirmText: "Understood"
-                                                            })
+                                                                confirmText: "Understood",
+                                                            });
                                                     }
                                                 } else
                                                     Linking.openURL(`tel:${influencer?.phoneNumber}`);
@@ -352,13 +487,17 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 color={Colors(theme).primary}
                                                 style={styles.icon}
                                             />
-                                            {(isPhoneMasked || isOnFreePlan || lockProfile) ? <>
+                                            {isPhoneMasked || isOnFreePlan || lockProfile ? (
+                                                <>
+                                                    <Text style={styles.subTextHeading}>
+                                                        {maskPhone(influencer?.phoneNumber)}
+                                                    </Text>
+                                                </>
+                                            ) : (
                                                 <Text style={styles.subTextHeading}>
-                                                    {maskPhone(influencer?.phoneNumber)}
+                                                    {influencer?.phoneNumber}
                                                 </Text>
-                                            </> : <Text style={styles.subTextHeading}>
-                                                {influencer?.phoneNumber}
-                                            </Text>}
+                                            )}
                                         </Pressable>
                                     )}
 
@@ -375,7 +514,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             </Text>
                                         </View>
                                     )}
-                                    {influencer?.location && (
+                                    {(influencer?.location) && (
                                         <View style={styles.row}>
                                             <FontAwesomeIcon
                                                 icon={faLocation}
@@ -388,16 +527,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             </Text>
                                         </View>
                                     )}
-
                                 </View>
                             </View>
 
                             {influencer?.profile?.category?.length !== 0 && (
-                                <View
-                                    style={[
-                                        styles.chipContainer,
-                                    ]}
-                                >
+                                <View style={[styles.chipContainer]}>
                                     {influencer?.profile?.category &&
                                         influencer?.profile?.category.map((interest, index) => (
                                             <Chip key={index} style={styles.chip} mode="outlined">
@@ -432,12 +566,15 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
                                 {influencer?.profile?.content?.socialMediaHighlight ? (
                                     <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>Social Media Highlight</Title>
+                                        <Title style={styles.cardColor}>
+                                            Social Media Highlight
+                                        </Title>
                                         <RenderHTML
                                             contentWidth={screenWidth}
                                             source={{
                                                 html:
-                                                    influencer?.profile?.content?.socialMediaHighlight ||
+                                                    influencer?.profile?.content
+                                                        ?.socialMediaHighlight ||
                                                     "<p>No content available.</p>",
                                             }}
                                             baseStyle={{
@@ -450,14 +587,16 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         />
                                     </View>
                                 ) : null}
-                                {(showCampaignGoals && influencer?.profile?.content?.collaborationGoals) ? (
+                                {showCampaignGoals &&
+                                    influencer?.profile?.content?.collaborationGoals ? (
                                     <View style={styles.aboutCard}>
                                         <Title style={styles.cardColor}>Campaign Goals</Title>
                                         <RenderHTML
                                             contentWidth={screenWidth}
                                             source={{
                                                 html:
-                                                    influencer?.profile?.content?.collaborationGoals ||
+                                                    influencer?.profile?.content
+                                                        ?.collaborationGoals ||
                                                     "<p>No content available.</p>",
                                             }}
                                             baseStyle={{
@@ -470,14 +609,18 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         />
                                     </View>
                                 ) : null}
-                                {(showInfluencerGoals && influencer?.profile?.content?.influencerConectionGoals) ? (
+                                {showInfluencerGoals &&
+                                    influencer?.profile?.content?.influencerConectionGoals ? (
                                     <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>Influencer Connection Goals</Title>
+                                        <Title style={styles.cardColor}>
+                                            Influencer Connection Goals
+                                        </Title>
                                         <RenderHTML
                                             contentWidth={screenWidth}
                                             source={{
                                                 html:
-                                                    influencer?.profile?.content?.influencerConectionGoals ||
+                                                    influencer?.profile?.content
+                                                        ?.influencerConectionGoals ||
                                                     "<p>No content available.</p>",
                                             }}
                                             baseStyle={{
@@ -492,7 +635,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 ) : null}
                                 {influencer?.profile?.content?.audienceInsights ? (
                                     <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>Audience Insights</Title>
+                                        <Title style={styles.cardColor}>
+                                            Audience Insights
+                                        </Title>
                                         <RenderHTML
                                             contentWidth={screenWidth}
                                             source={{
@@ -512,7 +657,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 ) : null}
                                 {influencer?.profile?.content?.funFactAboutUser ? (
                                     <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>Fun Fact About You</Title>
+                                        <Title style={styles.cardColor}>
+                                            Fun Fact About You
+                                        </Title>
                                         <RenderHTML
                                             contentWidth={screenWidth}
                                             source={{
@@ -531,7 +678,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     </View>
                                 ) : null}
                                 {loadingPosts ? (
-                                    <ActivityIndicator size="large" color={Colors(theme).primary} />
+                                    <ActivityIndicator
+                                        size="large"
+                                        color={Colors(theme).primary}
+                                    />
                                 ) : posts.length > 0 ? (
                                     <View style={styles.aboutCard}>
                                         <Title
@@ -542,13 +692,18 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 },
                                             ]}
                                         >
-                                            {influencer.name}'s {isInstagram ? "Instagram" : "Facebook"}{" "}
-                                            Posts
+                                            {influencer.name}'s{" "}
+                                            {isInstagram ? "Instagram" : "Facebook"} Posts
                                         </Title>
 
-                                        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                                        <ScrollView
+                                            horizontal
+                                            showsHorizontalScrollIndicator={false}
+                                        >
                                             <View style={{ flexDirection: "column" }}>
-                                                <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                                                <View
+                                                    style={{ flexDirection: "row", marginBottom: 10 }}
+                                                >
                                                     {posts &&
                                                         posts
                                                             .filter((_, index) => index % 2 === 0)
@@ -638,8 +793,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         />
                     </View>
                 )}
+
+
             </ScrollView>
-            {(showCardPreviewTab && !isTwoColumn) && (
+            {showCardPreviewTab && !isTwoColumn && (
                 <View
                     style={{
                         padding: 10,
