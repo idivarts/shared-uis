@@ -9,8 +9,7 @@ import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import {
     maskEmail,
     maskHandle,
-    maskName,
-    maskPhone,
+    maskPhone
 } from "@/shared-uis/utils/masks";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
@@ -197,7 +196,58 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     }, []);
 
     const { width } = useWindowDimensions();
-    const isTwoColumn = Platform.OS == "web" ? width > 768 : false; // Adjus
+    const isTwoColumn = Platform.OS == "web" ? width > 768 : false;
+    const trendlyGender = social?.gender;
+    const trendlyQuality =
+        typeof social?.quality === "number"
+            ? social.quality
+            : typeof (social as any)?.quality_score === "number"
+                ? (social as any).quality_score
+                : undefined;
+    const trendlyVerified =
+        typeof social?.isVerified === "boolean"
+            ? social.isVerified
+            : Boolean((social as any)?.profile_verified);
+    const showGenderChip = !!trendlyGender && trendlyGender !== "unknown";
+    const showQualityChip = typeof trendlyQuality === "number";
+    const showVerifiedChip = !!trendlyVerified;
+    const showTrendlyChips = showGenderChip || showQualityChip || showVerifiedChip;
+    const actionButtonNode =
+        actionButton != undefined
+            ? actionButton
+            : isBrandsApp && (
+                <>
+                    {!isOnFreePlan ? (
+                        <>
+                            {lockProfile ? (
+                                <Button
+                                    mode="outlined"
+                                    onPress={unlockProfile}
+                                    loading={loading}
+                                >
+                                    Unlock Profile
+                                </Button>
+                            ) : (
+                                <>
+                                    {IS_MONETIZATION_DONE && (
+                                        <Button
+                                            mode="contained"
+                                            onPress={sendMessage}
+                                            loading={loading}
+                                        >
+                                            Send Message
+                                        </Button>
+                                    )}
+                                </>
+                            )}
+                        </>
+                    ) : (
+                        <Button mode="outlined" onPress={upgradeNow}>
+                            Unlock Profile
+                        </Button>
+                    )}
+                </>
+            );
 
     return (
         <View
@@ -264,52 +314,34 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 <View style={styles.profileInfo}>
                                     <View
                                         style={{
-                                            flexDirection: "row",
-                                            alignItems: "center",
-                                            gap: 24,
+                                            flexDirection: isTwoColumn ? "row" : "column",
+                                            alignItems: "flex-start",
+                                            gap: isTwoColumn ? 24 : 12,
                                             marginBottom: 16,
                                         }}
                                     >
-                                        <Text style={styles.name}>
-                                            {isOnFreePlan || lockProfile
-                                                ? maskName(influencer.name)
-                                                : influencer.name}
+                                        <Text
+                                            style={[
+                                                styles.name,
+                                                isTwoColumn
+                                                    ? { flexShrink: 1, minWidth: 0 }
+                                                    : { width: "100%" },
+                                            ]}
+                                            numberOfLines={isTwoColumn ? 1 : 2}
+                                        >
+                                            {influencer.name}
                                         </Text>
-                                        {actionButton != undefined
-                                            ? actionButton
-                                            : isBrandsApp && (
-                                                <>
-                                                    {!isOnFreePlan ? (
-                                                        <>
-                                                            {lockProfile ? (
-                                                                <Button
-                                                                    mode="outlined"
-                                                                    onPress={unlockProfile}
-                                                                    loading={loading}
-                                                                >
-                                                                    Unlock Profile
-                                                                </Button>
-                                                            ) : (
-                                                                <>
-                                                                    {IS_MONETIZATION_DONE && (
-                                                                        <Button
-                                                                            mode="contained"
-                                                                            onPress={sendMessage}
-                                                                            loading={loading}
-                                                                        >
-                                                                            Send Message
-                                                                        </Button>
-                                                                    )}
-                                                                </>
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        <Button mode="outlined" onPress={upgradeNow}>
-                                                            Unlock Profile
-                                                        </Button>
-                                                    )}
-                                                </>
-                                            )}
+                                        {actionButtonNode ? (
+                                            <View
+                                                style={{
+                                                    width: isTwoColumn ? "auto" : "100%",
+                                                    alignItems: "flex-start"
+
+                                                }}
+                                            >
+                                                {actionButtonNode}
+                                            </View>
+                                        ) : null}
                                     </View>
 
                                     <Pressable
@@ -369,7 +401,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         </Text>
                                     </Pressable>
 
-                                    {/* {trendlySocial && (
+                                    {showTrendlyChips ? (
                                         <View
                                             style={{
                                                 flexDirection: "row",
@@ -377,26 +409,25 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 marginTop: 8,
                                             }}
                                         >
-                                            {!!trendlySocial.gender &&
-                                                trendlySocial.gender !== "unknown" && (
-                                                    <Chip
-                                                        style={{ marginRight: 8, marginBottom: 8 }}
-                                                        icon="account"
-                                                        mode="outlined"
-                                                    >
-                                                        {trendlySocial.gender}
-                                                    </Chip>
-                                                )}
-                                            {typeof qualityValue === "number" && (
+                                            {showGenderChip ? (
+                                                <Chip
+                                                    style={{ marginRight: 8, marginBottom: 8 }}
+                                                    icon="account"
+                                                    mode="outlined"
+                                                >
+                                                    {trendlyGender}
+                                                </Chip>
+                                            ) : null}
+                                            {showQualityChip ? (
                                                 <Chip
                                                     style={{ marginRight: 8, marginBottom: 8 }}
                                                     icon="star"
                                                     mode="outlined"
                                                 >
-                                                    Quality: {qualityValue}/100
+                                                    Quality: {trendlyQuality}/100
                                                 </Chip>
-                                            )}
-                                            {trendlySocial.profile_verified && (
+                                            ) : null}
+                                            {showVerifiedChip ? (
                                                 <Chip
                                                     style={{ marginRight: 8, marginBottom: 8 }}
                                                     icon="check-decagram"
@@ -404,9 +435,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 >
                                                     Verified
                                                 </Chip>
-                                            )}
+                                            ) : null}
                                         </View>
-                                    )} */}
+                                    ) : null}
 
                                     {/* Email */}
                                     {influencer?.email && (

@@ -10,7 +10,6 @@ import {
     TextInput,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-
 import Colors from "@/shared-uis/constants/Colors";
 import BottomSheetContainer from '../bottom-sheet';
 import { Text, View } from '../theme/Themed';
@@ -23,6 +22,7 @@ export interface MultiSelectExtendableProps {
     onSelectedItemsChange: (items: string[]) => void;
     selectedItems: string[];
     theme: Theme;
+    closeOnSelect?: boolean;
 }
 
 export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
@@ -33,6 +33,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
     onSelectedItemsChange,
     selectedItems,
     theme,
+    closeOnSelect = false,
 }) => {
     const [totalMultiselectItems, setTotalMultiselectItems] = useState<string[]>(initialMultiselectItemsList);
     const [selectedMultiselectItems, setSelectedMultiselectItems] = useState<string[]>(selectedItems);
@@ -67,6 +68,9 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
         onSelectedItemsChange([...selectedMultiselectItems, searchText]);
 
         setSearchText('');
+        if (closeOnSelect) {
+            setIsModalVisible(false);
+        }
     };
 
     const toggleSelection = (item: string) => {
@@ -84,13 +88,16 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
         // Remove item from selected items if it's already selected
         // Add item to total items if it's not already in the list
         // Send updated selected items to parent component
-
+        const wasSelected = selectedMultiselectItems.includes(item);
         toggleSelection(item);
         if (!totalMultiselectItems.includes(item)) {
             setTotalMultiselectItems([...totalMultiselectItems, item]);
         }
 
         setSearchText('');
+        if (closeOnSelect && !wasSelected) {
+            setIsModalVisible(false);
+        }
     };
 
     const openBottomSheet = () => {
