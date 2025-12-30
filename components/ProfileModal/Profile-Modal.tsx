@@ -13,11 +13,14 @@ import {
 } from "@/shared-uis/utils/masks";
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
+    faCheck,
     faClock,
     faClose,
     faEnvelope,
     faLocation,
     faPhone,
+    faStar,
+    faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
@@ -402,39 +405,45 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     </Pressable>
 
                                     {showTrendlyChips ? (
-                                        <View
-                                            style={{
-                                                flexDirection: "row",
-                                                flexWrap: "wrap",
-                                                marginTop: 8,
-                                            }}
-                                        >
+                                        <View style={{ marginTop: 8 }}>
                                             {showGenderChip ? (
-                                                <Chip
-                                                    style={{ marginRight: 8, marginBottom: 8 }}
-                                                    icon="account"
-                                                    mode="outlined"
-                                                >
-                                                    {trendlyGender}
-                                                </Chip>
+                                                <View style={styles.row}>
+                                                    <FontAwesomeIcon
+                                                        icon={faUser}
+                                                        size={16}
+                                                        color={Colors(theme).primary}
+                                                        style={styles.icon}
+                                                    />
+                                                    <Text style={styles.subTextHeading}>
+                                                        Gender: {trendlyGender}
+                                                    </Text>
+                                                </View>
                                             ) : null}
                                             {showQualityChip ? (
-                                                <Chip
-                                                    style={{ marginRight: 8, marginBottom: 8 }}
-                                                    icon="star"
-                                                    mode="outlined"
-                                                >
-                                                    Quality: {trendlyQuality}/100
-                                                </Chip>
+                                                <View style={styles.row}>
+                                                    <FontAwesomeIcon
+                                                        icon={faStar}
+                                                        size={16}
+                                                        color={Colors(theme).primary}
+                                                        style={styles.icon}
+                                                    />
+                                                    <Text style={styles.subTextHeading}>
+                                                        Quality: {trendlyQuality}/100
+                                                    </Text>
+                                                </View>
                                             ) : null}
                                             {showVerifiedChip ? (
-                                                <Chip
-                                                    style={{ marginRight: 8, marginBottom: 8 }}
-                                                    icon="check-decagram"
-                                                    mode="outlined"
-                                                >
-                                                    Verified
-                                                </Chip>
+                                                <View style={styles.row}>
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        size={16}
+                                                        color={Colors(theme).primary}
+                                                        style={styles.icon}
+                                                    />
+                                                    <Text style={styles.subTextHeading}>
+                                                        Verified
+                                                    </Text>
+                                                </View>
                                             ) : null}
                                         </View>
                                     ) : null}
