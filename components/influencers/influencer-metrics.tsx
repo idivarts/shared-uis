@@ -2,6 +2,7 @@ import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Colors from "@/shared-uis/constants/Colors";
 import { convertToKUnits } from "@/shared-uis/utils/conversion";
+import { convertToMUnits } from "@/shared-uis/utils/conversion-million";
 import {
     faArrowUpWideShort,
     faChartLine,
@@ -28,7 +29,7 @@ export const InfluencerMetrics = ({ user, social, action = null }: CardActionsPr
     };
     const theme = useTheme();
     const followers = convertToKUnits(metrics.followers) || social?.instaProfile?.approxMetrics?.followers || "";
-    const reach = convertToKUnits(metrics.reach) || social?.instaProfile?.approxMetrics?.views || "";
+    const reach = convertToMUnits(metrics.reach) || social?.instaProfile?.approxMetrics?.views || "";
     const interations = convertToKUnits(metrics.engagement) || social?.instaProfile?.approxMetrics?.interactions || "";
     if (!followers && !reach && !interations) { // && !metrics.rating
         return null

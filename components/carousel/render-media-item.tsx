@@ -4,13 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { ActivityIndicator, findNodeHandle, UIManager } from "react-native";
 import { GestureEventPayload, PanGestureHandler, PanGestureHandlerEventPayload, State, TapGestureHandler } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
-
 import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
 import { Console } from "@/shared-libs/utils/console";
 import Colors from "@/shared-uis/constants/Colors";
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import React from "react";
-import { Dimensions, Platform, Pressable } from "react-native";
+import { Dimensions, Linking, Platform, Pressable, type ViewStyle } from "react-native";
+import { faPlay } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 //  import { InView } from 'react-native-intersection-observer';
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
@@ -20,6 +21,8 @@ import { Text, View } from "../theme/Themed";
 export interface MediaItem {
     type: string;
     url: string;
+    imageUrl?: string;
+    playUrl?: string;
 }
 
 interface RenderMediaItemProps {
@@ -54,8 +57,8 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     const [isError, setIsError] = useState(false);
     const [isMuted, setIsMuted] = useState(true)
     const [inView, setInView] = useState(false)
-    const videoRef = useRef<HTMLVideoElement>()
-    const nativeVideoRef = useRef<Video>()
+    const videoRef = useRef<HTMLVideoElement | null>(null)
+    const nativeVideoRef = useRef<Video | null>(null)
     const isFocused = useIsFocused();
     const { scrollRef, scrollHeight } = useScrollContext()
     const [topPosition, setTopPosition] = useState<number | null>(null)
@@ -225,8 +228,18 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     }
 
     if (item?.type.includes("reel")) {
+        const reelImageUrl = item.imageUrl || item.url;
+        const handleReelPlay = () => {
+            if (item.playUrl) {
+                Linking.openURL(item.playUrl);
+                return;
+            }
+            if (handleImagePress) {
+                handleImagePress(item);
+            }
+        };
         const mImage = <ImageComponent
-            url={item.url}
+            url={reelImageUrl}
             altText="Media"
             style={[
                 styles.media,
@@ -245,44 +258,68 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             }}
         />
 
-        const AnimatedImageView = <Animated.View
-            style={{
-                position: "relative",
-            }}
-        >
-            {Platform.OS == "web" ? (
-                mImage
-            ) : (
-                <Zoomable maxPanPointers={2}>
-                    {mImage}
-                </Zoomable>
-            )}
-            <View>
-                <Text>
-                    This is Reel component. Yet to be developeed. Needs Play button with redirect to the link
-                </Text>
-            </View>
-            <LoadingCircle />
-        </Animated.View>
-
-        return (
-            <TapGestureHandler
-                onHandlerStateChange={({ nativeEvent }) => {
-                    if (nativeEvent.state === State.ACTIVE && handleImagePress) {
-                        handleImagePress(item);
-                    }
+        const reelFrameStyle: ViewStyle = {
+            width: width || "100%",
+            height: height || 250,
+            alignSelf: "center",
+        };
+        const AnimatedImageView = (
+            <Animated.View
+                style={{
+                    position: "relative",
+                    ...reelFrameStyle,
                 }}
             >
-                <PanGestureHandler
-                    onGestureEvent={({ nativeEvent }) => {
-                        scrollBy(nativeEvent)
-                        // element?.current?.scrollBy(0, -nativeEvent.translationY * 0.05);
+                {Platform.OS == "web" ? (
+                    mImage
+                ) : (
+                    <View style={reelFrameStyle}>
+                        <Zoomable maxPanPointers={2}>
+                            {mImage}
+                        </Zoomable>
+                    </View>
+                )}
+                <View
+                    pointerEvents="box-none"
+                    style={{
+                        position: "absolute",
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: "transparent",
+                        alignItems: "center",
+                        justifyContent: "center",
                     }}
-                    activeOffsetY={[-5, 5]}
                 >
-                    {AnimatedImageView}
-                </PanGestureHandler>
-            </TapGestureHandler >
+                    <Pressable
+                        onPress={handleReelPlay}
+                        style={{
+                            height: 52,
+                            width: 52,
+                            borderRadius: 26,
+                            backgroundColor: "rgba(0, 0, 0, 0.6)",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                    >
+                        <FontAwesomeIcon icon={faPlay} size={20} color="#ffffff" />
+                    </Pressable>
+                </View>
+                <LoadingCircle />
+            </Animated.View>
+        );
+
+        return (
+            <PanGestureHandler
+                onGestureEvent={({ nativeEvent }) => {
+                    scrollBy(nativeEvent)
+                    // element?.current?.scrollBy(0, -nativeEvent.translationY * 0.05);
+                }}
+                activeOffsetY={[-5, 5]}
+            >
+                {AnimatedImageView}
+            </PanGestureHandler>
         );
     }
 

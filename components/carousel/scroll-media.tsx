@@ -35,11 +35,13 @@ const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB, padding, mediaRes }: IProps) =>
 const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { width: number, height: number } }) => {
     // const [thumbnail, setThumbnail] = useState(media.url);
     const styles = stylesWrapper(width, undefined, mediaRes);
+    const isImage = media.type.includes("image") || media.type.includes("reel");
+    const imageUrl = media.imageUrl || media.url;
 
     return (
         <View style={styles.mediaWrapper}>
-            {media.type === "image" ? (
-                <Image source={{ uri: media.url }} style={styles.media} />
+            {isImage ? (
+                <Image source={{ uri: imageUrl }} style={styles.media} />
             ) : (
                 Platform.OS === "web" ? (
                     <View style={styles.media}>
