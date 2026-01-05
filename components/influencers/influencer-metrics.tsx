@@ -57,19 +57,16 @@ export const InfluencerMetrics = ({ user, social, action = null }: CardActionsPr
     };
     const theme = useTheme();
     const followers = formatMetricValue(
-        typeof metrics.followers === "number"
-            ? metrics.followers
-            : social?.instaProfile?.approxMetrics?.followers
+        metrics.followers ||
+        social?.instaProfile?.approxMetrics?.followers
     );
     const reach = formatMetricValue(
-        typeof metrics.reach === "number"
-            ? metrics.reach
-            : social?.instaProfile?.approxMetrics?.views
+        metrics.reach ||
+        social?.instaProfile?.approxMetrics?.views
     );
     const interations = formatMetricValue(
-        typeof metrics.engagement === "number"
-            ? metrics.engagement
-            : social?.instaProfile?.approxMetrics?.interactions
+        metrics.engagement ||
+        social?.instaProfile?.approxMetrics?.interactions
     );
     if (!followers && !reach && !interations) { // && !metrics.rating
         return null
