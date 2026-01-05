@@ -1,8 +1,6 @@
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import Colors from "@/shared-uis/constants/Colors";
-import { convertToKUnits } from "@/shared-uis/utils/conversion";
-import { convertToMUnits } from "@/shared-uis/utils/conversion-million";
 import {
     faArrowUpWideShort,
     faChartLine,
@@ -20,17 +18,59 @@ type CardActionsProps = {
     action?: React.ReactNode;
 };
 
+const formatCompactNumber = (value: number) => {
+    if (Number.isNaN(value)) {
+        return "";
+    }
+
+    const abs = Math.abs(value);
+    const format = (num: number) => {
+        const rounded = num.toFixed(1);
+        return rounded.endsWith(".0") ? rounded.slice(0, -2) : rounded;
+    };
+
+    if (abs < 1_000) return format(value);
+    if (abs < 1_000_000) return `${format(value / 1_000)}k`;
+    if (abs < 1_000_000_000) return `${format(value / 1_000_000)}M`;
+    return `${format(value / 1_000_000_000)}B`;
+};
+
+const formatMetricValue = (value?: number | string | null) => {
+    if (value === null || value === undefined) return "";
+    if (typeof value === "number") return formatCompactNumber(value);
+
+    const trimmed = value.trim();
+    if (!trimmed) return "";
+    if (/[a-zA-Z]/.test(trimmed)) return trimmed;
+
+    const numeric = Number(trimmed.replace(/,/g, ""));
+    if (Number.isNaN(numeric)) return trimmed;
+    return formatCompactNumber(numeric);
+};
+
 export const InfluencerMetrics = ({ user, social, action = null }: CardActionsProps) => {
     const metrics = {
-        followers: user.backend?.followers || 0,
-        reach: user.backend?.reach || 0,
-        engagement: user.backend?.engagement || 0,
-        rating: user.backend?.rating || 0,
+        followers: user.backend?.followers,
+        reach: user.backend?.reach,
+        engagement: user.backend?.engagement,
+        rating: user.backend?.rating,
     };
     const theme = useTheme();
-    const followers = convertToKUnits(metrics.followers) || social?.instaProfile?.approxMetrics?.followers || "";
-    const reach = convertToMUnits(metrics.reach) || social?.instaProfile?.approxMetrics?.views || "";
-    const interations = convertToKUnits(metrics.engagement) || social?.instaProfile?.approxMetrics?.interactions || "";
+    const followers = formatMetricValue(
+        typeof metrics.followers === "number"
+            ? metrics.followers
+            : social?.instaProfile?.approxMetrics?.followers
+    );
+    const reach = formatMetricValue(
+        typeof metrics.reach === "number"
+            ? metrics.reach
+            : social?.instaProfile?.approxMetrics?.views
+    );
+    const interations = formatMetricValue(
+        typeof metrics.engagement === "number"
+            ? metrics.engagement
+            : social?.instaProfile?.approxMetrics?.interactions
+    );
     if (!followers && !reach && !interations) { // && !metrics.rating
         return null
     }
