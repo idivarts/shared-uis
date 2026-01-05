@@ -112,6 +112,7 @@ export const ApplicationActionBar: React.FC<{
                         <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
                             <PaperButton
                                 mode="contained"
+                                style={{ alignSelf: "center" }}
                                 onPress={() => handle("shortlist")}
                             >
                                 Shortlist
@@ -155,11 +156,20 @@ export const ApplicationActionBar: React.FC<{
             case "shortlisted":
                 if (isCompact) {
                     return (
-                        <IconButton
-                            icon="dots-vertical"
-                            onPress={() => setIsActionSheetOpen(true)}
-                            accessibilityLabel="More actions"
-                        />
+                        <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                            <PaperButton
+                                mode="contained"
+                                style={{ alignSelf: "center" }}
+                                onPress={confirmAccept}
+                            >
+                                Accept
+                            </PaperButton>
+                            <IconButton
+                                icon="dots-vertical"
+                                onPress={() => setIsActionSheetOpen(true)}
+                                accessibilityLabel="More actions"
+                            />
+                        </View>
                     );
                 }
                 return (
