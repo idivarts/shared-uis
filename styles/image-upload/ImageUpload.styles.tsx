@@ -8,10 +8,12 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
+
     },
     innerContainer: {
         width: 120,
         position: "relative",
+        backgroundColor: "transparent",
     },
     image: {
         width: 120,
