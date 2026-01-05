@@ -8,10 +8,12 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
         width: "100%",
         justifyContent: "center",
         alignItems: "center",
+      
     },
     innerContainer: {
         width: 120,
         position: "relative",
+          backgroundColor:"transparent",
     },
     image: {
         width: 120,
@@ -22,9 +24,8 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     cameraButton: {
         backgroundColor: Colors(theme).primary,
         padding: 10,
-        position: "absolute",
-        right: 0,
-        bottom: 0,
+        justifyContent:"center",
+        alignItems:"center",
     },
     modalOverlay: {
         flex: 1,
