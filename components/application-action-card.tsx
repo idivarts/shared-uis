@@ -1,16 +1,16 @@
 import { IApplications } from "@/shared-libs/firestore/trendly-pro/models/collaborations";
 import { Console } from "@/shared-libs/utils/console";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import { useConfirmationModel } from "@/shared-uis/components/ConfirmationModal";
 import { Text, View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
-import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
-import BottomSheetContainer from "./bottom-sheet";
-import { Button as PaperButton, IconButton, List, Surface } from "react-native-paper";
+import { IconButton, List, Button as PaperButton, Surface } from "react-native-paper";
 import { convertToKUnits } from "../utils/conversion";
+import BottomSheetContainer from "./bottom-sheet";
 
 
 export const ApplicationActionBar: React.FC<{
