@@ -4,10 +4,12 @@ import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
 import { useConfirmationModel } from "@/shared-uis/components/ConfirmationModal";
 import { Text, View } from "@/shared-uis/components/theme/Themed";
 import Toaster from "@/shared-uis/components/toaster/Toaster";
+import { useBreakpoints } from "@/hooks";
 import { useTheme } from "@react-navigation/native";
 import { doc, updateDoc } from "firebase/firestore";
 import React, { useState } from "react";
-import { Button as PaperButton, Surface } from "react-native-paper";
+import BottomSheetContainer from "./bottom-sheet";
+import { Button as PaperButton, IconButton, List, Surface } from "react-native-paper";
 import { convertToKUnits } from "../utils/conversion";
 
 
@@ -49,6 +51,8 @@ export const ApplicationActionBar: React.FC<{
     // const [confirm, setConfirm] = React.useState<null | { type: "accept" | "reject" | "reopen" | "shortlist"; title: string; desc: string }>(null);
 
     const [status, setStatus] = useState(application.status)
+    const [isActionSheetOpen, setIsActionSheetOpen] = useState(false);
+    const { xl } = useBreakpoints();
 
     const handle = async (type: "accept" | "reject" | "reopen" | "shortlist") => {
         switch (type) {
@@ -79,10 +83,47 @@ export const ApplicationActionBar: React.FC<{
     };
 
     const dividerColor = theme.dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
+    const isCompact = !xl;
+
+    const confirmAccept = () => {
+        openModal({
+            title: "Accept application?",
+            description: "This will create a message thread between you and the selected influencer.",
+            confirmText: "Accept",
+            confirmAction: () => handle("accept"),
+        });
+    };
+
+    const handleAcceptFromSheet = () => {
+        setIsActionSheetOpen(false);
+        confirmAccept();
+    };
+
+    const handleRejectFromSheet = () => {
+        setIsActionSheetOpen(false);
+        handle("reject");
+    };
 
     const renderButtons = () => {
         switch (status) {
             case "pending":
+                if (isCompact) {
+                    return (
+                        <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
+                            <PaperButton
+                                mode="contained"
+                                onPress={() => handle("shortlist")}
+                            >
+                                Shortlist
+                            </PaperButton>
+                            <IconButton
+                                icon="dots-vertical"
+                                onPress={() => setIsActionSheetOpen(true)}
+                                accessibilityLabel="More actions"
+                            />
+                        </View>
+                    );
+                }
                 return (
                     <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
                         <PaperButton
@@ -93,12 +134,7 @@ export const ApplicationActionBar: React.FC<{
                         </PaperButton>
                         <PaperButton
                             mode="elevated"
-                            onPress={() => openModal({
-                                title: "Accept application?",
-                                description: "This will create a message thread between you and the selected influencer.",
-                                confirmText: "Accept",
-                                confirmAction: () => handle("accept")
-                            })}
+                            onPress={confirmAccept}
                         >
                             Accept
                         </PaperButton>
@@ -117,16 +153,20 @@ export const ApplicationActionBar: React.FC<{
                     </PaperButton>
                 );
             case "shortlisted":
+                if (isCompact) {
+                    return (
+                        <IconButton
+                            icon="dots-vertical"
+                            onPress={() => setIsActionSheetOpen(true)}
+                            accessibilityLabel="More actions"
+                        />
+                    );
+                }
                 return (
                     <View style={{ flexDirection: "row", gap: 8, flexWrap: "wrap", justifyContent: "flex-end" }}>
                         <PaperButton
                             mode="contained"
-                            onPress={() => openModal({
-                                title: "Accept application?",
-                                description: "This will create a message thread between you and the selected influencer.",
-                                confirmText: "Accept",
-                                confirmAction: () => handle("accept")
-                            })}
+                            onPress={confirmAccept}
                         >
                             Accept
                         </PaperButton>
@@ -171,6 +211,22 @@ export const ApplicationActionBar: React.FC<{
                     <View style={{ flexShrink: 0, flexGrow: 0, alignItems: "flex-end" }}>{renderButtons()}</View>
                 </View>
             </Surface>
+            {isCompact && (status === "pending" || status === "shortlisted") && (
+                <BottomSheetContainer
+                    isVisible={isActionSheetOpen}
+                    onClose={() => setIsActionSheetOpen(false)}
+                    snapPoints={["25%", "35%"]}
+                    enablePanDownToClose
+                    index={0}
+                    backgroundStyle={{ backgroundColor: theme.colors.background }}
+                    handleIndicatorStyle={{ backgroundColor: theme.colors.primary }}
+                >
+                    <List.Section style={{ paddingBottom: 16 }}>
+                        <List.Item title="Accept" onPress={handleAcceptFromSheet} />
+                        <List.Item title="Reject" onPress={handleRejectFromSheet} />
+                    </List.Section>
+                </BottomSheetContainer>
+            )}
 
             {/* Confirmation Dialog
             <Portal>
