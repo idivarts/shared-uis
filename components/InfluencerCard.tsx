@@ -133,7 +133,8 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     {
                         maxWidth: MAX_WIDTH_WEB,
                         alignSelf: "center",
-                        overflow: "hidden"
+                        overflow: "hidden",
+                        backgroundColor: Colors(theme).background
                     }
                 ]}>
                 <View style={[styles.header]}>
