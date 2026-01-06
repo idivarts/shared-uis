@@ -143,6 +143,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
                 position: "absolute",
                 top: (height || 250) / 2,
                 left: (width || Dimensions.get("window").width) / 2 - 12,
+                backgroundColor: "transparent"
             },
         ]}
     >

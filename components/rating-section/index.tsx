@@ -27,6 +27,7 @@ const Stars: React.FC<{
             <View
                 style={{
                     flexDirection: 'row',
+                    backgroundColor: "transparent",
                 }}
             >
                 {
@@ -102,6 +103,7 @@ const RatingSection: React.FC<RatingSectionProps> = ({
                     flexDirection: 'row',
                     gap: 8,
                     marginBottom: 16,
+                    backgroundColor: "transparent",
                 }}
             >
                 <Stars rating={avgRatings} />
