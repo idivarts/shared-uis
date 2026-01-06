@@ -6,7 +6,7 @@ import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme, useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
-import { Dimensions, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
 import { useCarouselInViewContext } from './CarouselInViewContext';
 
@@ -36,7 +36,6 @@ const CarouselScroller: React.FC<IProps> = (props) => {
     const { xl } = useBreakpoints()
     const isWeb = Platform.OS == "web" && xl
     const styles = stylesFn(theme, isWeb);
-    const windowHeight = Dimensions.get("window").height;
 
     const carouselRef = useRef<ICarouselInstance>(null);
     const containerRef = useRef<any>(null);
@@ -138,7 +137,6 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                 shadowOpacity: 0.25,
                 shadowRadius: 3.84,
                 elevation: 5,
-           
             }}>
                 <Carousel
                     ref={carouselRef}
@@ -146,11 +144,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
                     vertical={props.vertical}
                     onSnapToItem={refreshCarousel}
                     width={props.width}
-                    height={
-                        props.vertical
-                            ? (isWeb ? props.height : (containerHeight || windowHeight))
-                            : props.height
-                    }
+                    height={containerHeight || props.height}
                     data={data}
                     renderItem={({ item, index }) => {
                         if (Math.abs(currentIndex - index) > 2) {
