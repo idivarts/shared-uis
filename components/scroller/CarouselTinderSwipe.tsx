@@ -184,7 +184,7 @@ const styles = StyleSheet.create({
     overlay: {
         position: 'absolute',
         top: '50%',
-        left: '30%',
+        left: '50%',
         transform: [{ translateX: -75 }, { translateY: -25 }],
         backgroundColor: 'rgba(0, 0, 0, 0.2)',
         paddingHorizontal: 20,
