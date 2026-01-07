@@ -180,6 +180,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
                 {
                     height: height || 250,
                     width: width || "100%",
+                    
                 },
             ]}
             shape={shape}
@@ -326,7 +327,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
 
     return <>
         <Pressable
-            style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
+            style={{ width: width || "100%", height: height || 250, overflow: "hidden", }}
             onPress={() => {
                 videoRef.current?.play();
                 setIsMuted(false)
@@ -345,7 +346,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
                 activeOffsetY={[-5, 5]} // allow only minimal horizontal 
             >
                 <Animated.View
-                    style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
+                    style={{ width: width || "100%", height: height || 250, overflow: "hidden" ,}}
                 >
                     {/* if (Platform.OS == "web") { */}
                     {Platform.OS == "web" ? <video

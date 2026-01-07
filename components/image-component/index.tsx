@@ -107,7 +107,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
                     containerStyle,
                     style,
                     {
-                        backgroundColor: Colors(theme).primary,
+                        backgroundColor: Colors(theme).primary, 
                         justifyContent: "center",
                         alignItems: "center",
                     },
