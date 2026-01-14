@@ -40,6 +40,7 @@ import {
 } from "react-native";
 import { Button, Chip, Title } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Subject } from "rxjs";
 import { useConfirmationModel } from "../ConfirmationModal";
 import InfluencerCard from "../InfluencerCard";
@@ -48,6 +49,7 @@ import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
 import SelectGroup from "../select/select-group";
+
 
 interface ProfileBottomSheetProps {
     actionButton?: React.ReactNode;
@@ -108,11 +110,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     isPhoneMasked = true,
     showCampaignGoals = true,
     showInfluencerGoals = false,
+
 }) => {
     const styles = stylesFn(theme);
     const [primarySocial, setPrimarySocial] = useState<ISocials>();
     const { openModal } = useConfirmationModel();
     const router = useMyNavigation();
+
 
     const mediaProcessing = carouselMedia
         ? carouselMedia
@@ -323,17 +327,24 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             marginBottom: 16,
                                         }}
                                     >
-                                        <Text
-                                            style={[
-                                                styles.name,
-                                                isTwoColumn
-                                                    ? { flexShrink: 1, minWidth: 0 }
-                                                    : { width: "100%" },
-                                            ]}
-                                            numberOfLines={isTwoColumn ? 1 : 2}
-                                        >
-                                            {influencer.name}
-                                        </Text>
+                                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                            <Text
+                                                style={[
+                                                    styles.name,
+
+                                                ]}
+                                                numberOfLines={isTwoColumn ? 1 : 2}
+                                            >
+                                                {influencer.name}
+                                            </Text>
+                                            {influencer.isKYCDone && (
+                                                <MaterialIcons
+                                                    name="verified"
+                                                    size={24}
+                                                    color="#3B82F6"
+                                                />
+                                            )}
+                                        </View>
                                         {actionButtonNode ? (
                                             <View
                                                 style={{
