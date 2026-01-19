@@ -11,6 +11,7 @@ import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { truncateText } from "@/shared-uis/utils/text";
 import { imageUrl } from "@/shared-uis/utils/url";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -201,11 +202,16 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                     }
                                 }}
                             >
-                                <Text style={styles.name}>
-                                    {props.isOnFreePlan || props.lockProfile
-                                        ? maskName(influencer.name)
-                                        : influencer.name}
-                                </Text>
+                                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                    <Text style={styles.name}>
+                                        {props.isOnFreePlan || props.lockProfile
+                                            ? maskName(influencer.name)
+                                            : influencer.name}
+                                    </Text>
+                                    {influencer.isKYCDone && (
+                                        <MaterialIcons name="verified" size={16} color="#3B82F6" />
+                                    )}
+                                </View>
                                 {socialHandle && (
                                     <Text style={styles.handle}>
                                         {props.isOnFreePlan || props.lockProfile
