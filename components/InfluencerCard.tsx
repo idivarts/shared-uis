@@ -9,9 +9,9 @@ import Carousel from "@/shared-uis/components/carousel/carousel";
 import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
 import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { truncateText } from "@/shared-uis/utils/text";
 import { imageUrl } from "@/shared-uis/utils/url";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
@@ -208,7 +208,9 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                             ? maskName(influencer.name)
                                             : influencer.name}
                                     </Text>
-                                    <MaterialIcons name="verified" size={16} color="#3B82F6" />
+                                    {influencer.isKYCDone && (
+                                        <MaterialIcons name="verified" size={16} color="#3B82F6" />
+                                    )}
                                 </View>
                                 {socialHandle && (
                                     <Text style={styles.handle}>

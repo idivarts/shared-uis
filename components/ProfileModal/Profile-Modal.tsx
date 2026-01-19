@@ -11,6 +11,7 @@ import {
     maskHandle,
     maskPhone
 } from "@/shared-uis/utils/masks";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
     faCheck,
@@ -40,7 +41,6 @@ import {
 } from "react-native";
 import { Button, Chip, Title } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { Subject } from "rxjs";
 import { useConfirmationModel } from "../ConfirmationModal";
 import InfluencerCard from "../InfluencerCard";
