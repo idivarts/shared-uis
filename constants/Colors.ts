@@ -26,6 +26,7 @@ export const ColorsStatic = {
     backdropDark: "rgba(255, 255, 255, 0.5)",
     success: "rgb(2, 202, 48)",
     successForeground: "rgb(40, 167, 69)",
+    warning: "rgb(255, 152, 0)",
     cardDark: "rgb(30, 30, 30)",
     textLight: "rgb(0, 0, 0)",
     textSecondaryLight: "rgb(102, 102, 102)",
