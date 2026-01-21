@@ -6,6 +6,7 @@ import Colors from '@/shared-uis/constants/Colors';
 import { faDownload, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme } from '@react-navigation/native';
+import Toaster from '../toaster/Toaster';
 
 interface VideoDownloadCardProps {
   videoUrl: string;
@@ -31,7 +32,7 @@ const VideoDownloadCard: React.FC<VideoDownloadCardProps> = ({
         await onDownload(videoUrl);
       } catch (error) {
         console.error('Error downloading video:', error);
-        alert('Failed to download video. Please try again.');
+        Toaster.error('Failed to download video. Please try again.');
       } finally {
         setDownloading(false);
       }

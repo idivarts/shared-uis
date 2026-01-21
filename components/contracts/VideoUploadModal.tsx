@@ -6,6 +6,7 @@ import Colors from '@/shared-uis/constants/Colors';
 import { faClose, faUpload } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme } from '@react-navigation/native';
+import Toaster from '../toaster/Toaster';
 
 interface VideoUploadModalProps {
   isVisible: boolean;
@@ -49,7 +50,7 @@ const VideoUploadModal: React.FC<VideoUploadModalProps> = ({
         // Check file size (500MB limit)
         const maxSize = 500 * 1024 * 1024; // 500MB in bytes
         if (video.size > maxSize) {
-          alert('Video file size exceeds 500MB limit. Please select a smaller file.');
+          Toaster.error('Video file size exceeds 500MB limit. Please select a smaller file.');
           return;
         }
         setSelectedVideo(video);
@@ -70,7 +71,7 @@ const VideoUploadModal: React.FC<VideoUploadModalProps> = ({
       setIsVisible(false);
     } catch (error) {
       console.error('Error uploading video:', error);
-      alert('Failed to upload video. Please try again.');
+      Toaster.error('Failed to upload video. Please try again.');
     } finally {
       setUploading(false);
     }

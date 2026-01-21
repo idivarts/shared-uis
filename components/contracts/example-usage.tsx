@@ -181,7 +181,7 @@ export const ContractPage: React.FC<ContractPageProps> = ({
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to upload videos!');
+        Toaster.error('Sorry, we need camera roll permissions to upload videos!');
         return null;
       }
 
@@ -211,7 +211,7 @@ export const ContractPage: React.FC<ContractPageProps> = ({
     try {
       const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
       if (status !== 'granted') {
-        alert('Sorry, we need camera roll permissions to upload images!');
+        Toaster.error('Sorry, we need camera roll permissions to upload images!');
         return null;
       }
 
