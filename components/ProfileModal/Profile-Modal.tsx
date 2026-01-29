@@ -262,7 +262,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 flex: 1,
                 backgroundColor: Colors(theme).background,
                 position: "relative",
-                height: "100%",
             }}
         >
             <ScrollView
@@ -272,6 +271,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 contentContainerStyle={{
                     paddingBottom: 100,
                 }}
+                showsVerticalScrollIndicator={true}
+                bounces={true}
             >
                 {closeModal && isTwoColumn && (
                     <View
