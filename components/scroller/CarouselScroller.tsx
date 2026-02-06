@@ -34,8 +34,8 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 
     const theme = useTheme();
     const { xl } = useBreakpoints()
-    const isWeb = Platform.OS == "web" && xl
-    const styles = stylesFn(theme, isWeb);
+    const isWeb = Platform.OS == "web";
+    const styles = stylesFn(theme, isWeb && xl);
 
     const carouselRef = useRef<ICarouselInstance>(null);
     const containerRef = useRef<any>(null);
