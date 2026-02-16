@@ -1,3 +1,4 @@
+import Colors from "@/shared-uis/constants/Colors";
 import { faCheck, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme } from '@react-navigation/native';
@@ -10,7 +11,6 @@ import {
     TextInput,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Colors from "@/shared-uis/constants/Colors";
 import BottomSheetContainer from '../bottom-sheet';
 import { Text, View } from '../theme/Themed';
 
@@ -45,6 +45,21 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
     const searchInputRef = useRef<TextInput>(null);
 
     const styles = stylesFn(theme);
+
+    // Sync selectedItems prop changes to internal state
+    useEffect(() => {
+        setSelectedMultiselectItems(selectedItems);
+    }, [selectedItems]);
+
+    // Sync initialItemsList prop changes to internal state
+    useEffect(() => {
+        setItemsList(initialItemsList);
+    }, [initialItemsList]);
+
+    // Sync initialMultiselectItemsList prop changes to internal state
+    useEffect(() => {
+        setTotalMultiselectItems(initialMultiselectItemsList);
+    }, [initialMultiselectItemsList]);
 
     useEffect(() => {
         if (searchText) {
