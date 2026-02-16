@@ -211,6 +211,23 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             : typeof (social as any)?.quality_score === "number"
                 ? (social as any).quality_score
                 : undefined;
+
+    const formatQualityStars = (quality?: number | null) => {
+        if (quality === null || quality === undefined) return 0;
+        return Math.round(quality / 20);
+    };
+
+    const renderStars = (rating: number) => {
+        const stars = [];
+        for (let i = 1; i <= 5; i++) {
+            stars.push(
+                <Text key={i} style={{ fontSize: 16, marginRight: 4 }}>
+                    {i <= rating ? "⭐" : "☆"}
+                </Text>
+            );
+        }
+        return stars;
+    };
     const trendlyVerified =
         typeof social?.isVerified === "boolean"
             ? social.isVerified
@@ -439,9 +456,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                         color={Colors(theme).primary}
                                                         style={styles.icon}
                                                     />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Quality: {trendlyQuality}/100
-                                                    </Text>
+                                                    <Text style={styles.subTextHeading}>Quality: </Text>
+                                                    <View style={{ flexDirection: "row", alignItems: "center" }}>
+                                                        {renderStars(formatQualityStars(trendlyQuality))}
+                                                    </View>
                                                 </View>
                                             ) : null}
                                             {showVerifiedChip ? (
