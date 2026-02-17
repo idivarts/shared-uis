@@ -11,12 +11,14 @@ import {
 interface BottomSheetContainerProps extends BottomSheetProps {
     isVisible: boolean;
     onClose: () => void;
+    useBottomSheetView?: boolean;
 }
 
 const BottomSheetContainer: React.FC<BottomSheetContainerProps> = ({
     isVisible,
     onClose,
     children,
+    useBottomSheetView = true,
     ...props
 }) => {
     const sheetRef = React.useRef<BottomSheet>(null);
@@ -48,9 +50,13 @@ const BottomSheetContainer: React.FC<BottomSheetContainerProps> = ({
                     style={styles.bottomSheet}
                     {...props}
                 >
-                    <BottomSheetView>
-                        {children as React.ReactNode}
-                    </BottomSheetView>
+                    {useBottomSheetView ? (
+                        <BottomSheetView>
+                            {children as React.ReactNode}
+                        </BottomSheetView>
+                    ) : (
+                        children as React.ReactNode
+                    )}
                 </BottomSheet>
             </View>
         </Modal>
