@@ -46,6 +46,21 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
 
     const styles = stylesFn(theme);
 
+    // Sync selectedItems prop changes to internal state
+    useEffect(() => {
+        setSelectedMultiselectItems(selectedItems);
+    }, [selectedItems]);
+
+    // Sync initialItemsList prop changes to internal state
+    useEffect(() => {
+        setItemsList(initialItemsList);
+    }, [initialItemsList]);
+
+    // Sync initialMultiselectItemsList prop changes to internal state
+    useEffect(() => {
+        setTotalMultiselectItems(initialMultiselectItemsList);
+    }, [initialMultiselectItemsList]);
+
     useEffect(() => {
         if (searchText) {
             const filtered = itemsList.filter(item =>
