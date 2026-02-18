@@ -20,7 +20,6 @@ import {
     faEnvelope,
     faLocation,
     faPhone,
-    faStar,
     faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
@@ -48,6 +47,7 @@ import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
+import { Stars, qualityScoreToStars } from "../rating-section";
 import SelectGroup from "../select/select-group";
 
 
@@ -432,15 +432,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 </View>
                                             ) : null}
                                             {showQualityChip ? (
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faStar}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Quality: {trendlyQuality}/100
+                                                <View style={[styles.row, { alignItems: "center" }]}>
+                                                    <Text style={[styles.subTextHeading, { marginRight: 6 }]}>
+                                                        Quality:
+                                                    </Text>
+                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
+                                                    <Text style={[styles.subTextHeading, { marginLeft: 4 }]}>
+                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
                                                     </Text>
                                                 </View>
                                             ) : null}
