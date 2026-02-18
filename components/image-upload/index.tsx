@@ -109,12 +109,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                 uploadImage();
                             }
                         }}
-                        style={[
-                            styles.cameraButton,
-                            {
-                                borderRadius: rounded ? 24 : 10,
-                            },
-                        ]}
+                        style={styles.cameraButton}
                     >
                         <FontAwesomeIcon
                             icon={faCamera}
@@ -127,10 +122,13 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                                     ref={inputRef}
                                     type="file"
                                     style={{
-                                        backgroundColor: "transparent",
-                                        width: 0,
-                                        height: 0,
-                                        visibility: "hidden",
+                                        position: "absolute",
+                                        opacity: 0,
+                                        width: "100%",
+                                        height: "100%",
+                                        top: 0,
+                                        left: 0,
+                                        cursor: "pointer",
                                     }}
                                     multiple
                                     onChange={handleFileSelection}
