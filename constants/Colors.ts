@@ -47,6 +47,8 @@ export const ColorsStatic = {
     primaryLight: "#D9E4F2",
     primaryDark: "#1A3B5C",
     surface: "#EEF4FB",
+    planBadgeProBg: "rgba(236, 214, 148, 0.16)",
+    planBadgeEnterpriseBg: "rgba(83, 139, 166, 0.16)",
 
     // Toast colors
     toastSuccess: "#4caf50",
@@ -66,6 +68,7 @@ export default (theme: Theme) => ({
     ...(theme.dark
         ? {
             primary: ColorsStatic.secondary, // Main accent color
+            onPrimary: ColorsStatic.white, // Icons/text on primary
             card: ColorsStatic.eerieBlack, // Card background color
             text: ColorsStatic.white, // Primary text color
             textSecondary: ColorsStatic.gray300, // Secondary text, captions
@@ -76,6 +79,7 @@ export default (theme: Theme) => ({
             tag: ColorsStatic.gray100, // Tag background
             tagForeground: ColorsStatic.white, // Tag text/icon color
             outline: ColorsStatic.gray300, // Borders and outlines
+            border: ColorsStatic.gray300, // Alias for borders
             background: ColorsStatic.black, // App background
             reverseBackground: ColorsStatic.white, // Opposite of background for contrast
             modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
@@ -87,6 +91,7 @@ export default (theme: Theme) => ({
         }
         : {
             primary: ColorsStatic.primary, // Main accent color
+            onPrimary: ColorsStatic.white, // Icons/text on primary
             card: ColorsStatic.white, // Card background color
             text: ColorsStatic.black, // Primary text color
             textSecondary: ColorsStatic.gray100, // Secondary text, captions
@@ -97,6 +102,7 @@ export default (theme: Theme) => ({
             tag: ColorsStatic.gray200, // Tag background
             tagForeground: ColorsStatic.black, // Tag text/icon color
             outline: ColorsStatic.gray300, // Borders and outlines
+            border: ColorsStatic.gray300, // Alias for borders
             background: ColorsStatic.white, // App background
             reverseBackground: ColorsStatic.black, // Opposite of background for contrast
             modalBackground: ColorsStatic.white, // Modal or overlay background
