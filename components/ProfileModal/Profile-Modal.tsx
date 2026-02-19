@@ -3,6 +3,7 @@ import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
@@ -25,7 +26,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
-import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -47,7 +47,6 @@ import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
-import { Stars, qualityScoreToStars } from "../rating-section";
 import SelectGroup from "../select/select-group";
 
 
@@ -205,20 +204,20 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     const { width } = useWindowDimensions();
     const isTwoColumn = Platform.OS == "web" ? width > 768 : false;
     const trendlyGender = social?.gender;
-    const trendlyQuality =
-        typeof social?.quality === "number"
-            ? social.quality
-            : typeof (social as any)?.quality_score === "number"
-                ? (social as any).quality_score
-                : undefined;
+    // const trendlyQuality =
+    //     typeof social?.quality === "number"
+    //         ? social.quality
+    //         : typeof (social as any)?.quality_score === "number"
+    //             ? (social as any).quality_score
+    //             : undefined;
     const trendlyVerified =
         typeof social?.isVerified === "boolean"
             ? social.isVerified
             : Boolean((social as any)?.profile_verified);
     const showGenderChip = !!trendlyGender && trendlyGender !== "unknown";
-    const showQualityChip = typeof trendlyQuality === "number";
+    // const showQualityChip = typeof trendlyQuality === "number";
     const showVerifiedChip = !!trendlyVerified;
-    const showTrendlyChips = showGenderChip || showQualityChip || showVerifiedChip;
+    const showTrendlyChips = showGenderChip || showVerifiedChip;
     const actionButtonNode =
         actionButton != undefined
             ? actionButton
@@ -442,7 +441,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                     </Text>
                                                 </View>
                                             ) : null}
-                                            {showQualityChip ? (
+                                            {/* {showQualityChip ? (
                                                 <View style={[styles.row, { alignItems: "center" }]}>
                                                     <Text style={[styles.subTextHeading, { marginRight: 6 }]}>
                                                         Quality:
@@ -452,7 +451,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                         {qualityScoreToStars(trendlyQuality!).toFixed(1)}
                                                     </Text>
                                                 </View>
-                                            ) : null}
+                                            ) : null} */}
                                             {showVerifiedChip ? (
                                                 <View style={styles.row}>
                                                     <FontAwesomeIcon
