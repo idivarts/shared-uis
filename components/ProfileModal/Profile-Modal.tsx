@@ -98,11 +98,6 @@ const ACCENT = {
     sky: "#0EA5E9",
 };
 
-const CATEGORY_COLORS = [
-    ACCENT.blue, ACCENT.purple, ACCENT.pink, ACCENT.emerald,
-    ACCENT.amber, ACCENT.sky, ACCENT.rose, ACCENT.teal,
-];
-
 const tintBg = (hex: string, opacity = 0.1) => {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
@@ -154,8 +149,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log("SOCIAL DATA FETCHED", social);
-
         setPrimarySocial(social)
     }, [social])
 
@@ -192,7 +185,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         });
     };
 
-    const { width: screenWidth } = useBreakpoints();
+    const { width: screenWidth, xs, sm, md, lg } = useBreakpoints();
+
+    // Responsive padding for all screen sizes (xs<480, sm>=480, md>=640, lg>=768)
+    const responsivePaddingHorizontal = xs ? 16 : sm ? 18 : md ? 20 : 24;
 
     const fetchPrimarySocialMedia = async () => {
         if (primarySocial) return;
@@ -225,7 +221,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     }, []);
 
     const { width } = useWindowDimensions();
-    const isTwoColumn = Platform.OS == "web" ? width > 768 : false;
+    const isTwoColumn = Platform.OS === "web" ? lg : false;
     const trendlyGender = social?.gender;
     const trendlyVerified =
         typeof social?.isVerified === "boolean"
@@ -234,7 +230,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     const showGenderChip = !!trendlyGender && trendlyGender !== "unknown";
     const showVerifiedChip = !!trendlyVerified;
     const showTrendlyChips = showGenderChip || showVerifiedChip;
-    const hasCategories = (influencer?.profile?.category?.length ?? 0) > 0;
 
     const actionButtonNode =
         actionButton != undefined
@@ -298,7 +293,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         if (!html) return null;
         return (
             <View style={{
-                marginHorizontal: 20,
+                marginHorizontal: responsivePaddingHorizontal,
                 marginBottom: 16,
                 backgroundColor: cardBg,
                 borderRadius: 16,
@@ -365,7 +360,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <View
                         style={{
                             flexDirection: isTwoColumn ? "row" : "column",
-                            padding: isTwoColumn ? 20 : 0,
+                            padding: isTwoColumn ? responsivePaddingHorizontal : 0,
                             alignItems: isTwoColumn ? "flex-start" : undefined,
                         }}
                     >
@@ -385,14 +380,14 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 {mediaProcessing && mediaProcessing.length > 0 && (
                                     <Carousel data={mediaProcessing || []} theme={theme} />
                                 )}
-                                <View style={{ paddingHorizontal: 16 }}>
+                                <View style={{ paddingHorizontal: responsivePaddingHorizontal }}>
                                     <InfluencerMetrics user={influencer} social={primarySocial} />
                                 </View>
                             </View>)}
 
                         <View style={[{ flex: 1, marginTop: 16 }]}>
                             {/* ─── Name + Action Button ─── */}
-                            <View style={{ paddingHorizontal: 20 }}>
+                            <View style={{ paddingHorizontal: responsivePaddingHorizontal }}>
                                 <View
                                     style={{
                                         flexDirection: isTwoColumn ? "row" : "column",
@@ -414,7 +409,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         }}
                                     >
                                         <Text
-                                            style={styles.name}
+                                            style={[
+                                                styles.name,
+                                                { fontSize: xs ? 20 : sm ? 22 : 26 }
+                                            ]}
                                             numberOfLines={isTwoColumn ? 1 : 2}
                                         >
                                             {influencer.name}
@@ -443,11 +441,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
                             {/* ─── Contact Info Card ─── */}
                             <View style={{
-                                marginHorizontal: 20,
+                                marginHorizontal: responsivePaddingHorizontal,
                                 marginTop: 16,
                                 backgroundColor: cardBg,
                                 borderRadius: 16,
-                                padding: 16,
+                                padding: xs ? 12 : 16,
                                 borderWidth: 1,
                                 borderColor: cardBorder,
                             }}>
@@ -628,13 +626,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 )}
                             </View>
 
-                            {/* ─── Badges & Categories ─── */}
-                            {(showTrendlyChips || hasCategories) && (
+                            {/* ─── Badges (Gender, Verified) - Niches shown in actionCard/TrendlyAnalyticsEmbed ─── */}
+                            {showTrendlyChips && (
                                 <View style={{
                                     flexDirection: "row",
                                     flexWrap: "wrap",
                                     gap: 8,
-                                    paddingHorizontal: 20,
+                                    paddingHorizontal: responsivePaddingHorizontal,
                                     marginTop: 16,
                                 }}>
                                     {showGenderChip && (
@@ -669,21 +667,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             </Text>
                                         </View>
                                     )}
-                                    {influencer?.profile?.category?.map((interest, index) => {
-                                        const c = CATEGORY_COLORS[index % CATEGORY_COLORS.length];
-                                        return (
-                                            <View key={index} style={{
-                                                backgroundColor: tintBg(c, isDark ? 0.15 : 0.1),
-                                                borderRadius: 20,
-                                                paddingVertical: 7,
-                                                paddingHorizontal: 14,
-                                            }}>
-                                                <Text style={{ fontSize: 13, fontWeight: "600", color: c }}>
-                                                    {interest}
-                                                </Text>
-                                            </View>
-                                        );
-                                    })}
                                 </View>
                             )}
 
@@ -724,7 +707,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     />
                                 ) : posts.length > 0 ? (
                                     <View style={{
-                                        marginHorizontal: 20,
+                                        marginHorizontal: responsivePaddingHorizontal,
                                         marginBottom: 16,
                                         backgroundColor: cardBg,
                                         borderRadius: 16,
@@ -827,7 +810,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 ) : (
                     <View
                         style={{
-                            padding: isTwoColumn ? 20 : 0,
+                            padding: responsivePaddingHorizontal,
                             alignSelf: "center",
                         }}
                     >
