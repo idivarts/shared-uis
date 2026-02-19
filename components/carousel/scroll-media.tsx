@@ -75,6 +75,7 @@ const stylesWrapper = (width: any, padding = 16, mediaRes: any = undefined) => S
         width: width, // Fixed width container
         alignSelf: Platform.OS == "web" ? "flex-start" : "center",
         padding: padding,
+
     },
     listContainer: {
         flexDirection: "row",
