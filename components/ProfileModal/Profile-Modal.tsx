@@ -222,7 +222,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
     const { width } = useWindowDimensions();
     const isTwoColumn = Platform.OS === "web" ? lg : false;
-    const trendlyGender = social?.gender;
+    const trendlyGender = social?.gender ?? (influencer as any)?.backend?.gender;
     const trendlyVerified =
         typeof social?.isVerified === "boolean"
             ? social.isVerified
@@ -609,8 +609,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     </View>
                                 )}
 
-                                {/* Location */}
-                                {influencer?.location && (
+                                {/* Location - from influencer or social (Trendly) */}
+                                {(influencer?.location || social?.location) && (
                                     <View style={contactRowStyle}>
                                         <View style={iconSquareStyle(ACCENT.sky)}>
                                             <FontAwesomeIcon
@@ -620,7 +620,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             />
                                         </View>
                                         <Text style={styles.subTextHeading}>
-                                            {influencer?.location}
+                                            {influencer?.location || social?.location}
                                         </Text>
                                     </View>
                                 )}
