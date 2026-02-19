@@ -14,13 +14,11 @@ import {
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { faFacebook, faInstagram } from "@fortawesome/free-brands-svg-icons";
 import {
-    faCheck,
     faClock,
     faClose,
     faEnvelope,
     faLocation,
     faPhone,
-    faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
@@ -47,7 +45,6 @@ import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
-import { Stars, qualityScoreToStars } from "../rating-section";
 import SelectGroup from "../select/select-group";
 
 
@@ -132,10 +129,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log("SOCIAL DATA FETCHED", social);
-
-        setPrimarySocial(social)
-    }, [social])
+        setPrimarySocial(social);
+    }, [social]);
 
     const unlockProfile = () => {
         setLoading(true);
@@ -204,21 +199,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
     const { width } = useWindowDimensions();
     const isTwoColumn = Platform.OS == "web" ? width > 768 : false;
-    const trendlyGender = social?.gender;
-    const trendlyQuality =
-        typeof social?.quality === "number"
-            ? social.quality
-            : typeof (social as any)?.quality_score === "number"
-                ? (social as any).quality_score
-                : undefined;
-    const trendlyVerified =
-        typeof social?.isVerified === "boolean"
-            ? social.isVerified
-            : Boolean((social as any)?.profile_verified);
-    const showGenderChip = !!trendlyGender && trendlyGender !== "unknown";
-    const showQualityChip = typeof trendlyQuality === "number";
-    const showVerifiedChip = !!trendlyVerified;
-    const showTrendlyChips = showGenderChip || showQualityChip || showVerifiedChip;
     const actionButtonNode =
         actionButton != undefined
             ? actionButton
@@ -265,25 +245,34 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             }}
         >
             <ScrollView
-                style={{
-                    flex: 1,
-                }}
+                style={{ flex: 1 }}
+                scrollEnabled={!closeModal}
+                nestedScrollEnabled={!!closeModal}
                 contentContainerStyle={{
                     paddingBottom: 100,
+                    paddingTop: closeModal ? 48 : 0,
+                    paddingHorizontal: !isTwoColumn ? 20 : 0,
                 }}
-                showsVerticalScrollIndicator={true}
-                bounces={true}
+                showsVerticalScrollIndicator={!closeModal}
+                bounces={!closeModal}
             >
-                {closeModal && isTwoColumn && (
+                {closeModal && (
                     <View
-                        style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}
+                        style={{
+                            position: "absolute",
+                            top: 12,
+                            right: 16,
+                            zIndex: 1000,
+                            padding: 8,
+                            borderRadius: 20,
+                            backgroundColor: theme.dark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.05)",
+                        }}
                     >
-                        <Pressable onPress={closeModal}>
+                        <Pressable onPress={closeModal} hitSlop={12}>
                             <FontAwesomeIcon
                                 icon={faClose}
-                                size={24}
+                                size={22}
                                 color={Colors(theme).primary}
-                                style={styles.icon}
                             />
                         </Pressable>
                     </View>
@@ -371,7 +360,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     </View>
 
                                     <Pressable
-                                        style={styles.row}
+                                        style={[styles.row, { marginBottom: 4 }]}
                                         onPress={() => {
                                             if (isOnFreePlan) {
                                                 upgradeNow();
@@ -396,11 +385,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                     ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
                                                     : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
                                             );
-                                            Console.log(
-                                                primarySocial?.isInstagram
-                                                    ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
-                                                    : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
-                                            );
                                         }}
                                     >
                                         <FontAwesomeIcon
@@ -413,7 +397,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             color={Colors(theme).primary}
                                             style={styles.icon}
                                         />
-                                        <Text style={styles.subTextHeading}>
+                                        <Text style={[styles.subTextHeading, { fontWeight: "500" }]}>
                                             {primarySocial?.isInstagram
                                                 ? "@" +
                                                 (isOnFreePlan || lockProfile
@@ -427,48 +411,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         </Text>
                                     </Pressable>
 
-                                    {showTrendlyChips ? (
-                                        <View style={{ marginTop: 8 }}>
-                                            {showGenderChip ? (
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faUser}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Gender: {trendlyGender}
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                            {showQualityChip ? (
-                                                <View style={[styles.row, { alignItems: "center" }]}>
-                                                    <Text style={[styles.subTextHeading, { marginRight: 6 }]}>
-                                                        Quality:
-                                                    </Text>
-                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
-                                                    <Text style={[styles.subTextHeading, { marginLeft: 4 }]}>
-                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                            {showVerifiedChip ? (
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Verified
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                        </View>
-                                    ) : null}
-
+                                    {(influencer?.email || influencer?.phoneNumber || influencer?.location || influencer?.profile?.timeCommitment) ? (
+                                        <View style={styles.contactCard}>
+                                            <Text style={styles.sectionLabel}>Contact & Details</Text>
                                     {/* Email */}
                                     {influencer?.email && (
                                         <Pressable
@@ -588,6 +533,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             </Text>
                                         </View>
                                     )}
+                                        </View>
+                                    ) : null}
                                 </View>
                             </View>
 
@@ -601,9 +548,21 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         ))}
                                 </View>
                             )}
-                            {actionCard}
+                            {actionCard ? (
+                                <View style={{ marginTop: 24, marginBottom: 8 }}>
+                                    {actionCard}
+                                </View>
+                            ) : null}
 
                             <View style={styles.aboutContainer}>
+                                {(influencer?.profile?.content?.about ||
+                                    influencer?.profile?.content?.socialMediaHighlight ||
+                                    influencer?.profile?.content?.collaborationGoals ||
+                                    influencer?.profile?.content?.influencerConectionGoals ||
+                                    influencer?.profile?.content?.audienceInsights ||
+                                    influencer?.profile?.content?.funFactAboutUser) ? (
+                                    <Text style={[styles.sectionLabel, { paddingHorizontal: 20, marginBottom: 4 }]}>About</Text>
+                                ) : null}
                                 {influencer?.profile?.content?.about ? (
                                     <View style={styles.aboutCard}>
                                         <Title style={styles.cardColor}>About Me</Title>
@@ -854,8 +813,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         />
                     </View>
                 )}
-
-
             </ScrollView>
             {showCardPreviewTab && !isTwoColumn && (
                 <View
@@ -870,8 +827,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         left: 0,
                         right: 0,
                         zIndex: 1000,
-                        elevation: 5, // For Android shadow
-                        shadowColor: "#000", // For iOS shadow
+                        elevation: 5,
+                        shadowColor: "#000",
                         shadowOffset: {
                             width: 0,
                             height: -2,
