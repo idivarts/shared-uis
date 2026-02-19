@@ -323,12 +323,23 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     <View
                                         style={{
                                             flexDirection: isTwoColumn ? "row" : "column",
+                                            flexWrap: isTwoColumn ? "wrap" : undefined,
                                             alignItems: "flex-start",
                                             gap: isTwoColumn ? 24 : 12,
                                             marginBottom: 16,
+                                            minWidth: 0,
                                         }}
                                     >
-                                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                        <View
+                                            style={{
+                                                flexDirection: "row",
+                                                alignItems: "center",
+                                                gap: 6,
+                                                flexShrink: isTwoColumn ? 1 : 0,
+                                                minWidth: isTwoColumn ? 0 : undefined,
+                                                maxWidth: isTwoColumn ? "100%" : undefined,
+                                            }}
+                                        >
                                             <Text
                                                 style={[
                                                     styles.name,
@@ -350,8 +361,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             <View
                                                 style={{
                                                     width: isTwoColumn ? "auto" : "100%",
-                                                    alignItems: "flex-start"
-
+                                                    alignItems: "flex-start",
+                                                    flexShrink: 0,
                                                 }}
                                             >
                                                 {actionButtonNode}
