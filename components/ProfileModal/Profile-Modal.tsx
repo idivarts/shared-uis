@@ -25,10 +25,10 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Dimensions,
     Image,
     Linking,
     Platform,
@@ -170,7 +170,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         });
     };
 
-    const screenWidth = Dimensions.get("window").width;
+    const { width: screenWidth } = useBreakpoints();
 
     const fetchPrimarySocialMedia = async () => {
         if (primarySocial) return;

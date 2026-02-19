@@ -16,9 +16,9 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { collection, doc, getDoc } from "firebase/firestore";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Dimensions,
     Pressable,
     StyleProp,
     Text,
@@ -123,7 +123,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         getSocial();
     }, []);
 
-    const screenWidth = Dimensions.get("window").width;
+    const { width: screenWidth } = useBreakpoints();
 
     const onImagePress = (data: MediaItem) => {
         setPreviewImageUrl(data.url);
