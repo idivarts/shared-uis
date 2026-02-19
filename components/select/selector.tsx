@@ -13,24 +13,38 @@ interface OptionType {
     description?: string;
 }
 
-interface SelectorProps {
-    onSelect: (value: string) => void;
+interface SelectorPropsBase {
     options: OptionType[];
-    selectedValue?: string;
     theme: Theme;
     variant?: 'horizontal' | 'vertical';
 }
 
-export const Selector: React.FC<SelectorProps> = ({
-    onSelect,
-    options,
-    selectedValue,
-    theme,
-    variant,
-}) => {
-    // Determine effective variant based on platform if not explicitly set
+interface SelectorPropsSingle extends SelectorPropsBase {
+    multiSelect?: false;
+    onSelect: (value: string) => void;
+    selectedValue?: string;
+}
+
+interface SelectorPropsMulti extends SelectorPropsBase {
+    multiSelect: true;
+    onToggle: (value: string) => void;
+    selectedValues?: string[];
+}
+
+type SelectorProps = SelectorPropsSingle | SelectorPropsMulti;
+
+export const Selector: React.FC<SelectorProps> = (props) => {
+    const { options, theme, variant } = props;
     const effectiveVariant = variant || (Platform.OS === 'web' ? 'horizontal' : 'vertical');
     const styles = stylesFn(theme, effectiveVariant);
+
+    const isSelected = (value: string) =>
+        props.multiSelect
+            ? (props.selectedValues ?? []).includes(value)
+            : props.selectedValue === value;
+
+    const handlePress = (value: string) =>
+        props.multiSelect ? props.onToggle(value) : props.onSelect(value);
 
     return (
         <View style={styles.optionsContainer}>
@@ -39,9 +53,9 @@ export const Selector: React.FC<SelectorProps> = ({
                     key={index}
                     style={[
                         styles.option,
-                        selectedValue === option.value && styles.selectedOption,
+                        isSelected(option.value) && styles.selectedOption,
                     ]}
-                    onPress={() => onSelect(option.value)}
+                    onPress={() => handlePress(option.value)}
                 >
                     {option.icon && (
                         <FontAwesomeIcon
