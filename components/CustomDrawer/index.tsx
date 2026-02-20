@@ -7,20 +7,18 @@ import React from "react";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { Animated, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { Subject } from "rxjs";
 import { View } from "../theme/Themed";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const OpenDrawerSubject = new Subject<boolean | undefined>()
 
 const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: React.ReactNode, DrawerContent: any, isFixed: boolean }) => {
 
-    const { xl } = useBreakpoints()
+    const { xl, width: screenWidth } = useBreakpoints()
     const theme = useTheme()
 
-    const DRAWER_WIDTH = xl ? 320 : SCREEN_WIDTH * 0.75;
+    const DRAWER_WIDTH = xl ? 320 : screenWidth * 0.75;
 
     const [drawerVisible, setDrawerVisible] = useState(xl);
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;

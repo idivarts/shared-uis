@@ -43,262 +43,262 @@ export const MultiSelectExtendableAsync: React.FC<
     theme,
     closeOnSelect = false,
 }) => {
-    const [totalMultiselectItems, setTotalMultiselectItems] = useState<
-        string[]
-    >(initialMultiselectItemsList);
-    const [selectedMultiselectItems, setSelectedMultiselectItems] =
-        useState<string[]>(selectedItems);
-    const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
-    const [searchText, setSearchText] = useState("");
-    const [filteredItems, setFilteredItems] = useState<string[]>(itemsList);
-    const [isSearching, setIsSearching] = useState(false);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const searchInputRef = useRef<TextInput>(null);
-    const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+        const [totalMultiselectItems, setTotalMultiselectItems] = useState<
+            string[]
+        >(initialMultiselectItemsList);
+        const [selectedMultiselectItems, setSelectedMultiselectItems] =
+            useState<string[]>(selectedItems);
+        const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
+        const [searchText, setSearchText] = useState("");
+        const [filteredItems, setFilteredItems] = useState<string[]>(itemsList);
+        const [isSearching, setIsSearching] = useState(false);
+        const [isModalVisible, setIsModalVisible] = useState(false);
+        const searchInputRef = useRef<TextInput>(null);
+        const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const styles = stylesFn(theme);
+        const styles = stylesFn(theme);
 
-    const performSearch = useCallback(
-        async (query: string) => {
-            if (!query || query.trim() === "") {
+        const performSearch = useCallback(
+            async (query: string) => {
+                if (!query || query.trim() === "") {
+                    setFilteredItems(itemsList);
+                    setIsSearching(false);
+                    return;
+                }
+                setIsSearching(true);
+                try {
+                    const results = await onSearch(query);
+                    setFilteredItems(results);
+                } catch {
+                    setFilteredItems([]);
+                } finally {
+                    setIsSearching(false);
+                }
+            },
+            [onSearch, itemsList]
+        );
+
+        useEffect(() => {
+            if (debounceRef.current) {
+                clearTimeout(debounceRef.current);
+            }
+            if (!searchText.trim()) {
                 setFilteredItems(itemsList);
                 setIsSearching(false);
                 return;
             }
-            setIsSearching(true);
-            try {
-                const results = await onSearch(query);
-                setFilteredItems(results);
-            } catch {
-                setFilteredItems([]);
-            } finally {
-                setIsSearching(false);
-            }
-        },
-        [onSearch, itemsList]
-    );
+            debounceRef.current = setTimeout(() => {
+                performSearch(searchText);
+            }, SEARCH_DEBOUNCE_MS);
+            return () => {
+                if (debounceRef.current) {
+                    clearTimeout(debounceRef.current);
+                }
+            };
+        }, [searchText, itemsList, performSearch]);
 
-    useEffect(() => {
-        if (debounceRef.current) {
-            clearTimeout(debounceRef.current);
-        }
-        if (!searchText.trim()) {
-            setFilteredItems(itemsList);
-            setIsSearching(false);
-            return;
-        }
-        debounceRef.current = setTimeout(() => {
-            performSearch(searchText);
-        }, SEARCH_DEBOUNCE_MS);
-        return () => {
-            if (debounceRef.current) {
-                clearTimeout(debounceRef.current);
+        const handleAddItem = () => {
+            if (searchText.trim() === "") return;
+            const newItem = searchText.trim();
+            const updatedItems = [...itemsList, newItem];
+            setItemsList(updatedItems);
+            setTotalMultiselectItems([...totalMultiselectItems, newItem]);
+            const newSelected = [...selectedMultiselectItems, newItem];
+            setSelectedMultiselectItems(newSelected);
+            onSelectedItemsChange(newSelected);
+            setSearchText("");
+            if (closeOnSelect) setIsModalVisible(false);
+        };
+
+        const toggleSelection = (item: string) => {
+            if (selectedMultiselectItems.includes(item)) {
+                const next = selectedMultiselectItems.filter((i) => i !== item);
+                setSelectedMultiselectItems(next);
+                onSelectedItemsChange(next);
+            } else {
+                const next = [...selectedMultiselectItems, item];
+                setSelectedMultiselectItems(next);
+                onSelectedItemsChange(next);
             }
         };
-    }, [searchText, itemsList, performSearch]);
 
-    const handleAddItem = () => {
-        if (searchText.trim() === "") return;
-        const newItem = searchText.trim();
-        const updatedItems = [...itemsList, newItem];
-        setItemsList(updatedItems);
-        setTotalMultiselectItems([...totalMultiselectItems, newItem]);
-        const newSelected = [...selectedMultiselectItems, newItem];
-        setSelectedMultiselectItems(newSelected);
-        onSelectedItemsChange(newSelected);
-        setSearchText("");
-        if (closeOnSelect) setIsModalVisible(false);
-    };
+        const handleSelectItem = (item: string) => {
+            const wasSelected = selectedMultiselectItems.includes(item);
+            toggleSelection(item);
+            if (!totalMultiselectItems.includes(item)) {
+                setTotalMultiselectItems([...totalMultiselectItems, item]);
+            }
+            setSearchText("");
+            if (closeOnSelect && !wasSelected) setIsModalVisible(false);
+        };
 
-    const toggleSelection = (item: string) => {
-        if (selectedMultiselectItems.includes(item)) {
-            const next = selectedMultiselectItems.filter((i) => i !== item);
-            setSelectedMultiselectItems(next);
-            onSelectedItemsChange(next);
-        } else {
-            const next = [...selectedMultiselectItems, item];
-            setSelectedMultiselectItems(next);
-            onSelectedItemsChange(next);
-        }
-    };
+        const openBottomSheet = () => {
+            setIsModalVisible(true);
+            searchInputRef.current?.focus();
+        };
 
-    const handleSelectItem = (item: string) => {
-        const wasSelected = selectedMultiselectItems.includes(item);
-        toggleSelection(item);
-        if (!totalMultiselectItems.includes(item)) {
-            setTotalMultiselectItems([...totalMultiselectItems, item]);
-        }
-        setSearchText("");
-        if (closeOnSelect && !wasSelected) setIsModalVisible(false);
-    };
+        const isItemNotFound =
+            searchText.trim() !== "" && !isSearching && filteredItems.length === 0;
+        const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
+        const insets = useSafeAreaInsets();
 
-    const openBottomSheet = () => {
-        setIsModalVisible(true);
-        searchInputRef.current?.focus();
-    };
-
-    const isItemNotFound =
-        searchText.trim() !== "" && !isSearching && filteredItems.length === 0;
-    const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
-    const insets = useSafeAreaInsets();
-
-    return (
-        <>
-            <View style={styles.container}>
-                <View style={styles.selectedItemsContainer}>
-                    <View style={styles.chipContainer}>
-                        {totalMultiselectItems.map((item) => (
-                            <Pressable
-                                key={item}
-                                onPress={() => toggleSelection(item)}
-                            >
-                                <View
-                                    style={[
-                                        styles.chip,
-                                        {
-                                            backgroundColor:
-                                                selectedMultiselectItems.includes(
-                                                    item
-                                                )
-                                                    ? Colors(theme).primary
-                                                    : Colors(theme).tag,
-                                        },
-                                    ]}
+        return (
+            <>
+                <View style={styles.container}>
+                    <View style={styles.selectedItemsContainer}>
+                        <View style={styles.chipContainer}>
+                            {totalMultiselectItems.map((item) => (
+                                <Pressable
+                                    key={item}
+                                    onPress={() => toggleSelection(item)}
                                 >
-                                    <Text
+                                    <View
                                         style={[
-                                            styles.chipText,
+                                            styles.chip,
                                             {
-                                                color: selectedMultiselectItems.includes(
-                                                    item
-                                                )
-                                                    ? Colors(theme).white
-                                                    : Colors(theme).text,
+                                                backgroundColor:
+                                                    selectedMultiselectItems.includes(
+                                                        item
+                                                    )
+                                                        ? Colors(theme).primary
+                                                        : Colors(theme).tag,
                                             },
                                         ]}
                                     >
-                                        {item}
-                                    </Text>
-                                    <FontAwesomeIcon
-                                        icon={faCheck}
-                                        color={Colors(theme).white}
-                                        size={16}
-                                        style={{
-                                            display:
-                                                selectedMultiselectItems.includes(
-                                                    item
-                                                )
-                                                    ? "flex"
-                                                    : "none",
-                                        }}
-                                    />
-                                </View>
-                            </Pressable>
-                        ))}
-                        <Pressable onPress={openBottomSheet} style={styles.addChip}>
-                            <Text style={styles.addChipText}>
-                                {buttonLabel || "Add"}
-                            </Text>
-                            {buttonIcon ?? (
-                                <FontAwesomeIcon
-                                    icon={faPlus}
-                                    color={Colors(theme).primary}
-                                    size={14}
-                                />
-                            )}
-                        </Pressable>
-                    </View>
-                </View>
-            </View>
-            {isModalVisible && (
-                <BottomSheetContainer
-                    backgroundStyle={{
-                        backgroundColor: Colors(theme).background,
-                    }}
-                    enablePanDownToClose
-                    handleIndicatorStyle={{
-                        backgroundColor: Colors(theme).primary,
-                    }}
-                    index={2}
-                    isVisible={isModalVisible}
-                    onClose={() => setIsModalVisible(false)}
-                    snapPoints={snapPoints}
-                    topInset={insets.top}
-                >
-                    <View style={styles.bottomSheetContent}>
-                        <Pressable
-                            style={styles.closeButton}
-                            onPress={() => setIsModalVisible(false)}
-                        >
-                            <FontAwesomeIcon
-                                icon={faClose}
-                                color={Colors(theme).primary}
-                                size={24}
-                            />
-                        </Pressable>
-                        <TextInput
-                            ref={searchInputRef}
-                            style={styles.searchInput}
-                            value={searchText}
-                            onChangeText={setSearchText}
-                            placeholder="Search"
-                            autoCapitalize="none"
-                            placeholderTextColor={Colors(theme).gray300}
-                        />
-                        <ScrollView style={styles.itemsList}>
-                            {isSearching ? (
-                                <View style={styles.loadingContainer}>
-                                    <ActivityIndicator
-                                        size="small"
-                                        color={Colors(theme).primary}
-                                    />
-                                    <Text style={styles.loadingText}>
-                                        Searching...
-                                    </Text>
-                                </View>
-                            ) : isItemNotFound ? (
-                                <Pressable
-                                    style={styles.addButton}
-                                    onPress={handleAddItem}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={faPlus}
-                                        color={Colors(theme).white}
-                                        size={14}
-                                    />
-                                    <Text style={styles.addButtonText}>
-                                        Add {searchText}
-                                    </Text>
-                                </Pressable>
-                            ) : (
-                                filteredItems.map((item) => (
-                                    <Pressable
-                                        key={item}
-                                        style={styles.item}
-                                        onPress={() => handleSelectItem(item)}
-                                    >
-                                        <Text style={styles.itemText}>
+                                        <Text
+                                            style={[
+                                                styles.chipText,
+                                                {
+                                                    color: selectedMultiselectItems.includes(
+                                                        item
+                                                    )
+                                                        ? Colors(theme).white
+                                                        : Colors(theme).text,
+                                                },
+                                            ]}
+                                        >
                                             {item}
                                         </Text>
-                                        {selectedMultiselectItems.includes(
-                                            item
-                                        ) && (
-                                            <FontAwesomeIcon
-                                                icon={faCheck}
-                                                color={Colors(theme).primary}
-                                                size={16}
-                                            />
-                                        )}
-                                    </Pressable>
-                                ))
-                            )}
-                        </ScrollView>
+                                        <FontAwesomeIcon
+                                            icon={faCheck}
+                                            color={Colors(theme).white}
+                                            size={16}
+                                            style={{
+                                                display:
+                                                    selectedMultiselectItems.includes(
+                                                        item
+                                                    )
+                                                        ? "flex"
+                                                        : "none",
+                                            }}
+                                        />
+                                    </View>
+                                </Pressable>
+                            ))}
+                            <Pressable onPress={openBottomSheet} style={styles.addChip}>
+                                <Text style={styles.addChipText}>
+                                    {buttonLabel || "Add"}
+                                </Text>
+                                {buttonIcon ?? (
+                                    <FontAwesomeIcon
+                                        icon={faPlus}
+                                        color={Colors(theme).primary}
+                                        size={14}
+                                    />
+                                )}
+                            </Pressable>
+                        </View>
                     </View>
-                </BottomSheetContainer>
-            )}
-        </>
-    );
-};
+                </View>
+                {isModalVisible && (
+                    <BottomSheetContainer
+                        backgroundStyle={{
+                            backgroundColor: Colors(theme).background,
+                        }}
+                        enablePanDownToClose
+                        handleIndicatorStyle={{
+                            backgroundColor: Colors(theme).primary,
+                        }}
+                        index={2}
+                        isVisible={isModalVisible}
+                        onClose={() => setIsModalVisible(false)}
+                        snapPoints={snapPoints}
+                        topInset={insets.top}
+                    >
+                        <View style={styles.bottomSheetContent}>
+                            <Pressable
+                                style={styles.closeButton}
+                                onPress={() => setIsModalVisible(false)}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faClose}
+                                    color={Colors(theme).primary}
+                                    size={24}
+                                />
+                            </Pressable>
+                            <TextInput
+                                ref={searchInputRef}
+                                style={styles.searchInput}
+                                value={searchText}
+                                onChangeText={setSearchText}
+                                placeholder="Search"
+                                autoCapitalize="none"
+                                placeholderTextColor={Colors(theme).gray300}
+                            />
+                            <ScrollView style={styles.itemsList}>
+                                {isSearching ? (
+                                    <View style={styles.loadingContainer}>
+                                        <ActivityIndicator
+                                            size="small"
+                                            color={Colors(theme).primary}
+                                        />
+                                        <Text style={styles.loadingText}>
+                                            Searching...
+                                        </Text>
+                                    </View>
+                                ) : isItemNotFound ? (
+                                    <Pressable
+                                        style={styles.addButton}
+                                        onPress={handleAddItem}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faPlus}
+                                            color={Colors(theme).white}
+                                            size={14}
+                                        />
+                                        <Text style={styles.addButtonText}>
+                                            Add {searchText}
+                                        </Text>
+                                    </Pressable>
+                                ) : (
+                                    filteredItems.map((item) => (
+                                        <Pressable
+                                            key={item}
+                                            style={styles.item}
+                                            onPress={() => handleSelectItem(item)}
+                                        >
+                                            <Text style={styles.itemText}>
+                                                {item}
+                                            </Text>
+                                            {selectedMultiselectItems.includes(
+                                                item
+                                            ) && (
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        color={Colors(theme).primary}
+                                                        size={16}
+                                                    />
+                                                )}
+                                        </Pressable>
+                                    ))
+                                )}
+                            </ScrollView>
+                        </View>
+                    </BottomSheetContainer>
+                )}
+            </>
+        );
+    };
 
 const stylesFn = (theme: Theme) =>
     StyleSheet.create({

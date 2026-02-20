@@ -13,10 +13,15 @@ interface RatingSectionProps {
     }[];
 }
 
-const Stars: React.FC<{
+export const qualityScoreToStars = (qualityScore: number): number =>
+    Math.round((qualityScore / 2) * 2) / 2;
+
+export const Stars: React.FC<{
     rating: number;
+    size?: number;
 }> = ({
     rating,
+    size = 20,
 }) => {
         const theme = useTheme();
         const fullStars = Math.floor(rating);
@@ -35,7 +40,7 @@ const Stars: React.FC<{
                         <FontAwesomeIcon
                             key={i}
                             icon={faStarSolid}
-                            size={20}
+                            size={size}
                             color={Colors(theme).yellow}
                         />
                     ))
@@ -44,7 +49,7 @@ const Stars: React.FC<{
                     halfStar && (
                         <FontAwesomeIcon
                             icon={faStarHalfStroke}
-                            size={20}
+                            size={size}
                             color={Colors(theme).yellow}
                         />
                     )
@@ -54,7 +59,7 @@ const Stars: React.FC<{
                         <FontAwesomeIcon
                             key={i}
                             icon={faStar}
-                            size={20}
+                            size={size}
                             color={Colors(theme).yellow}
                         />
                     ))

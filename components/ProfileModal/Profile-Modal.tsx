@@ -20,16 +20,15 @@ import {
     faEnvelope,
     faLocation,
     faPhone,
-    faStar,
     faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
-    Dimensions,
     Image,
     Linking,
     Platform,
@@ -48,6 +47,7 @@ import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
+import { Stars, qualityScoreToStars } from "../rating-section";
 import SelectGroup from "../select/select-group";
 
 
@@ -170,7 +170,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         });
     };
 
-    const screenWidth = Dimensions.get("window").width;
+    const { width: screenWidth } = useBreakpoints();
 
     const fetchPrimarySocialMedia = async () => {
         if (primarySocial) return;
@@ -323,12 +323,23 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     <View
                                         style={{
                                             flexDirection: isTwoColumn ? "row" : "column",
+                                            flexWrap: isTwoColumn ? "wrap" : undefined,
                                             alignItems: "flex-start",
                                             gap: isTwoColumn ? 24 : 12,
                                             marginBottom: 16,
+                                            minWidth: 0,
                                         }}
                                     >
-                                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                        <View
+                                            style={{
+                                                flexDirection: "row",
+                                                alignItems: "center",
+                                                gap: 6,
+                                                flexShrink: isTwoColumn ? 1 : 0,
+                                                minWidth: isTwoColumn ? 0 : undefined,
+                                                maxWidth: isTwoColumn ? "100%" : undefined,
+                                            }}
+                                        >
                                             <Text
                                                 style={[
                                                     styles.name,
@@ -350,8 +361,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             <View
                                                 style={{
                                                     width: isTwoColumn ? "auto" : "100%",
-                                                    alignItems: "flex-start"
-
+                                                    alignItems: "flex-start",
+                                                    flexShrink: 0,
                                                 }}
                                             >
                                                 {actionButtonNode}
@@ -432,15 +443,13 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 </View>
                                             ) : null}
                                             {showQualityChip ? (
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faStar}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Quality: {trendlyQuality}/100
+                                                <View style={[styles.row, { alignItems: "center" }]}>
+                                                    <Text style={[styles.subTextHeading, { marginRight: 6 }]}>
+                                                        Quality:
+                                                    </Text>
+                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
+                                                    <Text style={[styles.subTextHeading, { marginLeft: 4 }]}>
+                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
                                                     </Text>
                                                 </View>
                                             ) : null}

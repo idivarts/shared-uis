@@ -1,11 +1,9 @@
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import { Theme } from "@react-navigation/native";
 import { ResizeMode, Video } from "expo-av";
 import React from "react";
-import { Dimensions, FlatList, Image, Platform, StyleSheet, View } from "react-native";
+import { FlatList, Image, Platform, StyleSheet, View } from "react-native";
 import { MediaItem } from "./render-media-item";
-
-
-const { width } = Dimensions.get("window");
 interface IProps {
     media: MediaItem[];
     xl: any;
@@ -33,7 +31,7 @@ const ScrollMedia = ({ media, xl, MAX_WIDTH_WEB, padding, mediaRes }: IProps) =>
 };
 
 const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { width: number, height: number } }) => {
-    // const [thumbnail, setThumbnail] = useState(media.url);
+    const { width } = useBreakpoints();
     const styles = stylesWrapper(width, undefined, mediaRes);
     const isImage = media.type.includes("image") || media.type.includes("reel");
     const imageUrl = media.imageUrl || media.url;

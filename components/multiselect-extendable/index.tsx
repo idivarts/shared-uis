@@ -1,16 +1,16 @@
+import Colors from "@/shared-uis/constants/Colors";
 import { faCheck, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { BottomSheetScrollView } from '@gorhom/bottom-sheet';
 import { Theme } from '@react-navigation/native';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
     Platform,
     Pressable,
-    ScrollView,
     StyleSheet,
     TextInput,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Colors from "@/shared-uis/constants/Colors";
 import BottomSheetContainer from '../bottom-sheet';
 import { Text, View } from '../theme/Themed';
 
@@ -45,6 +45,21 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
     const searchInputRef = useRef<TextInput>(null);
 
     const styles = stylesFn(theme);
+
+    // Sync selectedItems prop changes to internal state
+    useEffect(() => {
+        setSelectedMultiselectItems(selectedItems);
+    }, [selectedItems]);
+
+    // Sync initialItemsList prop changes to internal state
+    useEffect(() => {
+        setItemsList(initialItemsList);
+    }, [initialItemsList]);
+
+    // Sync initialMultiselectItemsList prop changes to internal state
+    useEffect(() => {
+        setTotalMultiselectItems(initialMultiselectItemsList);
+    }, [initialMultiselectItemsList]);
 
     useEffect(() => {
         if (searchText) {
@@ -173,6 +188,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                         }}
                         index={2}
                         isVisible={isModalVisible}
+                        useBottomSheetView={false}
                         onClose={() => setIsModalVisible(false)}
                         snapPoints={snapPoints}
                         topInset={insets.top}
@@ -199,7 +215,10 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                                 autoCapitalize="none"
                                 placeholderTextColor={Colors(theme).gray300}
                             />
-                            <ScrollView style={styles.itemsList}>
+                            <BottomSheetScrollView
+                                style={styles.itemsList}
+                                keyboardShouldPersistTaps="handled"
+                            >
                                 {isItemNotFound ? (
                                     <Pressable
                                         style={styles.addButton}
@@ -230,7 +249,7 @@ export const MultiSelectExtendable: React.FC<MultiSelectExtendableProps> = ({
                                         </Pressable>
                                     ))
                                 )}
-                            </ScrollView>
+                            </BottomSheetScrollView>
                         </View>
                     </BottomSheetContainer>
                 )
