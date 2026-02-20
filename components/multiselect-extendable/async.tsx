@@ -1,16 +1,20 @@
-import Colors from "@/shared-uis/constants/Colors";
-import { faCheck, faClose, faPlus } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import { Theme } from '@react-navigation/native';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { faCheck, faClose, faPlus } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Theme } from "@react-navigation/native";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     ActivityIndicator,
+    Platform,
     Pressable,
+    ScrollView,
     StyleSheet,
-    TextInput
-} from 'react-native';
-import BottomSheetScrollContainer from '../bottom-sheet/scroll-view';
-import { Text, View } from '../theme/Themed';
+    TextInput,
+} from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import Colors from "@/shared-uis/constants/Colors";
+import BottomSheetContainer from "../bottom-sheet";
+import { Text, View } from "../theme/Themed";
 
 export interface MultiSelectExtendableAsyncProps {
     buttonIcon?: React.ReactNode;
@@ -18,326 +22,387 @@ export interface MultiSelectExtendableAsyncProps {
     initialItemsList: string[];
     initialMultiselectItemsList: string[];
     onSelectedItemsChange: (items: string[]) => void;
+    onSearch: (query: string) => Promise<string[]>;
     selectedItems: string[];
     theme: Theme;
     closeOnSelect?: boolean;
-    onSearch?: (query: string) => Promise<string[]>;
 }
 
-export const MultiSelectExtendableAsync: React.FC<MultiSelectExtendableAsyncProps> = ({
+const SEARCH_DEBOUNCE_MS = 300;
+
+export const MultiSelectExtendableAsync: React.FC<
+    MultiSelectExtendableAsyncProps
+> = ({
     buttonIcon,
     buttonLabel,
     initialItemsList,
     initialMultiselectItemsList,
     onSelectedItemsChange,
+    onSearch,
     selectedItems,
     theme,
     closeOnSelect = false,
-    onSearch,
 }) => {
-    const [totalMultiselectItems, setTotalMultiselectItems] = useState<string[]>(initialMultiselectItemsList);
-    const [selectedMultiselectItems, setSelectedMultiselectItems] = useState<string[]>(selectedItems);
-    const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
+        const [totalMultiselectItems, setTotalMultiselectItems] = useState<
+            string[]
+        >(initialMultiselectItemsList);
+        const [selectedMultiselectItems, setSelectedMultiselectItems] =
+            useState<string[]>(selectedItems);
+        const [itemsList, setItemsList] = useState<string[]>(initialItemsList);
+        const [searchText, setSearchText] = useState("");
+        const [filteredItems, setFilteredItems] = useState<string[]>(itemsList);
+        const [isSearching, setIsSearching] = useState(false);
+        const [isModalVisible, setIsModalVisible] = useState(false);
+        const searchInputRef = useRef<TextInput>(null);
+        const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    const [searchText, setSearchText] = useState('');
-    const [filteredItems, setFilteredItems] = useState<string[]>(initialItemsList);
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [isSearching, setIsSearching] = useState(false);
-    const searchInputRef = useRef<TextInput>(null);
-    const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-    const onSearchRef = useRef(onSearch);
-    const isSearchActiveRef = useRef(false); // Track if user is actively searching
+        const styles = stylesFn(theme);
 
-    const styles = stylesFn(theme);
-
-    // Keep onSearch ref up to date
-    useEffect(() => {
-        onSearchRef.current = onSearch;
-    }, [onSearch]);
-
-    useEffect(() => {
-        // Clear any existing timeout
-        if (searchTimeoutRef.current) {
-            clearTimeout(searchTimeoutRef.current);
-            searchTimeoutRef.current = null;
-        }
-
-        if (onSearchRef.current && searchText && searchText.trim() !== '') {
-            // User is actively searching
-            isSearchActiveRef.current = true;
-            setIsSearching(true);
-
-            searchTimeoutRef.current = setTimeout(async () => {
+        const performSearch = useCallback(
+            async (query: string) => {
+                if (!query || query.trim() === "") {
+                    setFilteredItems(itemsList);
+                    setIsSearching(false);
+                    return;
+                }
+                setIsSearching(true);
                 try {
-                    const results = await onSearchRef.current!(searchText);
-                    // Only update if we're still in search mode
-                    if (isSearchActiveRef.current) {
-                        setFilteredItems(results);
-                        setItemsList(results);
-                    }
-                } catch (error) {
-                    console.error('Error searching:', error);
+                    const results = await onSearch(query);
+                    setFilteredItems(results);
+                } catch {
                     setFilteredItems([]);
                 } finally {
                     setIsSearching(false);
                 }
-            }, 300); // 300ms debounce
-        } else if (searchText && searchText.trim() !== '') {
-            // Local filtering fallback
-            isSearchActiveRef.current = true;
-            setIsSearching(false);
-            const filtered = itemsList.filter(item =>
-                item.toLowerCase().includes(searchText.toLowerCase())
-            );
-            setFilteredItems(filtered);
-        } else {
-            // No search text, reset to initial items
-            isSearchActiveRef.current = false;
-            setIsSearching(false);
-            if (!searchText) {
-                setFilteredItems(itemsList);
-            }
-        }
+            },
+            [onSearch, itemsList]
+        );
 
-        return () => {
-            if (searchTimeoutRef.current) {
-                clearTimeout(searchTimeoutRef.current);
-                searchTimeoutRef.current = null;
+        useEffect(() => {
+            if (debounceRef.current) {
+                clearTimeout(debounceRef.current);
+            }
+            if (!searchText.trim()) {
+                setFilteredItems(itemsList);
                 setIsSearching(false);
+                return;
+            }
+            debounceRef.current = setTimeout(() => {
+                performSearch(searchText);
+            }, SEARCH_DEBOUNCE_MS);
+            return () => {
+                if (debounceRef.current) {
+                    clearTimeout(debounceRef.current);
+                }
+            };
+        }, [searchText, itemsList, performSearch]);
+
+        const handleAddItem = () => {
+            if (searchText.trim() === "") return;
+            const newItem = searchText.trim();
+            const updatedItems = [...itemsList, newItem];
+            setItemsList(updatedItems);
+            setTotalMultiselectItems([...totalMultiselectItems, newItem]);
+            const newSelected = [...selectedMultiselectItems, newItem];
+            setSelectedMultiselectItems(newSelected);
+            onSelectedItemsChange(newSelected);
+            setSearchText("");
+            if (closeOnSelect) setIsModalVisible(false);
+        };
+
+        const toggleSelection = (item: string) => {
+            if (selectedMultiselectItems.includes(item)) {
+                const next = selectedMultiselectItems.filter((i) => i !== item);
+                setSelectedMultiselectItems(next);
+                onSelectedItemsChange(next);
+            } else {
+                const next = [...selectedMultiselectItems, item];
+                setSelectedMultiselectItems(next);
+                onSelectedItemsChange(next);
             }
         };
-    }, [searchText]); // Only depend on searchText
 
-    useEffect(() => {
-        // Only update if not actively searching
-        if (!isSearchActiveRef.current && !searchText) {
-            setItemsList(initialItemsList);
-            setFilteredItems(initialItemsList);
-        }
-    }, [initialItemsList, searchText]);
+        const handleSelectItem = (item: string) => {
+            const wasSelected = selectedMultiselectItems.includes(item);
+            toggleSelection(item);
+            if (!totalMultiselectItems.includes(item)) {
+                setTotalMultiselectItems([...totalMultiselectItems, item]);
+            }
+            setSearchText("");
+            if (closeOnSelect && !wasSelected) setIsModalVisible(false);
+        };
 
-    const handleAddItem = () => {
-        if (searchText.trim() === '') {
-            return;
-        }
-        const updatedItems = [...itemsList, searchText];
-        setItemsList(updatedItems);
-        setTotalMultiselectItems([...totalMultiselectItems, searchText]);
-        setSelectedMultiselectItems([...selectedMultiselectItems, searchText]);
-        onSelectedItemsChange([...selectedMultiselectItems, searchText]);
+        const openBottomSheet = () => {
+            setIsModalVisible(true);
+            searchInputRef.current?.focus();
+        };
 
-        setSearchText('');
-        if (closeOnSelect) {
-            setIsModalVisible(false);
-        }
-    };
+        const isItemNotFound =
+            searchText.trim() !== "" && !isSearching && filteredItems.length === 0;
+        const snapPoints = useMemo(() => ["25%", "50%", "75%", "100%"], []);
+        const insets = useSafeAreaInsets();
 
-    const toggleSelection = (item: string) => {
-        if (selectedMultiselectItems.includes(item)) {
-            setSelectedMultiselectItems(selectedMultiselectItems.filter(i => i !== item));
-            onSelectedItemsChange(selectedMultiselectItems.filter(i => i !== item));
-        } else {
-            setSelectedMultiselectItems([...selectedMultiselectItems, item]);
-            onSelectedItemsChange([...selectedMultiselectItems, item]);
-        }
-    }
-
-    const handleSelectItem = (item: string) => {
-        const wasSelected = selectedMultiselectItems.includes(item);
-        toggleSelection(item);
-        if (!totalMultiselectItems.includes(item)) {
-            setTotalMultiselectItems([...totalMultiselectItems, item]);
-        }
-
-        setSearchText('');
-        if (closeOnSelect && !wasSelected) {
-            setIsModalVisible(false);
-        }
-    };
-
-    const handleRemoveItem = (item: string) => {
-        setSelectedMultiselectItems(selectedMultiselectItems.filter(i => i !== item));
-        onSelectedItemsChange(selectedMultiselectItems.filter(i => i !== item));
-    };
-
-    const canAddNewItem = useMemo(() => {
-        return searchText.trim() !== '' && !filteredItems.some(item => item.toLowerCase() === searchText.toLowerCase());
-    }, [searchText, filteredItems]);
-
-    return (
-        <View style={styles.container}>
-            {selectedMultiselectItems.length > 0 && (
-                <View style={styles.selectedItemsContainer}>
-                    {selectedMultiselectItems.map((item, index) => (
-                        <View key={index} style={styles.selectedItem}>
-                            <Text style={styles.selectedItemText}>{item}</Text>
-                            <Pressable onPress={() => handleRemoveItem(item)}>
-                                <FontAwesomeIcon icon={faClose} size={14} color={Colors(theme).primary} />
-                            </Pressable>
-                        </View>
-                    ))}
-                </View>
-            )}
-            {buttonLabel && (
-                <Pressable
-                    style={styles.button}
-                    onPress={() => setIsModalVisible(true)}
-                >
-                    {buttonIcon}
-                    <Text style={styles.buttonText}>{buttonLabel}</Text>
-                </Pressable>
-            )}
-
-            <BottomSheetScrollContainer
-                isVisible={isModalVisible}
-                snapPointsRange={['90%', '90%']}
-                onClose={() => {
-                    setIsModalVisible(false);
-                    setSearchText('');
-                    isSearchActiveRef.current = false;
-                    setIsSearching(false);
-                    // Reset to initial items
-                    setFilteredItems(initialItemsList);
-                    setItemsList(initialItemsList);
-                }}
-            >
-                <View style={styles.scrollContent}>
-                    <View style={styles.searchContainer}>
-                        <TextInput
-                            ref={searchInputRef}
-                            style={styles.searchInput}
-                            placeholder="Search or add new..."
-                            value={searchText}
-                            onChangeText={setSearchText}
-                            autoFocus
-                        />
-                        {isSearching && (
-                            <ActivityIndicator size="small" color={Colors(theme).primary} />
-                        )}
-                    </View>
-
-                    {canAddNewItem && (
-                        <Pressable style={styles.addButton} onPress={handleAddItem}>
-                            <FontAwesomeIcon icon={faPlus} size={16} color={Colors(theme).primary} />
-                            <Text style={styles.addButtonText}>Add "{searchText}"</Text>
-                        </Pressable>
-                    )}
-
-                    {filteredItems.map((item, index) => {
-                        const isSelected = selectedMultiselectItems.includes(item);
-                        return (
-                            <Pressable
-                                key={index}
-                                style={[styles.item, isSelected && styles.selectedItemInList]}
-                                onPress={() => handleSelectItem(item)}
-                            >
-                                <Text style={styles.itemText}>{item}</Text>
-                                {isSelected && (
-                                    <FontAwesomeIcon icon={faCheck} size={16} color={Colors(theme).primary} />
+        return (
+            <>
+                <View style={styles.container}>
+                    <View style={styles.selectedItemsContainer}>
+                        <View style={styles.chipContainer}>
+                            {totalMultiselectItems.map((item) => (
+                                <Pressable
+                                    key={item}
+                                    onPress={() => toggleSelection(item)}
+                                >
+                                    <View
+                                        style={[
+                                            styles.chip,
+                                            {
+                                                backgroundColor:
+                                                    selectedMultiselectItems.includes(
+                                                        item
+                                                    )
+                                                        ? Colors(theme).primary
+                                                        : Colors(theme).tag,
+                                            },
+                                        ]}
+                                    >
+                                        <Text
+                                            style={[
+                                                styles.chipText,
+                                                {
+                                                    color: selectedMultiselectItems.includes(
+                                                        item
+                                                    )
+                                                        ? Colors(theme).white
+                                                        : Colors(theme).text,
+                                                },
+                                            ]}
+                                        >
+                                            {item}
+                                        </Text>
+                                        <FontAwesomeIcon
+                                            icon={faCheck}
+                                            color={Colors(theme).white}
+                                            size={16}
+                                            style={{
+                                                display:
+                                                    selectedMultiselectItems.includes(
+                                                        item
+                                                    )
+                                                        ? "flex"
+                                                        : "none",
+                                            }}
+                                        />
+                                    </View>
+                                </Pressable>
+                            ))}
+                            <Pressable onPress={openBottomSheet} style={styles.addChip}>
+                                <Text style={styles.addChipText}>
+                                    {buttonLabel || "Add"}
+                                </Text>
+                                {buttonIcon ?? (
+                                    <FontAwesomeIcon
+                                        icon={faPlus}
+                                        color={Colors(theme).primary}
+                                        size={14}
+                                    />
                                 )}
                             </Pressable>
-                        );
-                    })}
-                    {filteredItems.length === 0 && !isSearching && (
-                        <View style={styles.emptyState}>
-                            <Text style={styles.emptyStateText}>No items found</Text>
                         </View>
-                    )}
+                    </View>
                 </View>
-            </BottomSheetScrollContainer>
-        </View>
-    );
-};
+                {isModalVisible && (
+                    <BottomSheetContainer
+                        backgroundStyle={{
+                            backgroundColor: Colors(theme).background,
+                        }}
+                        enablePanDownToClose
+                        handleIndicatorStyle={{
+                            backgroundColor: Colors(theme).primary,
+                        }}
+                        index={2}
+                        isVisible={isModalVisible}
+                        onClose={() => setIsModalVisible(false)}
+                        snapPoints={snapPoints}
+                        topInset={insets.top}
+                    >
+                        <View style={styles.bottomSheetContent}>
+                            <Pressable
+                                style={styles.closeButton}
+                                onPress={() => setIsModalVisible(false)}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faClose}
+                                    color={Colors(theme).primary}
+                                    size={24}
+                                />
+                            </Pressable>
+                            <TextInput
+                                ref={searchInputRef}
+                                style={styles.searchInput}
+                                value={searchText}
+                                onChangeText={setSearchText}
+                                placeholder="Search"
+                                autoCapitalize="none"
+                                placeholderTextColor={Colors(theme).gray300}
+                            />
+                            <ScrollView style={styles.itemsList}>
+                                {isSearching ? (
+                                    <View style={styles.loadingContainer}>
+                                        <ActivityIndicator
+                                            size="small"
+                                            color={Colors(theme).primary}
+                                        />
+                                        <Text style={styles.loadingText}>
+                                            Searching...
+                                        </Text>
+                                    </View>
+                                ) : isItemNotFound ? (
+                                    <Pressable
+                                        style={styles.addButton}
+                                        onPress={handleAddItem}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faPlus}
+                                            color={Colors(theme).white}
+                                            size={14}
+                                        />
+                                        <Text style={styles.addButtonText}>
+                                            Add {searchText}
+                                        </Text>
+                                    </Pressable>
+                                ) : (
+                                    filteredItems.map((item) => (
+                                        <Pressable
+                                            key={item}
+                                            style={styles.item}
+                                            onPress={() => handleSelectItem(item)}
+                                        >
+                                            <Text style={styles.itemText}>
+                                                {item}
+                                            </Text>
+                                            {selectedMultiselectItems.includes(
+                                                item
+                                            ) && (
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        color={Colors(theme).primary}
+                                                        size={16}
+                                                    />
+                                                )}
+                                        </Pressable>
+                                    ))
+                                )}
+                            </ScrollView>
+                        </View>
+                    </BottomSheetContainer>
+                )}
+            </>
+        );
+    };
 
-const stylesFn = (theme: Theme) => StyleSheet.create({
-    container: {
-        marginBottom: 16,
-    },
-    selectedItemsContainer: {
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: 8,
-        marginBottom: 8,
-    },
-    selectedItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: Colors(theme).primaryLight,
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 16,
-        gap: 6,
-    },
-    selectedItemText: {
-        fontSize: 14,
-        color: Colors(theme).primary,
-    },
-    button: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        paddingVertical: 8,
-    },
-    buttonText: {
-        fontSize: 14,
-        color: Colors(theme).primary,
-        fontWeight: '500',
-    },
-    scrollContent: {
-        padding: 16,
-    },
-    searchContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        marginBottom: 16,
-    },
-    searchInput: {
-        flex: 1,
-        borderWidth: 1,
-        borderColor: Colors(theme).border,
-        borderRadius: 8,
-        paddingHorizontal: 12,
-        paddingVertical: 8,
-        fontSize: 16,
-        backgroundColor: Colors(theme).background,
-        color: Colors(theme).text,
-    },
-    addButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 8,
-        padding: 12,
-        backgroundColor: Colors(theme).primaryLight,
-        borderRadius: 8,
-        marginBottom: 16,
-    },
-    addButtonText: {
-        fontSize: 14,
-        color: Colors(theme).primary,
-        fontWeight: '500',
-    },
-    item: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: Colors(theme).border,
-    },
-    selectedItemInList: {
-        backgroundColor: Colors(theme).primaryLight,
-    },
-    itemText: {
-        fontSize: 16,
-        color: Colors(theme).text,
-    },
-    emptyState: {
-        padding: 32,
-        alignItems: 'center',
-    },
-    emptyStateText: {
-        fontSize: 14,
-        color: Colors(theme).textSecondary,
-    },
-});
+const stylesFn = (theme: Theme) =>
+    StyleSheet.create({
+        container: {
+            flex: 1,
+        },
+        selectedItemsContainer: {
+            gap: 16,
+        },
+        chipContainer: {
+            flexDirection: "row",
+            flexWrap: "wrap",
+            gap: 8,
+        },
+        chip: {
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: Colors(theme).primary,
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 8,
+        },
+        chipText: {
+            fontSize: 14,
+            marginRight: 4,
+            color: Colors(theme).white,
+        },
+        addChip: {
+            flexDirection: "row",
+            alignItems: "center",
+            backgroundColor: Colors(theme).tag,
+            borderRadius: 10,
+            paddingHorizontal: 14,
+            paddingVertical: 8,
+            borderWidth: 1,
+            borderColor: Colors(theme).primary,
+            gap: 8,
+        },
+        addChipText: {
+            fontSize: 14,
+            color: Colors(theme).primary,
+        },
+        bottomSheetContent: {
+            padding: 16,
+            paddingTop: Platform.OS === "web" ? 30 : 16,
+            paddingBottom: 20,
+            backgroundColor: Colors(theme).background,
+            position: "relative",
+        },
+        closeButton: {
+            display: Platform.OS === "web" ? "flex" : "none",
+            position: "absolute",
+            right: 16,
+            top: 0,
+            zIndex: Platform.OS === "web" ? 100 : -10,
+        },
+        searchInput: {
+            borderWidth: 1,
+            color: Colors(theme).text,
+            borderColor: Colors(theme).primary,
+            borderRadius: 10,
+            paddingHorizontal: 16,
+            paddingVertical: 12,
+            marginBottom: 16,
+        },
+        itemsList: {
+            maxHeight: 450,
+            borderRadius: 10,
+        },
+        item: {
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+            padding: 16,
+            borderBottomWidth: 1,
+            backgroundColor: theme.dark
+                ? Colors(theme).card
+                : Colors(theme).gray200,
+        },
+        itemText: {
+            fontSize: 16,
+            color: Colors(theme).text,
+        },
+        addButton: {
+            backgroundColor: Colors(theme).primary,
+            borderRadius: 100,
+            padding: 12,
+            alignItems: "center",
+            flexDirection: "row",
+            gap: 8,
+            justifyContent: "center",
+        },
+        addButtonText: {
+            color: Colors(theme).white,
+            fontSize: 16,
+            fontWeight: "600",
+        },
+        loadingContainer: {
+            padding: 24,
+            alignItems: "center",
+            gap: 12,
+        },
+        loadingText: {
+            fontSize: 14,
+            color: Colors(theme).gray300,
+        },
+    });
