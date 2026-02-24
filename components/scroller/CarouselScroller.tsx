@@ -129,7 +129,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
         <>
             <View ref={containerRef} style={{
                 position: 'relative', height: "100%", alignSelf: "center",
-                shadowColor: "#000",
+                shadowColor: colors.black,
                 shadowOffset: {
                     width: 0,
                     height: 2,

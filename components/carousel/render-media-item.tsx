@@ -307,7 +307,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
                             justifyContent: "center",
                         }}
                     >
-                        <FontAwesomeIcon icon={faPlay} size={20} color="#ffffff" />
+                        <FontAwesomeIcon icon={faPlay} size={20} color={Colors(theme).white} />
                     </Pressable>
                 </View>
                 <LoadingCircle />

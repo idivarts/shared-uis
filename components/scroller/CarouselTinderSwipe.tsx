@@ -1,6 +1,8 @@
 import { Console } from '@/shared-libs/utils/console';
+import Colors from '@/shared-uis/constants/Colors';
 import { faCheck, faPeopleRoof, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
+import { useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
@@ -17,6 +19,8 @@ interface IProps<T = any> {
     onPressView?: (item: T, index: number) => void;
 }
 const CarouselTinderSwipe: React.FC<IProps> = (props) => {
+    const theme = useTheme();
+    const colors = Colors(theme);
     const [data, setData] = useState<any[]>([])
     const [showOverlay, setShowOverlay] = useState(true);
     const [swipeOverlay, setSwipeOverlay] = useState<'accept' | 'reject' | null>(null);
@@ -131,15 +135,15 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
             )}
             <View style={styles.floatingButtonsContainer}>
                 <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
-                    <FontAwesomeIcon icon={faTimes} size={32} color="#fff" />
+                    <FontAwesomeIcon icon={faTimes} size={32} color={colors.white} />
                     <Text style={styles.buttonLabel}>Reject</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[prevIndex.current], currentGlobalIndex)}>
-                    <FontAwesomeIcon icon={faPeopleRoof} size={28} color="#fff" />
+                    <FontAwesomeIcon icon={faPeopleRoof} size={28} color={colors.white} />
                     <Text style={styles.buttonLabel}>View</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
-                    <FontAwesomeIcon icon={faCheck} size={32} color="#fff" />
+                    <FontAwesomeIcon icon={faCheck} size={32} color={colors.white} />
                     <Text style={styles.buttonLabel}>Accept</Text>
                 </TouchableOpacity>
             </View>

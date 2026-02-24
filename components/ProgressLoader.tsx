@@ -1,3 +1,4 @@
+import { ColorsStatic } from "@/shared-uis/constants/Colors";
 import React, { useEffect, useState } from "react";
 import { Animated, Modal, StyleSheet, Text, View } from "react-native";
 import { Subject } from "rxjs";
@@ -71,13 +72,13 @@ const styles = StyleSheet.create({
     progressBar: {
         width: "100%",
         height: 10,
-        backgroundColor: "#ddd",
+        backgroundColor: ColorsStatic.progressBarTrack,
         borderRadius: 5,
         overflow: "hidden",
     },
     progressFill: {
         height: "100%",
-        backgroundColor: "#3498db",
+        backgroundColor: ColorsStatic.progressBarFill,
     },
 });
 

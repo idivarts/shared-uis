@@ -1,3 +1,4 @@
+import { ColorsStatic } from "@/shared-uis/constants/Colors";
 import { Platform, StyleSheet } from "react-native";
 
 const styles = StyleSheet.create({
@@ -13,7 +14,7 @@ const styles = StyleSheet.create({
         borderColor: "lightgray",
         overflow: "hidden",
         borderRadius: 5,
-        shadowColor: "#000",
+        shadowColor: ColorsStatic.black,
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 2,

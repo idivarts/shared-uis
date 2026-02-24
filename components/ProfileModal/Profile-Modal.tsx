@@ -353,7 +353,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 <MaterialIcons
                                                     name="verified"
                                                     size={24}
-                                                    color="#3B82F6"
+                                                    color={Colors(theme).linkBlue}
                                                 />
                                             )}
                                         </View>

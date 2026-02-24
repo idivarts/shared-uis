@@ -142,7 +142,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                             borderRadius: 20,
                             borderColor: Colors(theme).border,
                             borderWidth: 1,
-                            shadowColor: "#000",
+                            shadowColor: colors.black,
                             shadowOffset: {
                                 width: 0,
                                 height: 2,

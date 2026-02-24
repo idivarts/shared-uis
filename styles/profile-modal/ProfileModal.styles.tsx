@@ -1,4 +1,4 @@
-import Colors from "@/shared-uis/constants/Colors";
+import Colors, { ColorsStatic } from "@/shared-uis/constants/Colors";
 import { StyleSheet } from "react-native";
 
 export const stylesFn = (theme: any) =>
@@ -103,9 +103,9 @@ export const stylesFn = (theme: any) =>
             position: "absolute",
             bottom: 0,
             width: "100%",
-            backgroundColor: "#fff",
+            backgroundColor: ColorsStatic.white,
             borderTopWidth: 1,
-            borderTopColor: "#ccc",
+            borderTopColor: ColorsStatic.borderDefault,
             padding: 10,
         },
         dot: {
