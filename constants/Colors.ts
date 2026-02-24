@@ -46,6 +46,8 @@ export const ColorsStatic = {
 
     primaryLight: "#D9E4F2",
     primaryDark: "#1A3B5C",
+    influencerCardGradientPurpleLight: "#E8DEFF",
+    influencerCardGradientPurpleDark: "#36284D",
     surface: "#EEF4FB",
     planBadgeProBg: "rgba(236, 214, 148, 0.16)",
     planBadgeEnterpriseBg: "rgba(83, 139, 166, 0.16)",
@@ -87,7 +89,9 @@ export default (theme: Theme) => ({
             backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
             shimmerBackground: ColorsStatic.gray100,
             shimmerOverlay: ColorsStatic.shimmerOverlayDark,
-            InfluencerStatCard: ColorsStatic.secondary
+            InfluencerStatCard: ColorsStatic.secondary,
+            influencerCardGradientStart: ColorsStatic.primaryDark,
+            influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleDark,
         }
         : {
             primary: ColorsStatic.primary, // Main accent color
@@ -110,6 +114,8 @@ export default (theme: Theme) => ({
             backdrop: ColorsStatic.backdrop, // Backdrop color for modals
             shimmerBackground: ColorsStatic.gray200,
             shimmerOverlay: ColorsStatic.shimmerOverlayLight,
-            InfluencerStatCard: ColorsStatic.white
+            InfluencerStatCard: ColorsStatic.white,
+            influencerCardGradientStart: ColorsStatic.primaryLight,
+            influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleLight,
         }),
 });
