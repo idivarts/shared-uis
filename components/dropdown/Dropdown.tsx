@@ -1,13 +1,15 @@
-import React, { PropsWithChildren, ReactElement, ReactNode, useState } from "react";
+import React, { PropsWithChildren, ReactElement, ReactNode, useMemo, useState } from "react";
 import { Pressable, View } from "react-native";
+import { useTheme } from "@react-navigation/native";
 import DropdownOptions from "./DropdownOptions";
 import DropdownTrigger from "./DropdownTrigger";
-
-import styles from "../../styles/dropdown/Dropdown.styles";
+import getDropdownStyles from "../../styles/dropdown/Dropdown.styles";
 
 interface DropdownProps extends PropsWithChildren<Record<string, unknown>> { }
 
 const Dropdown: React.FC<DropdownProps> = ({ children }: DropdownProps) => {
+    const theme = useTheme();
+    const styles = useMemo(() => getDropdownStyles(theme), [theme]);
     const [showDropdown, setShowDropdown] = useState(false);
 
     const toggleDropdown = () => {
@@ -42,9 +44,7 @@ const Dropdown: React.FC<DropdownProps> = ({ children }: DropdownProps) => {
                     onPress={() => setShowDropdown(false)}
                     style={[
                         styles.dropdownOverlay,
-                        {
-                            display: showDropdown ? 'flex' : 'none',
-                        }
+                        showDropdown ? styles.dropdownOverlayVisible : styles.dropdownOverlayHidden,
                     ]}
                 />
             </View>

@@ -35,7 +35,6 @@ import {
     Pressable,
     ScrollView,
     Text,
-    useWindowDimensions,
     View,
 } from "react-native";
 import { Button, Chip, Title } from "react-native-paper";
@@ -202,7 +201,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         fetchPrimarySocialMedia();
     }, []);
 
-    const { width } = useWindowDimensions();
+    const { width } = useBreakpoints();
     const isTwoColumn = Platform.OS == "web" ? width > 768 : false;
     const trendlyGender = social?.gender;
     const trendlyQuality =
@@ -353,7 +352,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 <MaterialIcons
                                                     name="verified"
                                                     size={24}
-                                                    color="#3B82F6"
+                                                    color={Colors(theme).primary}
                                                 />
                                             )}
                                         </View>
@@ -871,7 +870,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         right: 0,
                         zIndex: 1000,
                         elevation: 5, // For Android shadow
-                        shadowColor: "#000", // For iOS shadow
+                        shadowColor: Colors(theme).text,
                         shadowOffset: {
                             width: 0,
                             height: -2,

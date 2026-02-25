@@ -127,17 +127,7 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 
     return (
         <>
-            <View ref={containerRef} style={{
-                position: 'relative', height: "100%", alignSelf: "center",
-                shadowColor: "#000",
-                shadowOffset: {
-                    width: 0,
-                    height: 2,
-                },
-                shadowOpacity: 0.25,
-                shadowRadius: 3.84,
-                elevation: 5,
-            }}>
+            <View ref={containerRef} style={styles.carouselContainer}>
                 <Carousel
                     ref={carouselRef}
                     loop={false}
@@ -211,7 +201,19 @@ const CarouselScroller: React.FC<IProps> = (props) => {
 
 }
 
-const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
+const stylesFn = (theme: Theme, isWeb = false) => {
+    const colors = Colors(theme);
+    return StyleSheet.create({
+    carouselContainer: {
+        position: 'relative',
+        height: "100%",
+        alignSelf: "center",
+        shadowColor: colors.text,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
+    },
     floatingButtonsContainer: isWeb ? {
         position: 'absolute',
         bottom: "40%",
@@ -285,17 +287,18 @@ const stylesFn = (theme: Theme, isWeb = false) => StyleSheet.create({
         top: '50%',
         left: '50%',
         transform: [{ translateX: -100 }, { translateY: -25 }],
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+        backgroundColor: colors.backdrop,
         paddingHorizontal: 20,
         paddingVertical: 12,
         borderRadius: 8,
         zIndex: 10,
     },
     overlayText: {
-        color: Colors(theme).white,
+        color: colors.onPrimary,
         fontSize: 16,
         fontWeight: '500',
     },
 });
+}
 
-export default CarouselScroller
+export default CarouselScroller;

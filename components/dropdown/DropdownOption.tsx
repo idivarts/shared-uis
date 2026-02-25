@@ -1,7 +1,7 @@
-import { PropsWithChildren } from "react";
+import { useTheme } from "@react-navigation/native";
+import { PropsWithChildren, useMemo } from "react";
 import { Pressable } from "react-native";
-
-import styles from "../../styles/dropdown/Dropdown.styles";
+import getDropdownStyles from "../../styles/dropdown/Dropdown.styles";
 
 interface DropdownOptionProps extends PropsWithChildren {
     onSelect?: () => void;
@@ -10,10 +10,14 @@ interface DropdownOptionProps extends PropsWithChildren {
 const DropdownOption: React.FC<DropdownOptionProps> = ({
     children,
     onSelect,
-}) => (
-    <Pressable onPress={onSelect} style={styles.dropdownOption}>
-        {children}
-    </Pressable>
-);
+}) => {
+    const theme = useTheme();
+    const styles = useMemo(() => getDropdownStyles(theme), [theme]);
+    return (
+        <Pressable onPress={onSelect} style={styles.dropdownOption}>
+            {children}
+        </Pressable>
+    );
+};
 
 export default DropdownOption;
