@@ -3,6 +3,7 @@ import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
@@ -25,7 +26,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
-import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useState } from "react";
 import {
     ActivityIndicator,
@@ -38,7 +38,7 @@ import {
     useWindowDimensions,
     View,
 } from "react-native";
-import { Button, Chip, Title } from "react-native-paper";
+import { Button } from "react-native-paper";
 import RenderHTML from "react-native-render-html";
 import { Subject } from "rxjs";
 import { useConfirmationModel } from "../ConfirmationModal";
@@ -47,7 +47,6 @@ import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
-import { Stars, qualityScoreToStars } from "../rating-section";
 import SelectGroup from "../select/select-group";
 
 
@@ -57,7 +56,7 @@ interface ProfileBottomSheetProps {
     carouselMedia?: MediaItem[];
     FireStoreDB: Firestore;
     influencer: IUsers & {
-        id: string; // Note: additional fields from discovery page
+        id: string;
     };
     social?: ISocials & Partial<{
         gender: string,
@@ -77,7 +76,6 @@ interface ProfileBottomSheetProps {
     theme: Theme;
     showCampaignGoals?: boolean;
     showInfluencerGoals?: boolean;
-    // editMetricsButton?: React.ReactNode;
 }
 
 export const ProfileModalUnlockRequest = new Subject<{
@@ -89,6 +87,24 @@ export const ProfileModalSendMessage = new Subject<{
     callback: Function;
 }>();
 
+const ACCENT = {
+    blue: "#3B82F6",
+    purple: "#8B5CF6",
+    pink: "#EC4899",
+    amber: "#F59E0B",
+    emerald: "#10B981",
+    teal: "#14B8A6",
+    rose: "#F43F5E",
+    sky: "#0EA5E9",
+};
+
+const tintBg = (hex: string, opacity = 0.1) => {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
+    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+};
+
 const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     actionCard,
     actionButton,
@@ -99,7 +115,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     isBrandsApp,
     showCardPreviewTab = false,
     closeModal,
-    // editMetricsButton,
     theme,
     loadingPosts,
     posts = [],
@@ -113,6 +128,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
 }) => {
     const styles = stylesFn(theme);
+    const isDark = theme.dark;
+    const colors = Colors(theme);
     const [primarySocial, setPrimarySocial] = useState<ISocials>();
     const { openModal } = useConfirmationModel();
     const router = useMyNavigation();
@@ -132,8 +149,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        console.log("SOCIAL DATA FETCHED", social);
-
         setPrimarySocial(social)
     }, [social])
 
@@ -170,7 +185,10 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         });
     };
 
-    const { width: screenWidth } = useBreakpoints();
+    const { width: screenWidth, xs, sm, md, lg } = useBreakpoints();
+
+    // Responsive padding for all screen sizes (xs<480, sm>=480, md>=640, lg>=768)
+    const responsivePaddingHorizontal = xs ? 16 : sm ? 18 : md ? 20 : 24;
 
     const fetchPrimarySocialMedia = async () => {
         if (primarySocial) return;
@@ -203,22 +221,16 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     }, []);
 
     const { width } = useWindowDimensions();
-    const isTwoColumn = Platform.OS == "web" ? width > 768 : false;
-    const trendlyGender = social?.gender;
-    const trendlyQuality =
-        typeof social?.quality === "number"
-            ? social.quality
-            : typeof (social as any)?.quality_score === "number"
-                ? (social as any).quality_score
-                : undefined;
+    const isTwoColumn = Platform.OS === "web" ? lg : false;
+    const trendlyGender = social?.gender ?? (influencer as any)?.backend?.gender;
     const trendlyVerified =
         typeof social?.isVerified === "boolean"
             ? social.isVerified
             : Boolean((social as any)?.profile_verified);
     const showGenderChip = !!trendlyGender && trendlyGender !== "unknown";
-    const showQualityChip = typeof trendlyQuality === "number";
     const showVerifiedChip = !!trendlyVerified;
-    const showTrendlyChips = showGenderChip || showQualityChip || showVerifiedChip;
+    const showTrendlyChips = showGenderChip || showVerifiedChip;
+
     const actionButtonNode =
         actionButton != undefined
             ? actionButton
@@ -231,6 +243,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     mode="outlined"
                                     onPress={unlockProfile}
                                     loading={loading}
+                                    style={{ borderRadius: 24 }}
                                 >
                                     Unlock Profile
                                 </Button>
@@ -241,6 +254,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             mode="contained"
                                             onPress={sendMessage}
                                             loading={loading}
+                                            style={{ borderRadius: 24 }}
                                         >
                                             Send Message
                                         </Button>
@@ -249,18 +263,72 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                             )}
                         </>
                     ) : (
-                        <Button mode="outlined" onPress={upgradeNow}>
+                        <Button mode="outlined" onPress={upgradeNow} style={{ borderRadius: 24 }}>
                             Unlock Profile
                         </Button>
                     )}
                 </>
             );
 
+    const cardBg = tintBg(colors.primary, isDark ? 0.06 : 0.03);
+    const cardBorder = tintBg(colors.primary, isDark ? 0.12 : 0.06);
+
+    const iconSquareStyle = (accentColor: string) => ({
+        width: 34,
+        height: 34,
+        borderRadius: 10,
+        backgroundColor: tintBg(accentColor, isDark ? 0.15 : 0.1),
+        alignItems: "center" as const,
+        justifyContent: "center" as const,
+        marginRight: 12,
+    });
+
+    const contactRowStyle = {
+        flexDirection: "row" as const,
+        alignItems: "center" as const,
+        paddingVertical: 7,
+    };
+
+    const renderAboutSection = (title: string, html: string | undefined) => {
+        if (!html) return null;
+        return (
+            <View style={{
+                marginHorizontal: responsivePaddingHorizontal,
+                marginBottom: 16,
+                backgroundColor: cardBg,
+                borderRadius: 16,
+                padding: 18,
+                borderWidth: 1,
+                borderColor: cardBorder,
+            }}>
+                <Text style={{
+                    fontSize: 13,
+                    fontWeight: "700",
+                    color: colors.primary,
+                    marginBottom: 10,
+                    letterSpacing: 0.8,
+                    textTransform: "uppercase" as const,
+                }}>
+                    {title}
+                </Text>
+                <RenderHTML
+                    contentWidth={screenWidth}
+                    source={{ html: html || "<p>No content available.</p>" }}
+                    baseStyle={{
+                        color: isDark ? colors.text : Colors(theme).gray300,
+                        fontSize: 15,
+                        lineHeight: 22,
+                    }}
+                />
+            </View>
+        );
+    };
+
     return (
         <View
             style={{
                 flex: 1,
-                backgroundColor: Colors(theme).background,
+                backgroundColor: colors.background,
                 position: "relative",
             }}
         >
@@ -282,7 +350,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                             <FontAwesomeIcon
                                 icon={faClose}
                                 size={24}
-                                color={Colors(theme).primary}
+                                color={colors.primary}
                                 style={styles.icon}
                             />
                         </Pressable>
@@ -292,7 +360,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     <View
                         style={{
                             flexDirection: isTwoColumn ? "row" : "column",
-                            padding: isTwoColumn ? 20 : 0,
+                            padding: isTwoColumn ? responsivePaddingHorizontal : 0,
                             alignItems: isTwoColumn ? "flex-start" : undefined,
                         }}
                     >
@@ -312,464 +380,367 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 {mediaProcessing && mediaProcessing.length > 0 && (
                                     <Carousel data={mediaProcessing || []} theme={theme} />
                                 )}
-                                <View style={{ paddingHorizontal: 16 }}>
+                                <View style={{ paddingHorizontal: responsivePaddingHorizontal }}>
                                     <InfluencerMetrics user={influencer} social={primarySocial} />
                                 </View>
                             </View>)}
 
                         <View style={[{ flex: 1, marginTop: 16 }]}>
-                            <View style={[styles.header]}>
-                                <View style={styles.profileInfo}>
+                            {/* ─── Name + Action Button ─── */}
+                            <View style={{ paddingHorizontal: responsivePaddingHorizontal }}>
+                                <View
+                                    style={{
+                                        flexDirection: isTwoColumn ? "row" : "column",
+                                        flexWrap: isTwoColumn ? "wrap" : undefined,
+                                        alignItems: "flex-start",
+                                        gap: isTwoColumn ? 24 : 12,
+                                        marginBottom: 4,
+                                        minWidth: 0,
+                                    }}
+                                >
                                     <View
                                         style={{
-                                            flexDirection: isTwoColumn ? "row" : "column",
-                                            flexWrap: isTwoColumn ? "wrap" : undefined,
-                                            alignItems: "flex-start",
-                                            gap: isTwoColumn ? 24 : 12,
-                                            marginBottom: 16,
-                                            minWidth: 0,
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            gap: 6,
+                                            flexShrink: isTwoColumn ? 1 : 0,
+                                            minWidth: isTwoColumn ? 0 : undefined,
+                                            maxWidth: isTwoColumn ? "100%" : undefined,
                                         }}
                                     >
+                                        <Text
+                                            style={[
+                                                styles.name,
+                                                { fontSize: xs ? 20 : sm ? 22 : 26 }
+                                            ]}
+                                            numberOfLines={isTwoColumn ? 1 : 2}
+                                        >
+                                            {influencer.name}
+                                        </Text>
+                                        {influencer.isKYCDone && (
+                                            <MaterialIcons
+                                                name="verified"
+                                                size={24}
+                                                color={ACCENT.blue}
+                                            />
+                                        )}
+                                    </View>
+                                    {actionButtonNode ? (
                                         <View
                                             style={{
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                gap: 6,
-                                                flexShrink: isTwoColumn ? 1 : 0,
-                                                minWidth: isTwoColumn ? 0 : undefined,
-                                                maxWidth: isTwoColumn ? "100%" : undefined,
+                                                width: isTwoColumn ? "auto" : "100%",
+                                                alignItems: "flex-start",
+                                                flexShrink: 0,
                                             }}
                                         >
-                                            <Text
-                                                style={[
-                                                    styles.name,
-
-                                                ]}
-                                                numberOfLines={isTwoColumn ? 1 : 2}
-                                            >
-                                                {influencer.name}
-                                            </Text>
-                                            {influencer.isKYCDone && (
-                                                <MaterialIcons
-                                                    name="verified"
-                                                    size={24}
-                                                    color="#3B82F6"
-                                                />
-                                            )}
+                                            {actionButtonNode}
                                         </View>
-                                        {actionButtonNode ? (
-                                            <View
-                                                style={{
-                                                    width: isTwoColumn ? "auto" : "100%",
-                                                    alignItems: "flex-start",
-                                                    flexShrink: 0,
-                                                }}
-                                            >
-                                                {actionButtonNode}
-                                            </View>
-                                        ) : null}
-                                    </View>
+                                    ) : null}
+                                </View>
+                            </View>
 
-                                    <Pressable
-                                        style={styles.row}
-                                        onPress={() => {
-                                            if (isOnFreePlan) {
-                                                upgradeNow();
-                                                return;
-                                            }
-                                            if (lockProfile) {
-                                                closeModal?.();
-                                                openModal({
-                                                    title: "Social Unavailable",
-                                                    description:
-                                                        "You can only get the influencers socials if they apply on your collaboration",
-                                                    confirmAction: () => {
-                                                        router.push("/collaborations");
-                                                    },
-                                                    confirmText: "Post Collaboration",
-                                                });
-                                                return;
-                                            }
+                            {/* ─── Contact Info Card ─── */}
+                            <View style={{
+                                marginHorizontal: responsivePaddingHorizontal,
+                                marginTop: 16,
+                                backgroundColor: cardBg,
+                                borderRadius: 16,
+                                padding: xs ? 12 : 16,
+                                borderWidth: 1,
+                                borderColor: cardBorder,
+                            }}>
+                                {/* Social Link */}
+                                <Pressable
+                                    style={contactRowStyle}
+                                    onPress={() => {
+                                        if (isOnFreePlan) {
+                                            upgradeNow();
+                                            return;
+                                        }
+                                        if (lockProfile) {
+                                            closeModal?.();
+                                            openModal({
+                                                title: "Social Unavailable",
+                                                description:
+                                                    "You can only get the influencers socials if they apply on your collaboration",
+                                                confirmAction: () => {
+                                                    router.push("/collaborations");
+                                                },
+                                                confirmText: "Post Collaboration",
+                                            });
+                                            return;
+                                        }
 
-                                            Linking.openURL(
-                                                primarySocial?.isInstagram
-                                                    ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
-                                                    : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
-                                            );
-                                            Console.log(
-                                                primarySocial?.isInstagram
-                                                    ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
-                                                    : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
-                                            );
-                                        }}
-                                    >
+                                        Linking.openURL(
+                                            primarySocial?.isInstagram
+                                                ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
+                                                : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
+                                        );
+                                        Console.log(
+                                            primarySocial?.isInstagram
+                                                ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
+                                                : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
+                                        );
+                                    }}
+                                >
+                                    <View style={iconSquareStyle(
+                                        primarySocial?.isInstagram ? ACCENT.pink : ACCENT.blue
+                                    )}>
                                         <FontAwesomeIcon
                                             icon={
                                                 primarySocial?.isInstagram
                                                     ? faInstagram
                                                     : faFacebook
                                             }
-                                            size={18}
-                                            color={Colors(theme).primary}
-                                            style={styles.icon}
+                                            size={15}
+                                            color={primarySocial?.isInstagram ? ACCENT.pink : ACCENT.blue}
                                         />
+                                    </View>
+                                    <Text style={styles.subTextHeading}>
+                                        {primarySocial?.isInstagram
+                                            ? "@" +
+                                            (isOnFreePlan || lockProfile
+                                                ? maskHandle(
+                                                    primarySocial?.instaProfile?.username || ""
+                                                )
+                                                : primarySocial?.instaProfile?.username)
+                                            : isOnFreePlan || lockProfile
+                                                ? maskHandle(primarySocial?.fbProfile?.name || "")
+                                                : primarySocial?.fbProfile?.name}
+                                    </Text>
+                                </Pressable>
+
+                                {/* Email */}
+                                {influencer?.email && (
+                                    <Pressable
+                                        style={contactRowStyle}
+                                        onPress={() => {
+                                            if (isEmailMasked || isOnFreePlan || lockProfile) {
+                                                if (closeModal) {
+                                                    closeModal();
+                                                    openModal({
+                                                        title: "Email Unavailable",
+                                                        description:
+                                                            "You can only get the influencers email if they apply on your collaboration",
+                                                        confirmAction: () => {
+                                                            router.push("/collaborations");
+                                                        },
+                                                        confirmText: "Post Collaboration",
+                                                    });
+                                                }
+                                            } else
+                                                Linking.openURL(`mailto:${influencer?.email}`);
+                                        }}
+                                    >
+                                        <View style={iconSquareStyle(ACCENT.amber)}>
+                                            <FontAwesomeIcon
+                                                icon={faEnvelope}
+                                                size={14}
+                                                color={ACCENT.amber}
+                                            />
+                                        </View>
                                         <Text style={styles.subTextHeading}>
-                                            {primarySocial?.isInstagram
-                                                ? "@" +
-                                                (isOnFreePlan || lockProfile
-                                                    ? maskHandle(
-                                                        primarySocial?.instaProfile?.username || ""
-                                                    )
-                                                    : primarySocial?.instaProfile?.username)
-                                                : isOnFreePlan || lockProfile
-                                                    ? maskHandle(primarySocial?.fbProfile?.name || "")
-                                                    : primarySocial?.fbProfile?.name}
+                                            {isEmailMasked || isOnFreePlan || lockProfile
+                                                ? maskEmail(influencer?.email)
+                                                : influencer?.email}
                                         </Text>
                                     </Pressable>
+                                )}
 
-                                    {showTrendlyChips ? (
-                                        <View style={{ marginTop: 8 }}>
-                                            {showGenderChip ? (
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faUser}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Gender: {trendlyGender}
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                            {showQualityChip ? (
-                                                <View style={[styles.row, { alignItems: "center" }]}>
-                                                    <Text style={[styles.subTextHeading, { marginRight: 6 }]}>
-                                                        Quality:
-                                                    </Text>
-                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
-                                                    <Text style={[styles.subTextHeading, { marginLeft: 4 }]}>
-                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                            {showVerifiedChip ? (
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Verified
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                        </View>
-                                    ) : null}
-
-                                    {/* Email */}
-                                    {influencer?.email && (
-                                        <Pressable
-                                            style={styles.row}
-                                            onPress={() => {
-                                                if (isEmailMasked || isOnFreePlan || lockProfile) {
-                                                    if (closeModal) {
-                                                        closeModal();
+                                {/* Phone */}
+                                {influencer?.phoneNumber && (
+                                    <Pressable
+                                        style={contactRowStyle}
+                                        onPress={() => {
+                                            if (isPhoneMasked || isOnFreePlan || lockProfile) {
+                                                if (closeModal) {
+                                                    closeModal();
+                                                    if (isBrandsApp)
                                                         openModal({
-                                                            title: "Email Unavailable",
+                                                            title: "Phone Access Unavailable",
                                                             description:
-                                                                "You can only get the influencers email if they apply on your collaboration",
+                                                                "You can only get the influencers phone number if they apply on your collaboration",
                                                             confirmAction: () => {
                                                                 router.push("/collaborations");
                                                             },
                                                             confirmText: "Post Collaboration",
                                                         });
-                                                    }
-                                                } else
-                                                    Linking.openURL(`mailto:${influencer?.email}`);
-                                            }}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faEnvelope}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            {isEmailMasked || isOnFreePlan || lockProfile ? (
-                                                <>
-                                                    <Text style={styles.subTextHeading}>
-                                                        {maskEmail(influencer?.email)}
-                                                    </Text>
-                                                </>
-                                            ) : (
-                                                <Text style={styles.subTextHeading}>
-                                                    {influencer?.email}
-                                                </Text>
-                                            )}
-                                        </Pressable>
-                                    )}
-
-                                    {/* Phone */}
-                                    {influencer?.phoneNumber && (
-                                        <Pressable
-                                            style={styles.row}
-                                            onPress={() => {
-                                                if (isPhoneMasked || isOnFreePlan || lockProfile) {
-                                                    if (closeModal) {
-                                                        closeModal();
-                                                        if (isBrandsApp)
-                                                            openModal({
-                                                                title: "Phone Access Unavailable",
-                                                                description:
-                                                                    "You can only get the influencers phone number if they apply on your collaboration",
-                                                                confirmAction: () => {
-                                                                    router.push("/collaborations");
-                                                                },
-                                                                confirmText: "Post Collaboration",
-                                                            });
-                                                        else
-                                                            openModal({
-                                                                title: "Phone Access Unavailable",
-                                                                description:
-                                                                    "You can only get the influencers phone number if they accept your invitation to connect",
-                                                                confirmAction: () => { },
-                                                                confirmText: "Understood",
-                                                            });
-                                                    }
-                                                } else
-                                                    Linking.openURL(`tel:${influencer?.phoneNumber}`);
-                                            }}
-                                        >
+                                                    else
+                                                        openModal({
+                                                            title: "Phone Access Unavailable",
+                                                            description:
+                                                                "You can only get the influencers phone number if they accept your invitation to connect",
+                                                            confirmAction: () => { },
+                                                            confirmText: "Understood",
+                                                        });
+                                                }
+                                            } else
+                                                Linking.openURL(`tel:${influencer?.phoneNumber}`);
+                                        }}
+                                    >
+                                        <View style={iconSquareStyle(ACCENT.emerald)}>
                                             <FontAwesomeIcon
                                                 icon={faPhone}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
+                                                size={14}
+                                                color={ACCENT.emerald}
                                             />
-                                            {isPhoneMasked || isOnFreePlan || lockProfile ? (
-                                                <>
-                                                    <Text style={styles.subTextHeading}>
-                                                        {maskPhone(influencer?.phoneNumber)}
-                                                    </Text>
-                                                </>
-                                            ) : (
-                                                <Text style={styles.subTextHeading}>
-                                                    {influencer?.phoneNumber}
-                                                </Text>
-                                            )}
-                                        </Pressable>
-                                    )}
+                                        </View>
+                                        <Text style={styles.subTextHeading}>
+                                            {isPhoneMasked || isOnFreePlan || lockProfile
+                                                ? maskPhone(influencer?.phoneNumber)
+                                                : influencer?.phoneNumber}
+                                        </Text>
+                                    </Pressable>
+                                )}
 
-                                    {influencer?.profile?.timeCommitment && (
-                                        <View style={styles.row}>
+                                {/* Time Commitment */}
+                                {influencer?.profile?.timeCommitment && (
+                                    <View style={contactRowStyle}>
+                                        <View style={iconSquareStyle(ACCENT.teal)}>
                                             <FontAwesomeIcon
                                                 icon={faClock}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
+                                                size={14}
+                                                color={ACCENT.teal}
                                             />
-                                            <Text style={styles.subTextHeading}>
-                                                {influencer?.profile?.timeCommitment}
-                                            </Text>
                                         </View>
-                                    )}
-                                    {(influencer?.location) && (
-                                        <View style={styles.row}>
+                                        <Text style={styles.subTextHeading}>
+                                            {influencer?.profile?.timeCommitment}
+                                        </Text>
+                                    </View>
+                                )}
+
+                                {/* Location - from influencer or social (Trendly) */}
+                                {(influencer?.location || social?.location) && (
+                                    <View style={contactRowStyle}>
+                                        <View style={iconSquareStyle(ACCENT.sky)}>
                                             <FontAwesomeIcon
                                                 icon={faLocation}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
+                                                size={14}
+                                                color={ACCENT.sky}
                                             />
-                                            <Text style={styles.subTextHeading}>
-                                                {influencer?.location}
+                                        </View>
+                                        <Text style={styles.subTextHeading}>
+                                            {influencer?.location || social?.location}
+                                        </Text>
+                                    </View>
+                                )}
+                            </View>
+
+                            {/* ─── Badges (Gender, Verified) - Niches shown in actionCard/TrendlyAnalyticsEmbed ─── */}
+                            {showTrendlyChips && (
+                                <View style={{
+                                    flexDirection: "row",
+                                    flexWrap: "wrap",
+                                    gap: 8,
+                                    paddingHorizontal: responsivePaddingHorizontal,
+                                    marginTop: 16,
+                                }}>
+                                    {showGenderChip && (
+                                        <View style={{
+                                            backgroundColor: tintBg(ACCENT.purple, isDark ? 0.2 : 0.1),
+                                            borderRadius: 20,
+                                            paddingVertical: 7,
+                                            paddingHorizontal: 14,
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            gap: 6,
+                                        }}>
+                                            <FontAwesomeIcon icon={faUser} size={12} color={ACCENT.purple} />
+                                            <Text style={{ fontSize: 13, fontWeight: "600", color: ACCENT.purple }}>
+                                                {trendlyGender}
+                                            </Text>
+                                        </View>
+                                    )}
+                                    {showVerifiedChip && (
+                                        <View style={{
+                                            backgroundColor: tintBg(ACCENT.emerald, isDark ? 0.2 : 0.1),
+                                            borderRadius: 20,
+                                            paddingVertical: 7,
+                                            paddingHorizontal: 14,
+                                            flexDirection: "row",
+                                            alignItems: "center",
+                                            gap: 6,
+                                        }}>
+                                            <FontAwesomeIcon icon={faCheck} size={12} color={ACCENT.emerald} />
+                                            <Text style={{ fontSize: 13, fontWeight: "600", color: ACCENT.emerald }}>
+                                                Verified
                                             </Text>
                                         </View>
                                     )}
                                 </View>
+                            )}
+
+                            {/* ─── Action Card (Analytics Embed, etc.) ─── */}
+                            <View style={{ marginTop: 16 }}>
+                                {actionCard}
                             </View>
 
-                            {influencer?.profile?.category?.length !== 0 && (
-                                <View style={[styles.chipContainer]}>
-                                    {influencer?.profile?.category &&
-                                        influencer?.profile?.category.map((interest, index) => (
-                                            <Chip key={index} style={styles.chip} mode="outlined">
-                                                {interest}
-                                            </Chip>
-                                        ))}
-                                </View>
-                            )}
-                            {actionCard}
+                            {/* ─── About Sections ─── */}
+                            <View style={{ marginTop: 8 }}>
+                                {renderAboutSection("About Me", influencer?.profile?.content?.about)}
+                                {renderAboutSection(
+                                    "Social Media Highlight",
+                                    influencer?.profile?.content?.socialMediaHighlight
+                                )}
+                                {showCampaignGoals && renderAboutSection(
+                                    "Campaign Goals",
+                                    influencer?.profile?.content?.collaborationGoals
+                                )}
+                                {showInfluencerGoals && renderAboutSection(
+                                    "Influencer Connection Goals",
+                                    influencer?.profile?.content?.influencerConectionGoals
+                                )}
+                                {renderAboutSection(
+                                    "Audience Insights",
+                                    influencer?.profile?.content?.audienceInsights
+                                )}
+                                {renderAboutSection(
+                                    "Fun Fact",
+                                    influencer?.profile?.content?.funFactAboutUser
+                                )}
 
-                            <View style={styles.aboutContainer}>
-                                {influencer?.profile?.content?.about ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>About Me</Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content?.about ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
-                                        />
-                                    </View>
-                                ) : null}
-
-                                {influencer?.profile?.content?.socialMediaHighlight ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Social Media Highlight
-                                        </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content
-                                                        ?.socialMediaHighlight ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
-                                        />
-                                    </View>
-                                ) : null}
-                                {showCampaignGoals &&
-                                    influencer?.profile?.content?.collaborationGoals ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>Campaign Goals</Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content
-                                                        ?.collaborationGoals ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
-                                        />
-                                    </View>
-                                ) : null}
-                                {showInfluencerGoals &&
-                                    influencer?.profile?.content?.influencerConectionGoals ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Influencer Connection Goals
-                                        </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content
-                                                        ?.influencerConectionGoals ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
-                                        />
-                                    </View>
-                                ) : null}
-                                {influencer?.profile?.content?.audienceInsights ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Audience Insights
-                                        </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content?.audienceInsights ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
-                                        />
-                                    </View>
-                                ) : null}
-                                {influencer?.profile?.content?.funFactAboutUser ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Fun Fact About You
-                                        </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content?.funFactAboutUser ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
-                                        />
-                                    </View>
-                                ) : null}
+                                {/* Posts */}
                                 {loadingPosts ? (
                                     <ActivityIndicator
                                         size="large"
-                                        color={Colors(theme).primary}
+                                        color={colors.primary}
                                     />
                                 ) : posts.length > 0 ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title
-                                            style={[
-                                                styles.cardColor,
-                                                {
-                                                    marginBottom: 20,
-                                                },
-                                            ]}
-                                        >
+                                    <View style={{
+                                        marginHorizontal: responsivePaddingHorizontal,
+                                        marginBottom: 16,
+                                        backgroundColor: cardBg,
+                                        borderRadius: 16,
+                                        padding: 18,
+                                        borderWidth: 1,
+                                        borderColor: cardBorder,
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 13,
+                                            fontWeight: "700",
+                                            color: colors.primary,
+                                            marginBottom: 14,
+                                            letterSpacing: 0.8,
+                                            textTransform: "uppercase" as const,
+                                        }}>
                                             {influencer.name}'s{" "}
                                             {isInstagram ? "Instagram" : "Facebook"} Posts
-                                        </Title>
+                                        </Text>
 
                                         <ScrollView
                                             horizontal
                                             showsHorizontalScrollIndicator={false}
                                         >
-                                            <View style={{ flexDirection: "column" }}>
+                                            <View style={{ flexDirection: "column", gap: 10 }}>
                                                 <View
-                                                    style={{ flexDirection: "row", marginBottom: 10 }}
+                                                    style={{ flexDirection: "row" }}
                                                 >
                                                     {posts &&
                                                         posts
                                                             .filter((_, index) => index % 2 === 0)
                                                             .map((item: any, index) => (
                                                                 <Pressable
+                                                                    key={`top-${index}`}
                                                                     onPress={() => {
                                                                         Linking.openURL(
                                                                             isInstagram
@@ -779,7 +750,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                     }}
                                                                 >
                                                                     <Image
-                                                                        key={`bottom-${index}`}
                                                                         source={{
                                                                             uri: isInstagram
                                                                                 ? item.media_type === "IMAGE"
@@ -788,9 +758,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                                 : item.full_picture,
                                                                         }}
                                                                         style={{
-                                                                            width: 100,
-                                                                            height: 100,
-                                                                            borderRadius: 10,
+                                                                            width: 120,
+                                                                            height: 120,
+                                                                            borderRadius: 14,
                                                                             marginRight: 10,
                                                                         }}
                                                                     />
@@ -803,6 +773,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                             .filter((_, index) => index % 2 !== 0)
                                                             .map((item: any, index) => (
                                                                 <Pressable
+                                                                    key={`bottom-${index}`}
                                                                     onPress={() => {
                                                                         Linking.openURL(
                                                                             isInstagram
@@ -812,7 +783,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                     }}
                                                                 >
                                                                     <Image
-                                                                        key={`bottom-${index}`}
                                                                         source={{
                                                                             uri: isInstagram
                                                                                 ? item.media_type === "IMAGE"
@@ -821,9 +791,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                                 : item.full_picture,
                                                                         }}
                                                                         style={{
-                                                                            width: 100,
-                                                                            height: 100,
-                                                                            borderRadius: 10,
+                                                                            width: 120,
+                                                                            height: 120,
+                                                                            borderRadius: 14,
                                                                             marginRight: 10,
                                                                         }}
                                                                     />
@@ -840,7 +810,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                 ) : (
                     <View
                         style={{
-                            padding: isTwoColumn ? 20 : 0,
+                            padding: responsivePaddingHorizontal,
                             alignSelf: "center",
                         }}
                     >
@@ -862,16 +832,16 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     style={{
                         padding: 10,
                         paddingBottom: 40,
-                        backgroundColor: Colors(theme).background,
+                        backgroundColor: colors.background,
                         borderTopWidth: 1,
-                        borderTopColor: Colors(theme).border,
+                        borderTopColor: colors.border,
                         position: "absolute",
                         bottom: 0,
                         left: 0,
                         right: 0,
                         zIndex: 1000,
-                        elevation: 5, // For Android shadow
-                        shadowColor: "#000", // For iOS shadow
+                        elevation: 5,
+                        shadowColor: "#000",
                         shadowOffset: {
                             width: 0,
                             height: -2,
