@@ -96,6 +96,22 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     alignItems: "center",
                     gap: 6,
                 },
+                ellipsisButton: { padding: 6 },
+                cardActionWrap: { paddingVertical: 16 },
+                aboutText: {
+                    color: colors.text,
+                    fontSize: 16,
+                    lineHeight: 22,
+                },
+                taxonomiesRow: {
+                    flexDirection: "row",
+                    marginTop: 10,
+                    flexWrap: "wrap",
+                    rowGap: 10,
+                    gap: 8,
+                },
+                chip: { backgroundColor: colors.primary },
+                chipText: { color: colors.white },
             }),
         [colors]
     );
@@ -242,7 +258,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                         }
                                     }}
                                     hitSlop={8}
-                                    style={{ padding: 6 }}
+                                    style={layoutStyles.ellipsisButton}
                                     accessibilityRole="button"
                                     testID="influencer-ellipsis"
                                 >
@@ -289,18 +305,14 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     >
                         <InfluencerMetrics user={influencer} social={socials} />
                         {props.cardActionNode && (
-                            <View style={{ paddingVertical: 16 }}>
+                            <View style={layoutStyles.cardActionWrap}>
                                 {props.cardActionNode}
                             </View>
                         )}
                         {(props.customText || influencer?.profile?.content?.about) &&
                             type != "influencers" && (
                                 <Text
-                                    style={{
-                                        color: Colors(theme).text,
-                                        fontSize: 16,
-                                        lineHeight: 22,
-                                    }}
+                                    style={layoutStyles.aboutText}
                                 >
                                     {props.customText
                                         ? props.customText
@@ -311,29 +323,17 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                 </Text>
                             )}
                         {props.customTaxonomies && props.customTaxonomies.length > 0 && (
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    marginTop: 10,
-                                    flexWrap: "wrap",
-                                    rowGap: 10,
-                                    gap: 8,
-                                }}
-                            >
+                            <View style={layoutStyles.taxonomiesRow}>
                                 {props.customTaxonomies.map((tag, index) => (
-                                    <Chip style={{ backgroundColor: Colors(theme).primary }}>
-                                        <Text style={{ color: Colors(theme).white }}>{tag}</Text>
+                                    <Chip style={layoutStyles.chip}>
+                                        <Text style={layoutStyles.chipText}>{tag}</Text>
                                     </Chip>
                                 ))}
                             </View>
                         )}
                         {type == "influencers" && (
                             <Text
-                                style={{
-                                    color: Colors(theme).text,
-                                    fontSize: 16,
-                                    lineHeight: 22,
-                                }}
+                                style={layoutStyles.aboutText}
                             >
                                 {truncateText(
                                     (influencer?.profile?.content?.influencerConectionGoals

@@ -133,7 +133,7 @@ export default FeedbackModal;
 const stylesFn = (theme: Theme) => StyleSheet.create({
     overlay: {
         alignItems: 'center',
-        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        backgroundColor: Colors(theme).backdrop,
         flex: 1,
         justifyContent: 'center',
     },

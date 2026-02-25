@@ -45,7 +45,7 @@ const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { wid
                     <View style={styles.media}>
                         <video
                             src={media.url}
-                            style={{ width: "100%", height: "100%" }}
+                            style={styles.videoFill}
                             autoPlay={false}
                             controls={true}
                         // resizeMode="cover"
@@ -70,29 +70,35 @@ const MediaRenderer = ({ media, mediaRes }: { media: MediaItem, mediaRes?: { wid
     );
 };
 
-const stylesWrapper = (width: any, padding = 16, mediaRes: any = undefined) => StyleSheet.create({
-    container: {
-        width: width, // Fixed width container
-        alignSelf: Platform.OS == "web" ? "flex-start" : "center",
-        padding: padding,
-
-    },
-    listContainer: {
-        flexDirection: "row",
-    },
-    mediaWrapper: {
-        marginRight: 10,
-        borderRadius: 8,
-        overflow: "hidden",
-    },
-    media: mediaRes ? {
-        ...mediaRes,
-        borderRadius: 8,
-    } : {
-        width: 100,
-        height: 100,
-        borderRadius: 8,
-    },
-});
+const stylesWrapper = (width: any, padding = 16, mediaRes: any = undefined) => {
+    const base = StyleSheet.create({
+        container: {
+            width: width,
+            alignSelf: Platform.OS == "web" ? "flex-start" : "center",
+            padding: padding,
+        },
+        listContainer: {
+            flexDirection: "row",
+        },
+        mediaWrapper: {
+            marginRight: 10,
+            borderRadius: 8,
+            overflow: "hidden",
+        },
+        media: mediaRes ? {
+            ...mediaRes,
+            borderRadius: 8,
+        } : {
+            width: 100,
+            height: 100,
+            borderRadius: 8,
+        },
+        videoFill: {
+            width: "100%",
+            height: "100%",
+        },
+    });
+    return base;
+};
 
 export default ScrollMedia;

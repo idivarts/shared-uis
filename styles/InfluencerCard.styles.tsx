@@ -54,7 +54,7 @@ export const stylesFn = (theme: Theme) =>
             color: Colors(theme).text,
         },
         handle: {
-            color: "gray",
+            color: Colors(theme).textSecondary,
         },
         carouselContainer: {
             backgroundColor: Colors(theme).card,

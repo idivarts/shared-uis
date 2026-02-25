@@ -4,6 +4,8 @@ import { faStarHalfStroke, faStar as faStarSolid } from "@fortawesome/free-solid
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { useMemo } from "react";
+import { StyleSheet } from "react-native";
+
 import { Text, View } from "../theme/Themed";
 
 interface RatingSectionProps {
@@ -15,6 +17,21 @@ interface RatingSectionProps {
 
 export const qualityScoreToStars = (qualityScore: number): number =>
     Math.round((qualityScore / 2) * 2) / 2;
+
+const starsRowStyle = StyleSheet.create({
+    row: { flexDirection: 'row', backgroundColor: 'transparent' },
+}).row;
+
+const sectionStyles = StyleSheet.create({
+    section: {
+        alignItems: 'center',
+        flexDirection: 'row',
+        gap: 8,
+        marginBottom: 16,
+        backgroundColor: 'transparent',
+    },
+    ratingText: { fontSize: 14, fontWeight: '500' },
+});
 
 export const Stars: React.FC<{
     rating: number;
@@ -29,12 +46,7 @@ export const Stars: React.FC<{
         const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
 
         return (
-            <View
-                style={{
-                    flexDirection: 'row',
-                    backgroundColor: "transparent",
-                }}
-            >
+            <View style={starsRowStyle}>
                 {
                     Array.from({ length: fullStars }, (_, i) => (
                         <FontAwesomeIcon
@@ -102,31 +114,13 @@ const RatingSection: React.FC<RatingSectionProps> = ({
 
     if (avgRatings > 0) {
         return (
-            <View
-                style={{
-                    alignItems: 'center',
-                    flexDirection: 'row',
-                    gap: 8,
-                    marginBottom: 16,
-                    backgroundColor: "transparent",
-                }}
-            >
+            <View style={sectionStyles.section}>
                 <Stars rating={avgRatings} />
-                <Text
-                    style={{
-                        fontSize: 14,
-                        fontWeight: 'medium',
-                    }}
-                >
+                <Text style={sectionStyles.ratingText}>
                     {formattedAvgRatingsText(avgRatings)}
                 </Text>
                 {calculateReviews().length > 0 && (
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            fontWeight: 'medium',
-                        }}
-                    >
+                    <Text style={sectionStyles.ratingText}>
                         ({calculateReviews().length} Review{calculateReviews().length > 1 ? 's' : ''})
                     </Text>
                 )}

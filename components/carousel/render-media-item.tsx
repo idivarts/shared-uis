@@ -10,7 +10,7 @@ import Colors from "@/shared-uis/constants/Colors";
 import { Zoomable } from '@likashefqet/react-native-image-zoom';
 import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React from "react";
-import { Dimensions, Linking, Platform, Pressable, type ViewStyle } from "react-native";
+import { Linking, Platform, Pressable, type ViewStyle } from "react-native";
 import { faPlay } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 //  import { InView } from 'react-native-intersection-observer';
@@ -65,7 +65,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
     const [topPosition, setTopPosition] = useState<number | null>(null)
     const [bottomPosition, setBottomPosition] = useState<number | null>(null)
     const { currentItemId } = useCarouselInViewContext()
-    const { width: constrainedWidth } = useBreakpoints();
+    const { width: constrainedWidth, height: windowHeight } = useBreakpoints();
 
     useEffect(() => {
         if (currentIndex == index && inView && isFocused) {
@@ -127,7 +127,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
             return;
         }
         const yStart = scrollHeight;
-        const yEnd = scrollHeight + Dimensions.get("window").height; // height doesn't need constraining
+        const yEnd = scrollHeight + windowHeight; // height doesn't need constraining
 
         const cardHeight = bottomPosition - topPosition;
         const visibleHeight = Math.min(bottomPosition, yEnd) - Math.max(topPosition, yStart);
@@ -136,7 +136,7 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
         const isInView = percentageInView > 70;
 
         setInView(isInView);
-    }, [scrollHeight])
+    }, [scrollHeight, windowHeight]);
 
     // const [LoadingCircle, setLoadingCircle] = useState<any>(null);
     const LoadingCircle = () => isLoading ? <View
@@ -302,12 +302,12 @@ const RenderMediaItem: React.FC<RenderMediaItemProps> = ({
                             height: 52,
                             width: 52,
                             borderRadius: 26,
-                            backgroundColor: "rgba(0, 0, 0, 0.6)",
+                            backgroundColor: Colors(theme).backdrop,
                             alignItems: "center",
                             justifyContent: "center",
                         }}
                     >
-                        <FontAwesomeIcon icon={faPlay} size={20} color="#ffffff" />
+                        <FontAwesomeIcon icon={faPlay} size={20} color={Colors(theme).white} />
                     </Pressable>
                 </View>
                 <LoadingCircle />

@@ -5,6 +5,7 @@ import Zoom from 'react-medium-image-zoom';
 //  import 'react-inner-image-zoom/lib/InnerImageZoom/styles.css';
 import 'react-medium-image-zoom/dist/styles.css';
 import { Modal } from "react-native";
+import Colors from "@/shared-uis/constants/Colors";
 
 
 interface AssetPreviewModalProps {
@@ -21,6 +22,7 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
     setPreviewImage,
     theme,
 }) => {
+    const colors = Colors(theme);
 
     return (previewImage && (
         <Modal visible={true} animationType="fade">
@@ -29,7 +31,7 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
                 top: 20,
                 right: 20,
                 zIndex: 1000,
-                backgroundColor: 'rgba(0,0,0,0.6)',
+                backgroundColor: colors.backdrop,
                 borderRadius: '50%',
                 width: 36,
                 height: 36,
@@ -40,7 +42,7 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
             }}
                 onClick={() => setPreviewImage(false)}
             >
-                <span style={{ color: 'white', fontSize: 20, fontWeight: 'bold' }}>✕</span>
+                <span style={{ color: colors.text, fontSize: 20, fontWeight: 'bold' }}>✕</span>
             </div>
             <Zoom>
                 <img

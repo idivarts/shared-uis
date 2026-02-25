@@ -5,7 +5,7 @@ import { StyleSheet } from "react-native";
 export const stylesFn = (theme: Theme) => StyleSheet.create({
     modalContainer: {
         flex: 1,
-        backgroundColor: "rgba(0, 0, 0, 0.9)",
+        backgroundColor: Colors(theme).backdrop,
         justifyContent: "center",
         alignItems: "center",
     },

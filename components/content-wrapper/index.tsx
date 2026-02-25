@@ -1,7 +1,7 @@
 import { Theme } from "@react-navigation/native";
-import React, { PropsWithChildren } from "react";
+import React, { PropsWithChildren, useMemo } from "react";
 
-import { StyleProp, TextStyle } from "react-native";
+import { StyleProp, StyleSheet, TextStyle } from "react-native";
 import Colors from "../../constants/Colors";
 import { Text, View } from "../theme/Themed";
 
@@ -23,30 +23,27 @@ const ContentWrapper: React.FC<ContentWrapperProps> = ({
     title,
     titleStyle,
 }) => {
+    const styles = useMemo(() => StyleSheet.create({
+        outer: { gap: 12 },
+        headerRow: {
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            gap: 10,
+            alignItems: 'center',
+        },
+        title: { fontSize: 20, fontWeight: 'bold' },
+        description: {
+            fontSize: 14,
+            color: theme.dark ? Colors(theme).text : Colors(theme).gray300,
+        },
+    }), [theme]);
     return (
-        <View
-            style={{
-                gap: 12,
-            }}
-        >
-            <View
-                style={{
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    gap: 10,
-                    alignItems: 'center',
-                }}
-            >
+        <View style={styles.outer}>
+            <View style={styles.headerRow}>
                 {
                     title && (
                         <Text
-                            style={[
-                                {
-                                    fontSize: 20,
-                                    fontWeight: 'bold',
-                                },
-                                titleStyle,
-                            ]}
+                            style={[styles.title, titleStyle]}
                         >
                             {title}
                         </Text>
@@ -65,12 +62,7 @@ const ContentWrapper: React.FC<ContentWrapperProps> = ({
             {children}
             {
                 description && (
-                    <Text
-                        style={{
-                            fontSize: 14,
-                            color: theme.dark ? Colors(theme).text : Colors(theme).gray300,
-                        }}
-                    >
+                    <Text style={styles.description}>
                         {description}
                     </Text>
                 )

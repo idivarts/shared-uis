@@ -1,9 +1,46 @@
 import { Theme } from '@react-navigation/native';
 import React from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { StyleSheet, Pressable, Text, View } from 'react-native';
 
+import Colors from "../../constants/Colors";
 import { SelectItem } from '.';
-import stylesFn from '../../styles/select/SelectGroup.styles';
+
+const useStyles = (theme: Theme) => StyleSheet.create({
+    container: {
+        flexDirection: 'row',
+        backgroundColor: theme.dark ? Colors(theme).card : Colors(theme).tag,
+        borderRadius: 8,
+        padding: 4,
+    },
+    option: {
+        flex: 1,
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 6,
+    },
+    selectedOption: {
+        backgroundColor: Colors(theme).primary,
+        shadowColor: Colors(theme).black,
+        shadowOffset: {
+            width: 0,
+            height: 1,
+        },
+        shadowOpacity: 0.1,
+        shadowRadius: 1,
+        elevation: 2,
+    },
+    optionMargin: {
+        marginLeft: 4,
+    },
+    optionText: {
+        textAlign: 'center',
+        fontSize: 14,
+        color: Colors(theme).text,
+    },
+    selectedOptionText: {
+        color: Colors(theme).white,
+    },
+});
 
 interface SelectGroupProps {
     items: SelectItem[];
@@ -18,7 +55,7 @@ const SelectGroup: React.FC<SelectGroupProps> = ({
     selectedItem,
     theme,
 }) => {
-    const styles = stylesFn(theme);
+    const styles = useStyles(theme);
 
     return (
         <View style={styles.container}>

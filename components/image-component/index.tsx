@@ -115,7 +115,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
                     },
                 ]}
             >
-                <Text style={{ color: "white", fontSize: initialsSize }}>
+                <Text style={{ color: Colors(theme).white, fontSize: initialsSize }}>
                     {initials
                         ?.split(" ")
                         .map((word) => word[0])
