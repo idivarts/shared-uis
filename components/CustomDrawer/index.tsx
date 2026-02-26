@@ -19,7 +19,7 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
     const theme = useTheme()
     const styles = useStyles(theme)
 
-    const DRAWER_WIDTH = xl ? 320 : screenWidth * 0.75;
+    const DRAWER_WIDTH = xl ? 280 : screenWidth * 0.75;
 
     const [drawerVisible, setDrawerVisible] = useState(xl);
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
