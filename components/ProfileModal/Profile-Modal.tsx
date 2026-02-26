@@ -26,7 +26,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
 import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
     Image,
@@ -34,8 +34,8 @@ import {
     Platform,
     Pressable,
     ScrollView,
+    StyleSheet,
     Text,
-    useWindowDimensions,
     View,
 } from "react-native";
 import { Button, Chip, Title } from "react-native-paper";
@@ -113,6 +113,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
 }) => {
     const styles = stylesFn(theme);
+    const { width: screenWidth, width } = useBreakpoints();
+    const isTwoColumn = Platform.OS === "web" ? width > 768 : false;
+    const localStyles = useMemo(
+        () => createLocalStyles(theme, isTwoColumn, screenWidth),
+        [theme, isTwoColumn, screenWidth]
+    );
     const [primarySocial, setPrimarySocial] = useState<ISocials>();
     const { openModal } = useConfirmationModel();
     const router = useMyNavigation();
@@ -170,8 +176,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         });
     };
 
-    const { width: screenWidth } = useBreakpoints();
-
     const fetchPrimarySocialMedia = async () => {
         if (primarySocial) return;
 
@@ -202,8 +206,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
         fetchPrimarySocialMedia();
     }, []);
 
-    const { width } = useWindowDimensions();
-    const isTwoColumn = Platform.OS == "web" ? width > 768 : false;
     const trendlyGender = social?.gender;
     const trendlyQuality =
         typeof social?.quality === "number"
@@ -257,27 +259,15 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             );
 
     return (
-        <View
-            style={{
-                flex: 1,
-                backgroundColor: Colors(theme).background,
-                position: "relative",
-            }}
-        >
+        <View style={localStyles.root}>
             <ScrollView
-                style={{
-                    flex: 1,
-                }}
-                contentContainerStyle={{
-                    paddingBottom: 100,
-                }}
+                style={localStyles.scrollView}
+                contentContainerStyle={localStyles.scrollContent}
                 showsVerticalScrollIndicator={true}
                 bounces={true}
             >
                 {closeModal && isTwoColumn && (
-                    <View
-                        style={{ position: "absolute", top: 10, right: 10, zIndex: 1000 }}
-                    >
+                    <View style={localStyles.closeButtonWrap}>
                         <Pressable onPress={closeModal}>
                             <FontAwesomeIcon
                                 icon={faClose}
@@ -289,15 +279,9 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                     </View>
                 )}
                 {previewType.value === "Preview" ? (
-                    <View
-                        style={{
-                            flexDirection: isTwoColumn ? "row" : "column",
-                            padding: isTwoColumn ? 20 : 0,
-                            alignItems: isTwoColumn ? "flex-start" : undefined,
-                        }}
-                    >
+                    <View style={localStyles.previewContainer}>
                         {isTwoColumn ? (
-                            <View style={[styles.carouselContainer, { flex: 1 }, Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } : { alignSelf: "center" }]}>
+                            <View style={[styles.carouselContainer, localStyles.carouselColWeb]}>
                                 <InfluencerCard
                                     // @ts-ignore
                                     influencer={{ ...influencer, socials: [primarySocial?.isInstagram ? primarySocial?.instaProfile?.username : primarySocial?.fbProfile?.name] }}
@@ -306,40 +290,20 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     lockProfile={lockProfile}
                                 />
                             </View>) : (
-                            <View style={[styles.carouselContainer,
-                            Platform.OS === "web" ? { maxWidth: MAX_WIDTH_WEB + 34 } :
-                                { alignSelf: "center" }]}>
+                            <View style={[styles.carouselContainer, localStyles.carouselColNative]}>
                                 {mediaProcessing && mediaProcessing.length > 0 && (
                                     <Carousel data={mediaProcessing || []} theme={theme} />
                                 )}
-                                <View style={{ paddingHorizontal: 16 }}>
+                                <View style={localStyles.metricsPadding}>
                                     <InfluencerMetrics user={influencer} social={primarySocial} />
                                 </View>
                             </View>)}
 
-                        <View style={[{ flex: 1, marginTop: 16 }]}>
+                        <View style={localStyles.detailsCol}>
                             <View style={[styles.header]}>
                                 <View style={styles.profileInfo}>
-                                    <View
-                                        style={{
-                                            flexDirection: isTwoColumn ? "row" : "column",
-                                            flexWrap: isTwoColumn ? "wrap" : undefined,
-                                            alignItems: "flex-start",
-                                            gap: isTwoColumn ? 24 : 12,
-                                            marginBottom: 16,
-                                            minWidth: 0,
-                                        }}
-                                    >
-                                        <View
-                                            style={{
-                                                flexDirection: "row",
-                                                alignItems: "center",
-                                                gap: 6,
-                                                flexShrink: isTwoColumn ? 1 : 0,
-                                                minWidth: isTwoColumn ? 0 : undefined,
-                                                maxWidth: isTwoColumn ? "100%" : undefined,
-                                            }}
-                                        >
+                                    <View style={localStyles.profileInfoInner}>
+                                        <View style={localStyles.nameRow}>
                                             <Text
                                                 style={[
                                                     styles.name,
@@ -353,18 +317,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 <MaterialIcons
                                                     name="verified"
                                                     size={24}
-                                                    color="#3B82F6"
+                                                    color={Colors(theme).primary}
                                                 />
                                             )}
                                         </View>
                                         {actionButtonNode ? (
-                                            <View
-                                                style={{
-                                                    width: isTwoColumn ? "auto" : "100%",
-                                                    alignItems: "flex-start",
-                                                    flexShrink: 0,
-                                                }}
-                                            >
+                                            <View style={localStyles.actionButtonWrap}>
                                                 {actionButtonNode}
                                             </View>
                                         ) : null}
@@ -428,7 +386,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                     </Pressable>
 
                                     {showTrendlyChips ? (
-                                        <View style={{ marginTop: 8 }}>
+                                        <View style={localStyles.chipsMarginTop}>
                                             {showGenderChip ? (
                                                 <View style={styles.row}>
                                                     <FontAwesomeIcon
@@ -443,12 +401,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                 </View>
                                             ) : null}
                                             {showQualityChip ? (
-                                                <View style={[styles.row, { alignItems: "center" }]}>
-                                                    <Text style={[styles.subTextHeading, { marginRight: 6 }]}>
+                                                <View style={[styles.row, localStyles.qualityRow]}>
+                                                    <Text style={[styles.subTextHeading, localStyles.qualityLabelMargin]}>
                                                         Quality:
                                                     </Text>
                                                     <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
-                                                    <Text style={[styles.subTextHeading, { marginLeft: 4 }]}>
+                                                    <Text style={[styles.subTextHeading, localStyles.qualityValueMargin]}>
                                                         {qualityScoreToStars(trendlyQuality!).toFixed(1)}
                                                     </Text>
                                                 </View>
@@ -614,13 +572,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                     influencer?.profile?.content?.about ||
                                                     "<p>No content available.</p>",
                                             }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
+                                            baseStyle={localStyles.htmlBaseStyle}
                                         />
                                     </View>
                                 ) : null}
@@ -638,13 +590,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                         ?.socialMediaHighlight ||
                                                     "<p>No content available.</p>",
                                             }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
+                                            baseStyle={localStyles.htmlBaseStyle}
                                         />
                                     </View>
                                 ) : null}
@@ -660,13 +606,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                         ?.collaborationGoals ||
                                                     "<p>No content available.</p>",
                                             }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
+                                            baseStyle={localStyles.htmlBaseStyle}
                                         />
                                     </View>
                                 ) : null}
@@ -684,13 +624,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                         ?.influencerConectionGoals ||
                                                     "<p>No content available.</p>",
                                             }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
+                                            baseStyle={localStyles.htmlBaseStyle}
                                         />
                                     </View>
                                 ) : null}
@@ -706,13 +640,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                     influencer?.profile?.content?.audienceInsights ||
                                                     "<p>No content available.</p>",
                                             }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
+                                            baseStyle={localStyles.htmlBaseStyle}
                                         />
                                     </View>
                                 ) : null}
@@ -728,13 +656,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                     influencer?.profile?.content?.funFactAboutUser ||
                                                     "<p>No content available.</p>",
                                             }}
-                                            baseStyle={{
-                                                color: theme.dark
-                                                    ? Colors(theme).text
-                                                    : Colors(theme).gray300,
-                                                fontSize: 16,
-                                                lineHeight: 22,
-                                            }}
+                                            baseStyle={localStyles.htmlBaseStyle}
                                         />
                                     </View>
                                 ) : null}
@@ -746,12 +668,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                 ) : posts.length > 0 ? (
                                     <View style={styles.aboutCard}>
                                         <Title
-                                            style={[
-                                                styles.cardColor,
-                                                {
-                                                    marginBottom: 20,
-                                                },
-                                            ]}
+                                            style={[styles.cardColor, localStyles.cardTitleWithMargin]}
                                         >
                                             {influencer.name}'s{" "}
                                             {isInstagram ? "Instagram" : "Facebook"} Posts
@@ -761,10 +678,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             horizontal
                                             showsHorizontalScrollIndicator={false}
                                         >
-                                            <View style={{ flexDirection: "column" }}>
-                                                <View
-                                                    style={{ flexDirection: "row", marginBottom: 10 }}
-                                                >
+                                            <View style={localStyles.postsColumn}>
+                                                <View style={localStyles.postsRow}>
                                                     {posts &&
                                                         posts
                                                             .filter((_, index) => index % 2 === 0)
@@ -787,17 +702,12 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                                     : item.thumbnail_url
                                                                                 : item.full_picture,
                                                                         }}
-                                                                        style={{
-                                                                            width: 100,
-                                                                            height: 100,
-                                                                            borderRadius: 10,
-                                                                            marginRight: 10,
-                                                                        }}
+                                                                        style={localStyles.postImage}
                                                                     />
                                                                 </Pressable>
                                                             ))}
                                                 </View>
-                                                <View style={{ flexDirection: "row" }}>
+                                                <View style={localStyles.postsRowOnly}>
                                                     {posts &&
                                                         posts
                                                             .filter((_, index) => index % 2 !== 0)
@@ -820,12 +730,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                                     : item.thumbnail_url
                                                                                 : item.full_picture,
                                                                         }}
-                                                                        style={{
-                                                                            width: 100,
-                                                                            height: 100,
-                                                                            borderRadius: 10,
-                                                                            marginRight: 10,
-                                                                        }}
+                                                                        style={localStyles.postImage}
                                                                     />
                                                                 </Pressable>
                                                             ))}
@@ -838,12 +743,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                         </View>
                     </View>
                 ) : (
-                    <View
-                        style={{
-                            padding: isTwoColumn ? 20 : 0,
-                            alignSelf: "center",
-                        }}
-                    >
+                    <View style={localStyles.singleColumnPadding}>
                         <InfluencerCard
                             influencer={influencer}
                             ToggleModal={() => { }}
@@ -858,28 +758,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
             </ScrollView>
             {showCardPreviewTab && !isTwoColumn && (
-                <View
-                    style={{
-                        padding: 10,
-                        paddingBottom: 40,
-                        backgroundColor: Colors(theme).background,
-                        borderTopWidth: 1,
-                        borderTopColor: Colors(theme).border,
-                        position: "absolute",
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 1000,
-                        elevation: 5, // For Android shadow
-                        shadowColor: "#000", // For iOS shadow
-                        shadowOffset: {
-                            width: 0,
-                            height: -2,
-                        },
-                        shadowOpacity: 0.25,
-                        shadowRadius: 3.84,
-                    }}
-                >
+                <View style={localStyles.stickyBottom}>
                     <SelectGroup
                         items={[
                             { label: "Preview", value: "Preview" },
@@ -898,6 +777,107 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             )}
         </View>
     );
+};
+
+const createLocalStyles = (
+    theme: Theme,
+    isTwoColumn: boolean,
+    _screenWidth: number
+) => {
+    const colors = Colors(theme);
+    return StyleSheet.create({
+        root: {
+            flex: 1,
+            backgroundColor: colors.background,
+            position: "relative",
+        },
+        scrollView: { flex: 1 },
+        scrollContent: { paddingBottom: 100 },
+        closeButtonWrap: {
+            position: "absolute",
+            top: 10,
+            right: 10,
+            zIndex: 1000,
+        },
+        previewContainer: {
+            flexDirection: isTwoColumn ? "row" : "column",
+            padding: isTwoColumn ? 20 : 0,
+            alignItems: isTwoColumn ? "flex-start" : undefined,
+        },
+        carouselColWeb: {
+            flex: 1,
+            maxWidth: MAX_WIDTH_WEB + 34,
+        },
+        carouselColCenter: {
+            alignSelf: "center",
+        },
+        carouselColNative: Platform.OS === "web"
+            ? { maxWidth: MAX_WIDTH_WEB + 34 }
+            : { alignSelf: "center" as const },
+        metricsPadding: { paddingHorizontal: 16 },
+        detailsCol: { flex: 1, marginTop: 16 },
+        profileInfoInner: {
+            flexDirection: isTwoColumn ? "row" : "column",
+            flexWrap: isTwoColumn ? "wrap" : undefined,
+            alignItems: "flex-start",
+            gap: isTwoColumn ? 24 : 12,
+            marginBottom: 16,
+            minWidth: 0,
+        },
+        nameRow: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            flexShrink: isTwoColumn ? 1 : 0,
+            minWidth: isTwoColumn ? 0 : undefined,
+            maxWidth: isTwoColumn ? "100%" : undefined,
+        },
+        actionButtonWrap: {
+            width: isTwoColumn ? "auto" : "100%",
+            alignItems: "flex-start",
+            flexShrink: 0,
+        },
+        chipsMarginTop: { marginTop: 8 },
+        qualityRow: { alignItems: "center" as const },
+        qualityLabelMargin: { marginRight: 6 },
+        qualityValueMargin: { marginLeft: 4 },
+        htmlBaseStyle: {
+            color: theme.dark ? colors.text : colors.gray300,
+            fontSize: 16,
+            lineHeight: 22,
+        },
+        cardTitleWithMargin: { marginBottom: 20 },
+        postsColumn: { flexDirection: "column" as const },
+        postsRow: { flexDirection: "row" as const, marginBottom: 10 },
+        postsRowOnly: { flexDirection: "row" as const },
+        postImage: {
+            width: 100,
+            height: 100,
+            borderRadius: 10,
+            marginRight: 10,
+        },
+        singleColumnPadding: {
+            padding: isTwoColumn ? 20 : 0,
+            alignSelf: "center",
+        },
+        stickyBottom: {
+            padding: 10,
+            paddingBottom: 40,
+            backgroundColor: colors.background,
+            borderTopWidth: 1,
+            borderTopColor: colors.border,
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            zIndex: 1000,
+            elevation: 5,
+            shadowColor: colors.text,
+            shadowOffset: { width: 0, height: -2 },
+            shadowOpacity: 0.25,
+            shadowRadius: 3.84,
+        },
+    });
 };
 
 export default ProfileBottomSheet;

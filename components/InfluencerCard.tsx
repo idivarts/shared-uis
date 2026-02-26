@@ -21,6 +21,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
     Pressable,
     StyleProp,
+    StyleSheet,
     Text,
     ViewStyle,
 } from "react-native";
@@ -62,7 +63,58 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     const influencer = props.influencer;
     const type = props.type;
     const theme = useTheme();
+    const colors = Colors(theme);
     const styles = stylesFn(theme);
+    const layoutStyles = React.useMemo(
+        () =>
+            StyleSheet.create({
+                cardNotFullHeight: {
+                    borderRadius: 20,
+                    borderColor: colors.border,
+                    borderWidth: 1,
+                    shadowColor: colors.text,
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                },
+                cardInner: {
+                    maxWidth: MAX_WIDTH_WEB,
+                    alignSelf: "center",
+                    overflow: "hidden",
+                    backgroundColor: colors.background,
+                },
+                fullHeight: { height: "100%" },
+                headerRow: {
+                    gap: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                },
+                nameRow: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 6,
+                },
+                ellipsisButton: { padding: 6 },
+                cardActionWrap: { paddingVertical: 16 },
+                aboutText: {
+                    color: colors.text,
+                    fontSize: 16,
+                    lineHeight: 22,
+                },
+                taxonomiesRow: {
+                    flexDirection: "row",
+                    marginTop: 10,
+                    flexWrap: "wrap",
+                    rowGap: 10,
+                    gap: 8,
+                },
+                chip: { backgroundColor: colors.primary },
+                chipText: { color: colors.white },
+            }),
+        [colors]
+    );
     const [socials, setSocials] = useState<ISocials | undefined>(undefined);
 
     const [images, setImages] = useState(
@@ -137,39 +189,15 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     styles.card,
                     props.style,
                     props.fullHeight
-                        ? { height: "100%" }
-                        : {
-                            borderRadius: 20,
-                            borderColor: Colors(theme).border,
-                            borderWidth: 1,
-                            shadowColor: "#000",
-                            shadowOffset: {
-                                width: 0,
-                                height: 2,
-                            },
-                            shadowOpacity: 0.25,
-                            shadowRadius: 3.84,
-                            elevation: 5,
-                        },
-                    {
-                        maxWidth: MAX_WIDTH_WEB,
-                        alignSelf: "center",
-                        overflow: "hidden",
-                        backgroundColor: Colors(theme).background,
-                    },
+                        ? layoutStyles.fullHeight
+                        : layoutStyles.cardNotFullHeight,
+                    layoutStyles.cardInner,
                 ]}
             >
                 <View style={[styles.header]}>
                     <View>
                         {props.topHeaderNode}
-                        <View
-                            style={{
-                                gap: 10,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}
-                        >
+                        <View style={layoutStyles.headerRow}>
                             <Pressable
                                 onPressIn={(e) => {
                                     startX.current = e.nativeEvent.pageX;
@@ -202,14 +230,14 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                     }
                                 }}
                             >
-                                <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                                <View style={layoutStyles.nameRow}>
                                     <Text style={styles.name}>
                                         {props.isOnFreePlan || props.lockProfile
                                             ? maskName(influencer.name)
                                             : influencer.name}
                                     </Text>
                                     {influencer.isKYCDone && (
-                                        <MaterialIcons name="verified" size={16} color="#3B82F6" />
+                                        <MaterialIcons name="verified" size={16} color={colors.primary} />
                                     )}
                                 </View>
                                 {socialHandle && (
@@ -230,7 +258,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                         }
                                     }}
                                     hitSlop={8}
-                                    style={{ padding: 6 }}
+                                    style={layoutStyles.ellipsisButton}
                                     accessibilityRole="button"
                                     testID="influencer-ellipsis"
                                 >
@@ -277,18 +305,14 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     >
                         <InfluencerMetrics user={influencer} social={socials} />
                         {props.cardActionNode && (
-                            <View style={{ paddingVertical: 16 }}>
+                            <View style={layoutStyles.cardActionWrap}>
                                 {props.cardActionNode}
                             </View>
                         )}
                         {(props.customText || influencer?.profile?.content?.about) &&
                             type != "influencers" && (
                                 <Text
-                                    style={{
-                                        color: Colors(theme).text,
-                                        fontSize: 16,
-                                        lineHeight: 22,
-                                    }}
+                                    style={layoutStyles.aboutText}
                                 >
                                     {props.customText
                                         ? props.customText
@@ -299,29 +323,17 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                 </Text>
                             )}
                         {props.customTaxonomies && props.customTaxonomies.length > 0 && (
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    marginTop: 10,
-                                    flexWrap: "wrap",
-                                    rowGap: 10,
-                                    gap: 8,
-                                }}
-                            >
+                            <View style={layoutStyles.taxonomiesRow}>
                                 {props.customTaxonomies.map((tag, index) => (
-                                    <Chip style={{ backgroundColor: Colors(theme).primary }}>
-                                        <Text style={{ color: Colors(theme).white }}>{tag}</Text>
+                                    <Chip style={layoutStyles.chip}>
+                                        <Text style={layoutStyles.chipText}>{tag}</Text>
                                     </Chip>
                                 ))}
                             </View>
                         )}
                         {type == "influencers" && (
                             <Text
-                                style={{
-                                    color: Colors(theme).text,
-                                    fontSize: 16,
-                                    lineHeight: 22,
-                                }}
+                                style={layoutStyles.aboutText}
                             >
                                 {truncateText(
                                     (influencer?.profile?.content?.influencerConectionGoals

@@ -7,6 +7,7 @@ import {
     StyleSheet,
     View,
 } from "react-native";
+import Colors from "@/shared-uis/constants/Colors";
 
 interface BottomSheetContainerProps extends BottomSheetProps {
     isVisible: boolean;
@@ -72,7 +73,7 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backgroundColor: Colors(theme).backdrop,
     },
     bottomSheetContainer: {
         flex: 1,

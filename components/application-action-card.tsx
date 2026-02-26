@@ -11,6 +11,7 @@ import React, { useState } from "react";
 import { IconButton, List, Button as PaperButton, Surface } from "react-native-paper";
 import { convertToKUnits } from "../utils/conversion";
 import BottomSheetContainer from "./bottom-sheet";
+import Colors from "@/shared-uis/constants/Colors";
 
 
 export const ApplicationActionBar: React.FC<{
@@ -48,11 +49,12 @@ export const ApplicationActionBar: React.FC<{
     };
 
     const theme = useTheme();
-    // const [confirm, setConfirm] = React.useState<null | { type: "accept" | "reject" | "reopen" | "shortlist"; title: string; desc: string }>(null);
-
+    const colors = Colors(theme);
+    const dividerColor = theme.dark ? colors.glassSurface : colors.secondarySurface;
     const [status, setStatus] = useState(application.status)
     const [isActionSheetOpen, setIsActionSheetOpen] = useState(false);
     const { xl } = useBreakpoints();
+    const isCompact = !xl;
 
     const handle = async (type: "accept" | "reject" | "reopen" | "shortlist") => {
         switch (type) {
@@ -81,9 +83,6 @@ export const ApplicationActionBar: React.FC<{
                 break;
         }
     };
-
-    const dividerColor = theme.dark ? "rgba(255,255,255,0.12)" : "rgba(0,0,0,0.08)";
-    const isCompact = !xl;
 
     const confirmAccept = () => {
         openModal({

@@ -2,7 +2,7 @@ import { faStar } from '@fortawesome/free-regular-svg-icons';
 import { faStar as faStarSolid } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme } from '@react-navigation/native';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View } from 'react-native';
 
 import Colors from '@/shared-uis/constants/Colors';
@@ -18,13 +18,9 @@ const Star = ({
     size = 24,
     theme,
 }: StarProps) => {
+    const containerStyle = useMemo(() => ({ width: size, height: size }), [size]);
     return (
-        <View
-            style={{
-                width: size,
-                height: size,
-            }}
-        >
+        <View style={containerStyle}>
             {
                 filled ? (
                     <FontAwesomeIcon

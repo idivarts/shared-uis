@@ -1,7 +1,9 @@
 import { Console } from '@/shared-libs/utils/console';
+import Colors from '@/shared-uis/constants/Colors';
+import { useTheme } from '@react-navigation/native';
 import { faCheck, faPeopleRoof, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Carousel, { CarouselRenderItem, ICarouselInstance } from 'react-native-reanimated-carousel';
 
@@ -17,6 +19,9 @@ interface IProps<T = any> {
     onPressView?: (item: T, index: number) => void;
 }
 const CarouselTinderSwipe: React.FC<IProps> = (props) => {
+    const theme = useTheme();
+    const colors = Colors(theme);
+    const styles = useMemo(() => makeStyles(colors), [colors]);
     const [data, setData] = useState<any[]>([])
     const [showOverlay, setShowOverlay] = useState(true);
     const [swipeOverlay, setSwipeOverlay] = useState<'accept' | 'reject' | null>(null);
@@ -98,7 +103,7 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
     }
 
     return (
-        <View style={{ position: 'relative' }}>
+        <View style={styles.wrapper}>
             <Carousel
                 ref={carouselRef}
                 loop={true}
@@ -131,15 +136,15 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
             )}
             <View style={styles.floatingButtonsContainer}>
                 <TouchableOpacity style={[styles.floatingButton, styles.rejectButton]} onPress={() => handleSwipe('reject')}>
-                    <FontAwesomeIcon icon={faTimes} size={32} color="#fff" />
+                    <FontAwesomeIcon icon={faTimes} size={32} color={colors.onPrimary} />
                     <Text style={styles.buttonLabel}>Reject</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.floatingButton, styles.profileButton]} onPress={() => props.onPressView?.(data[prevIndex.current], currentGlobalIndex)}>
-                    <FontAwesomeIcon icon={faPeopleRoof} size={28} color="#fff" />
+                    <FontAwesomeIcon icon={faPeopleRoof} size={28} color={colors.onPrimary} />
                     <Text style={styles.buttonLabel}>View</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={[styles.floatingButton, styles.acceptButton]} onPress={() => handleSwipe('accept')}>
-                    <FontAwesomeIcon icon={faCheck} size={32} color="#fff" />
+                    <FontAwesomeIcon icon={faCheck} size={32} color={colors.onPrimary} />
                     <Text style={styles.buttonLabel}>Accept</Text>
                 </TouchableOpacity>
             </View>
@@ -148,7 +153,9 @@ const CarouselTinderSwipe: React.FC<IProps> = (props) => {
 
 }
 
-const styles = StyleSheet.create({
+function makeStyles(colors: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+    wrapper: { position: 'relative' as const },
     floatingButtonsContainer: {
         position: 'absolute',
         bottom: 20,
@@ -163,22 +170,22 @@ const styles = StyleSheet.create({
         width: 64,
         height: 64,
         borderRadius: 32,
-        backgroundColor: '#ccc',
+        backgroundColor: colors.border,
         elevation: 5,
         padding: 16,
     },
     acceptButton: {
-        backgroundColor: 'rgba(144, 238, 144, 0.8)', // pastel green with transparency
+        backgroundColor: colors.green || colors.primary,
     },
     rejectButton: {
-        backgroundColor: 'rgba(255, 182, 193, 0.8)', // pastel red/pink with transparency
+        backgroundColor: colors.red || colors.pink,
     },
     profileButton: {
-        backgroundColor: 'rgba(173, 216, 230, 0.8)', // pastel blue with transparency
+        backgroundColor: colors.secondary,
     },
     buttonLabel: {
         fontSize: 12,
-        color: 'white',
+        color: colors.onPrimary,
         marginTop: 4,
     },
     overlay: {
@@ -186,14 +193,14 @@ const styles = StyleSheet.create({
         top: '50%',
         left: '50%',
         transform: [{ translateX: -75 }, { translateY: -25 }],
-        backgroundColor: 'rgba(0, 0, 0, 0.2)',
+        backgroundColor: colors.backdrop,
         paddingHorizontal: 20,
         paddingVertical: 12,
         borderRadius: 8,
         zIndex: 10,
     },
     overlayText: {
-        color: '#fff',
+        color: colors.onPrimary,
         fontSize: 16,
         fontWeight: '500',
     },
@@ -202,17 +209,18 @@ const styles = StyleSheet.create({
         top: '40%',
         left: '50%',
         transform: [{ translateX: -90 }],
-        backgroundColor: 'rgba(0, 0, 0, 0.4)',
+        backgroundColor: colors.backdrop,
         paddingHorizontal: 24,
         paddingVertical: 14,
         borderRadius: 8,
         zIndex: 12,
     },
     swipeText: {
-        color: '#fff',
+        color: colors.onPrimary,
         fontSize: 18,
         fontWeight: '600',
     },
 });
+}
 
-export default CarouselTinderSwipe
+export default CarouselTinderSwipe;

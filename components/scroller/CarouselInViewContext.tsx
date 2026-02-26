@@ -1,6 +1,11 @@
 import { Console } from '@/shared-libs/utils/console';
 import React, { createContext, ReactNode, useContext, useState } from 'react';
+import { StyleSheet } from 'react-native';
 import { View } from '../theme/Themed';
+
+const styles = StyleSheet.create({
+    fill: { width: "100%", height: "100%" },
+});
 
 interface CarouselInViewContextType {
     currentItemId: string;
@@ -26,7 +31,7 @@ export const CarouselInViewProvider: React.FC<CarouselInViewProviderProps> = ({ 
     return (
         <CarouselInViewContext.Provider value={{ currentItemId, setCurrentItemId, containerHeight }}>
             <View
-                style={{ width: "100%", height: "100%" }}
+                style={styles.fill}
                 onLayout={(event) => {
                     const height = event.nativeEvent.layout.height;
                     Console.log("Carousel Height", height)

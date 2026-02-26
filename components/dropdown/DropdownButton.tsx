@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useTheme } from "@react-navigation/native";
+import { useMemo, useState } from "react";
 import { Pressable, Text } from "react-native";
-
-import styles from "../../styles/dropdown/Dropdown.styles";
+import getDropdownStyles from "../../styles/dropdown/Dropdown.styles";
 
 interface DropdownButtonProps {
     hoverInColor?: string;
@@ -14,6 +14,8 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
     onPress,
     title,
 }) => {
+    const theme = useTheme();
+    const styles = useMemo(() => getDropdownStyles(theme), [theme]);
     const [isHovered, setIsHovered] = useState(false);
 
     const handleHoverIn = () => {
@@ -31,9 +33,7 @@ const DropdownButton: React.FC<DropdownButtonProps> = ({
             onHoverOut={handleHoverOut}
             style={[
                 styles.dropdownButton,
-                {
-                    backgroundColor: isHovered ? (hoverInColor ?? 'lightgray') : 'white',
-                }
+                isHovered && styles.dropdownButtonHover,
             ]}
         >
             <Text
