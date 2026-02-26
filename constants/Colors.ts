@@ -151,6 +151,17 @@ export const ColorsStatic = {
     drawerBannerButtonBg: "rgba(255,255,255,0.4)",
     drawerBannerButtonPressed: "rgba(255,255,255,0.3)",
 
+    // Drawer sidebar (always dark theme)
+    drawerBackground: "rgb(26, 59, 92)",
+    drawerHeaderBg: "rgb(42, 72, 104)",
+    drawerCardBg: "rgb(33, 56, 80)",
+    drawerText: "rgb(229, 236, 245)",
+    drawerTextMuted: "rgb(160, 175, 195)",
+    drawerProgressTrack: "rgb(70, 85, 105)",
+    drawerProgressFill: "rgb(232, 185, 49)",
+    drawerInvitesIcon: "rgb(138, 99, 210)",
+    drawerBorder: "rgba(255, 255, 255, 0.08)",
+
     // Overlay / panel shadow
     panelShadow: "rgba(0, 0, 0, 0.18)",
 
@@ -242,6 +253,15 @@ export default (theme: Theme) => ({
             secondarySurface: "rgba(255, 255, 255, 0.16)",
             secondaryBorder: "rgba(255, 255, 255, 0.28)",
             secondaryText: ColorsStatic.white,
+            drawerBackground: ColorsStatic.drawerBackground,
+            drawerHeaderBg: ColorsStatic.drawerHeaderBg,
+            drawerCardBg: ColorsStatic.drawerCardBg,
+            drawerText: ColorsStatic.drawerText,
+            drawerTextMuted: ColorsStatic.drawerTextMuted,
+            drawerProgressTrack: ColorsStatic.drawerProgressTrack,
+            drawerProgressFill: ColorsStatic.drawerProgressFill,
+            drawerInvitesIcon: ColorsStatic.drawerInvitesIcon,
+            drawerBorder: ColorsStatic.drawerBorder,
         }
         : {
             primary: ColorsStatic.primary, // Main accent color
@@ -279,5 +299,14 @@ export default (theme: Theme) => ({
             secondarySurface: "rgba(15, 23, 42, 0.16)",
             secondaryBorder: "rgba(15, 23, 42, 0.28)",
             secondaryText: ColorsStatic.secondaryTextLight,
+            drawerBackground: ColorsStatic.drawerBackground,
+            drawerHeaderBg: ColorsStatic.drawerHeaderBg,
+            drawerCardBg: ColorsStatic.drawerCardBg,
+            drawerText: ColorsStatic.drawerText,
+            drawerTextMuted: ColorsStatic.drawerTextMuted,
+            drawerProgressTrack: ColorsStatic.drawerProgressTrack,
+            drawerProgressFill: ColorsStatic.drawerProgressFill,
+            drawerInvitesIcon: ColorsStatic.drawerInvitesIcon,
+            drawerBorder: ColorsStatic.drawerBorder,
         }),
 });

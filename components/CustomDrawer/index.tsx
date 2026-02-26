@@ -52,7 +52,7 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
                     <View style={styles.overlay} />
                 </TouchableWithoutFeedback>
             )}
-            <Animated.View style={[styles.drawer, { width: DRAWER_WIDTH, transform: [{ translateX: slideAnim }], borderRightWidth: 1, borderRightColor: Colors(theme).border }]}>
+            <Animated.View style={[styles.drawer, { width: DRAWER_WIDTH, transform: [{ translateX: slideAnim }] }]}>
                 {DrawerContent}
             </Animated.View>
             {/* </View> */}
@@ -72,8 +72,9 @@ const useStyles = (theme: Parameters<typeof Colors>[0]) => {
             left: 0,
             top: 0,
             bottom: 0,
-            // width: DRAWER_WIDTH,
-            backgroundColor: colors.card,
+            borderRightWidth: 1,
+            borderRightColor: colors.drawerBorder,
+            backgroundColor: colors.drawerBackground,
             zIndex: 9999,
         },
     });
