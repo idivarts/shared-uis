@@ -23,6 +23,7 @@ export const ColorsStatic = {
     transparent: "transparent",
 
     backdrop: "rgba(0, 0, 0, 0.5)",
+    backdropStrong: "rgba(0, 0, 0, 0.78)",
     backdropDark: "rgba(255, 255, 255, 0.5)",
     success: "rgb(2, 202, 48)",
     successForeground: "rgb(40, 167, 69)",
@@ -236,6 +237,7 @@ export default (theme: Theme) => ({
             modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
 
             backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
+            backdropStrong: ColorsStatic.backdropStrong,
             shimmerBackground: ColorsStatic.gray100,
             shimmerOverlay: ColorsStatic.shimmerOverlayDark,
             InfluencerStatCard: ColorsStatic.secondary,
@@ -282,6 +284,7 @@ export default (theme: Theme) => ({
             modalBackground: ColorsStatic.white, // Modal or overlay background
 
             backdrop: ColorsStatic.backdrop, // Backdrop color for modals
+            backdropStrong: ColorsStatic.backdropStrong,
             shimmerBackground: ColorsStatic.gray200,
             shimmerOverlay: ColorsStatic.shimmerOverlayLight,
             InfluencerStatCard: ColorsStatic.white,
