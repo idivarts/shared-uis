@@ -53,6 +53,10 @@ export const ColorsStatic = {
     surface: "#EEF4FB",
     planBadgeProBg: "rgba(236, 214, 148, 0.16)",
     planBadgeEnterpriseBg: "rgba(83, 139, 166, 0.16)",
+    budgetCardBg: "rgba(5, 68, 99, 0.08)",
+    budgetCardBorder: "rgba(5, 68, 99, 0.3)",
+    reachCardBg: "rgba(157, 213, 134, 0.2)",
+    reachCardBorder: "rgba(157, 213, 134, 0.4)",
 
     // Landing / form (light-oriented; use via Colors(theme))
     formLabel: "rgb(108, 122, 137)",
