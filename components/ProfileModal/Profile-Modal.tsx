@@ -303,22 +303,32 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                             <View style={[styles.header]}>
                                 <View style={styles.profileInfo}>
                                     <View style={localStyles.profileInfoInner}>
-                                        <View style={localStyles.nameRow}>
-                                            <Text
-                                                style={[
-                                                    styles.name,
+                                        <View style={localStyles.nameAndQualityBlock}>
+                                            <View style={localStyles.nameRow}>
+                                                <Text
+                                                    style={[
+                                                        styles.name,
 
-                                                ]}
-                                                numberOfLines={isTwoColumn ? 1 : 2}
-                                            >
-                                                {influencer.name}
-                                            </Text>
-                                            {influencer.isKYCDone && (
-                                                <MaterialIcons
-                                                    name="verified"
-                                                    size={24}
-                                                    color={Colors(theme).primary}
-                                                />
+                                                    ]}
+                                                    numberOfLines={isTwoColumn ? 1 : 2}
+                                                >
+                                                    {influencer.name}
+                                                </Text>
+                                                {influencer.isKYCDone && (
+                                                    <MaterialIcons
+                                                        name="verified"
+                                                        size={24}
+                                                        color={Colors(theme).primary}
+                                                    />
+                                                )}
+                                            </View>
+                                            {showQualityChip && (
+                                                <View style={[styles.row, localStyles.qualityRow]}>
+                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
+                                                    <Text style={[styles.subTextHeading, localStyles.qualityValueMargin]}>
+                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
+                                                    </Text>
+                                                </View>
                                             )}
                                         </View>
                                         {actionButtonNode ? (
@@ -391,20 +401,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                     />
                                                     <Text style={styles.subTextHeading}>
                                                         Gender: {trendlyGender}
-                                                    </Text>
-                                                </View>
-                                            </>
-                                        )}
-                                        {showQualityChip && (
-                                            <>
-                                                <Text style={styles.subTextHeading}> • </Text>
-                                                <View style={[styles.row, localStyles.qualityRow]}>
-                                                    <Text style={[styles.subTextHeading, localStyles.qualityLabelMargin]}>
-                                                        Quality:
-                                                    </Text>
-                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
-                                                    <Text style={[styles.subTextHeading, localStyles.qualityValueMargin]}>
-                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
                                                     </Text>
                                                 </View>
                                             </>
@@ -827,6 +823,12 @@ const createLocalStyles = (
             marginBottom: 16,
             minWidth: 0,
         },
+        nameAndQualityBlock: {
+            flexDirection: "column" as const,
+            alignItems: "flex-start",
+            flexShrink: isTwoColumn ? 1 : 0,
+            minWidth: isTwoColumn ? 0 : undefined,
+        },
         nameRow: {
             flexDirection: "row",
             alignItems: "center",
@@ -847,7 +849,10 @@ const createLocalStyles = (
             alignItems: "center" as const,
             marginBottom: 8,
         },
-        qualityRow: { alignItems: "center" as const },
+        qualityRow: {
+            alignItems: "center" as const,
+            marginTop: 4,
+        },
         qualityLabelMargin: { marginRight: 6 },
         qualityValueMargin: { marginLeft: 4 },
         htmlBaseStyle: {

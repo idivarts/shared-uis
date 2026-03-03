@@ -7,6 +7,7 @@ import {
     StyleSheet,
     View,
 } from "react-native";
+import { Provider, useTheme as usePaperTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import Colors from "@/shared-uis/constants/Colors";
 
@@ -39,6 +40,8 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
         onClose();
     };
 
+    const paperTheme = usePaperTheme();
+
     return (
         <Modal
             visible={isVisible}
@@ -46,24 +49,26 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
             animationType="fade"
             onRequestClose={handleClose}
         >
-            <View style={styles.bottomSheetContainer}>
-                <BottomSheet
-                    ref={sheetRef}
-                    index={0}
-                    snapPoints={snapPoints}
-                    enablePanDownToClose
-                    backdropComponent={() => {
-                        return <Pressable style={styles.overlay} onPress={handleClose} />;
-                    }}
-                    onClose={handleClose}
-                    style={styles.bottomSheet}
-                >
-                    <BottomSheetScrollView>
-                        {children}
-                    </BottomSheetScrollView>
-                </BottomSheet>
-                <Toast />
-            </View>
+            <Provider theme={paperTheme}>
+                <View style={styles.bottomSheetContainer}>
+                    <BottomSheet
+                        ref={sheetRef}
+                        index={0}
+                        snapPoints={snapPoints}
+                        enablePanDownToClose
+                        backdropComponent={() => {
+                            return <Pressable style={styles.overlay} onPress={handleClose} />;
+                        }}
+                        onClose={handleClose}
+                        style={styles.bottomSheet}
+                    >
+                        <BottomSheetScrollView>
+                            {children}
+                        </BottomSheetScrollView>
+                    </BottomSheet>
+                    <Toast />
+                </View>
+            </Provider>
         </Modal>
     );
 };
