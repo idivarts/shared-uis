@@ -303,22 +303,32 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                             <View style={[styles.header]}>
                                 <View style={styles.profileInfo}>
                                     <View style={localStyles.profileInfoInner}>
-                                        <View style={localStyles.nameRow}>
-                                            <Text
-                                                style={[
-                                                    styles.name,
+                                        <View style={localStyles.nameAndQualityBlock}>
+                                            <View style={localStyles.nameRow}>
+                                                <Text
+                                                    style={[
+                                                        styles.name,
 
-                                                ]}
-                                                numberOfLines={isTwoColumn ? 1 : 2}
-                                            >
-                                                {influencer.name}
-                                            </Text>
-                                            {influencer.isKYCDone && (
-                                                <MaterialIcons
-                                                    name="verified"
-                                                    size={24}
-                                                    color={Colors(theme).primary}
-                                                />
+                                                    ]}
+                                                    numberOfLines={isTwoColumn ? 1 : 2}
+                                                >
+                                                    {influencer.name}
+                                                </Text>
+                                                {influencer.isKYCDone && (
+                                                    <MaterialIcons
+                                                        name="verified"
+                                                        size={24}
+                                                        color={Colors(theme).primary}
+                                                    />
+                                                )}
+                                            </View>
+                                            {showQualityChip && (
+                                                <View style={[styles.row, localStyles.qualityRow]}>
+                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
+                                                    <Text style={[styles.subTextHeading, localStyles.qualityValueMargin]}>
+                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
+                                                    </Text>
+                                                </View>
                                             )}
                                         </View>
                                         {actionButtonNode ? (
@@ -328,66 +338,60 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         ) : null}
                                     </View>
 
-                                    <Pressable
-                                        style={styles.row}
-                                        onPress={() => {
-                                            if (isOnFreePlan) {
-                                                upgradeNow();
-                                                return;
-                                            }
-                                            if (lockProfile) {
-                                                closeModal?.();
-                                                openModal({
-                                                    title: "Social Unavailable",
-                                                    description:
-                                                        "You can only get the influencers socials if they apply on your collaboration",
-                                                    confirmAction: () => {
-                                                        router.push("/collaborations");
-                                                    },
-                                                    confirmText: "Post Collaboration",
-                                                });
-                                                return;
-                                            }
-
-                                            Linking.openURL(
-                                                primarySocial?.isInstagram
-                                                    ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
-                                                    : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
-                                            );
-                                            Console.log(
-                                                primarySocial?.isInstagram
-                                                    ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
-                                                    : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
-                                            );
-                                        }}
-                                    >
-                                        <FontAwesomeIcon
-                                            icon={
-                                                primarySocial?.isInstagram
-                                                    ? faInstagram
-                                                    : faFacebook
-                                            }
-                                            size={18}
-                                            color={Colors(theme).primary}
-                                            style={styles.icon}
-                                        />
-                                        <Text style={styles.subTextHeading}>
-                                            {primarySocial?.isInstagram
-                                                ? "@" +
-                                                (isOnFreePlan || lockProfile
-                                                    ? maskHandle(
-                                                        primarySocial?.instaProfile?.username || ""
-                                                    )
-                                                    : primarySocial?.instaProfile?.username)
-                                                : isOnFreePlan || lockProfile
-                                                    ? maskHandle(primarySocial?.fbProfile?.name || "")
-                                                    : primarySocial?.fbProfile?.name}
-                                        </Text>
-                                    </Pressable>
-
-                                    {showTrendlyChips ? (
-                                        <View style={localStyles.chipsMarginTop}>
-                                            {showGenderChip ? (
+                                    <View style={[styles.row, localStyles.profileDetailsRow]}>
+                                        <Pressable
+                                            style={styles.row}
+                                            onPress={() => {
+                                                if (isOnFreePlan) {
+                                                    upgradeNow();
+                                                    return;
+                                                }
+                                                if (lockProfile) {
+                                                    closeModal?.();
+                                                    openModal({
+                                                        title: "Social Unavailable",
+                                                        description:
+                                                            "You can only get the influencers socials if they apply on your collaboration",
+                                                        confirmAction: () => {
+                                                            router.push("/collaborations");
+                                                        },
+                                                        confirmText: "Post Collaboration",
+                                                    });
+                                                    return;
+                                                }
+                                                Linking.openURL(
+                                                    primarySocial?.isInstagram
+                                                        ? `https://www.instagram.com/${primarySocial?.instaProfile?.username}`
+                                                        : `https://www.facebook.com/${primarySocial?.fbProfile?.id}`
+                                                );
+                                            }}
+                                        >
+                                            <FontAwesomeIcon
+                                                icon={
+                                                    primarySocial?.isInstagram
+                                                        ? faInstagram
+                                                        : faFacebook
+                                                }
+                                                size={16}
+                                                color={Colors(theme).primary}
+                                                style={styles.icon}
+                                            />
+                                            <Text style={styles.subTextHeading}>
+                                                {primarySocial?.isInstagram
+                                                    ? "@" +
+                                                    (isOnFreePlan || lockProfile
+                                                        ? maskHandle(
+                                                            primarySocial?.instaProfile?.username || ""
+                                                        )
+                                                        : primarySocial?.instaProfile?.username)
+                                                    : isOnFreePlan || lockProfile
+                                                        ? maskHandle(primarySocial?.fbProfile?.name || "")
+                                                        : primarySocial?.fbProfile?.name}
+                                            </Text>
+                                        </Pressable>
+                                        {showGenderChip && (
+                                            <>
+                                                <Text style={styles.subTextHeading}> • </Text>
                                                 <View style={styles.row}>
                                                     <FontAwesomeIcon
                                                         icon={faUser}
@@ -399,19 +403,11 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                         Gender: {trendlyGender}
                                                     </Text>
                                                 </View>
-                                            ) : null}
-                                            {showQualityChip ? (
-                                                <View style={[styles.row, localStyles.qualityRow]}>
-                                                    <Text style={[styles.subTextHeading, localStyles.qualityLabelMargin]}>
-                                                        Quality:
-                                                    </Text>
-                                                    <Stars rating={qualityScoreToStars(trendlyQuality!)} size={16} />
-                                                    <Text style={[styles.subTextHeading, localStyles.qualityValueMargin]}>
-                                                        {qualityScoreToStars(trendlyQuality!).toFixed(1)}
-                                                    </Text>
-                                                </View>
-                                            ) : null}
-                                            {showVerifiedChip ? (
+                                            </>
+                                        )}
+                                        {showVerifiedChip && (
+                                            <>
+                                                <Text style={styles.subTextHeading}> • </Text>
                                                 <View style={styles.row}>
                                                     <FontAwesomeIcon
                                                         icon={faCheck}
@@ -423,9 +419,25 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                         Verified
                                                     </Text>
                                                 </View>
-                                            ) : null}
-                                        </View>
-                                    ) : null}
+                                            </>
+                                        )}
+                                        {influencer?.location && (
+                                            <>
+                                                <Text style={styles.subTextHeading}> • </Text>
+                                                <View style={styles.row}>
+                                                    <FontAwesomeIcon
+                                                        icon={faLocation}
+                                                        size={16}
+                                                        color={Colors(theme).primary}
+                                                        style={styles.icon}
+                                                    />
+                                                    <Text style={styles.subTextHeading}>
+                                                        {influencer.location}
+                                                    </Text>
+                                                </View>
+                                            </>
+                                        )}
+                                    </View>
 
                                     {/* Email */}
                                     {influencer?.email && (
@@ -530,19 +542,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             />
                                             <Text style={styles.subTextHeading}>
                                                 {influencer?.profile?.timeCommitment}
-                                            </Text>
-                                        </View>
-                                    )}
-                                    {(influencer?.location) && (
-                                        <View style={styles.row}>
-                                            <FontAwesomeIcon
-                                                icon={faLocation}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            <Text style={styles.subTextHeading}>
-                                                {influencer?.location}
                                             </Text>
                                         </View>
                                     )}
@@ -824,6 +823,12 @@ const createLocalStyles = (
             marginBottom: 16,
             minWidth: 0,
         },
+        nameAndQualityBlock: {
+            flexDirection: "column" as const,
+            alignItems: "flex-start",
+            flexShrink: isTwoColumn ? 1 : 0,
+            minWidth: isTwoColumn ? 0 : undefined,
+        },
         nameRow: {
             flexDirection: "row",
             alignItems: "center",
@@ -838,7 +843,16 @@ const createLocalStyles = (
             flexShrink: 0,
         },
         chipsMarginTop: { marginTop: 8 },
-        qualityRow: { alignItems: "center" as const },
+        profileDetailsRow: {
+            flexDirection: "row" as const,
+            flexWrap: "wrap" as const,
+            alignItems: "center" as const,
+            marginBottom: 8,
+        },
+        qualityRow: {
+            alignItems: "center" as const,
+            marginTop: 4,
+        },
         qualityLabelMargin: { marginRight: 6 },
         qualityValueMargin: { marginLeft: 4 },
         htmlBaseStyle: {

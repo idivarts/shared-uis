@@ -23,6 +23,7 @@ export const ColorsStatic = {
     transparent: "transparent",
 
     backdrop: "rgba(0, 0, 0, 0.5)",
+    backdropStrong: "rgba(0, 0, 0, 0.78)",
     backdropDark: "rgba(255, 255, 255, 0.5)",
     success: "rgb(2, 202, 48)",
     successForeground: "rgb(40, 167, 69)",
@@ -52,6 +53,10 @@ export const ColorsStatic = {
     surface: "#EEF4FB",
     planBadgeProBg: "rgba(236, 214, 148, 0.16)",
     planBadgeEnterpriseBg: "rgba(83, 139, 166, 0.16)",
+    budgetCardBg: "rgba(5, 68, 99, 0.08)",
+    budgetCardBorder: "rgba(5, 68, 99, 0.3)",
+    reachCardBg: "rgba(157, 213, 134, 0.2)",
+    reachCardBorder: "rgba(157, 213, 134, 0.4)",
 
     // Landing / form (light-oriented; use via Colors(theme))
     formLabel: "rgb(108, 122, 137)",
@@ -151,6 +156,17 @@ export const ColorsStatic = {
     drawerBannerButtonBg: "rgba(255,255,255,0.4)",
     drawerBannerButtonPressed: "rgba(255,255,255,0.3)",
 
+    // Drawer sidebar (always dark theme)
+    drawerBackground: "rgb(26, 59, 92)",
+    drawerHeaderBg: "rgb(42, 72, 104)",
+    drawerCardBg: "rgb(33, 56, 80)",
+    drawerText: "rgb(229, 236, 245)",
+    drawerTextMuted: "rgb(160, 175, 195)",
+    drawerProgressTrack: "rgb(70, 85, 105)",
+    drawerProgressFill: "rgb(232, 185, 49)",
+    drawerInvitesIcon: "rgb(138, 99, 210)",
+    drawerBorder: "rgba(255, 255, 255, 0.08)",
+
     // Overlay / panel shadow
     panelShadow: "rgba(0, 0, 0, 0.18)",
 
@@ -225,6 +241,7 @@ export default (theme: Theme) => ({
             modalBackground: ColorsStatic.eerieBlack, // Modal or overlay background
 
             backdrop: ColorsStatic.backdropDark, // Backdrop color for modals
+            backdropStrong: ColorsStatic.backdropStrong,
             shimmerBackground: ColorsStatic.gray100,
             shimmerOverlay: ColorsStatic.shimmerOverlayDark,
             InfluencerStatCard: ColorsStatic.secondary,
@@ -242,6 +259,15 @@ export default (theme: Theme) => ({
             secondarySurface: "rgba(255, 255, 255, 0.16)",
             secondaryBorder: "rgba(255, 255, 255, 0.28)",
             secondaryText: ColorsStatic.white,
+            drawerBackground: ColorsStatic.drawerBackground,
+            drawerHeaderBg: ColorsStatic.drawerHeaderBg,
+            drawerCardBg: ColorsStatic.drawerCardBg,
+            drawerText: ColorsStatic.drawerText,
+            drawerTextMuted: ColorsStatic.drawerTextMuted,
+            drawerProgressTrack: ColorsStatic.drawerProgressTrack,
+            drawerProgressFill: ColorsStatic.drawerProgressFill,
+            drawerInvitesIcon: ColorsStatic.drawerInvitesIcon,
+            drawerBorder: ColorsStatic.drawerBorder,
         }
         : {
             primary: ColorsStatic.primary, // Main accent color
@@ -262,6 +288,7 @@ export default (theme: Theme) => ({
             modalBackground: ColorsStatic.white, // Modal or overlay background
 
             backdrop: ColorsStatic.backdrop, // Backdrop color for modals
+            backdropStrong: ColorsStatic.backdropStrong,
             shimmerBackground: ColorsStatic.gray200,
             shimmerOverlay: ColorsStatic.shimmerOverlayLight,
             InfluencerStatCard: ColorsStatic.white,
@@ -279,5 +306,14 @@ export default (theme: Theme) => ({
             secondarySurface: "rgba(15, 23, 42, 0.16)",
             secondaryBorder: "rgba(15, 23, 42, 0.28)",
             secondaryText: ColorsStatic.secondaryTextLight,
+            drawerBackground: ColorsStatic.drawerBackground,
+            drawerHeaderBg: ColorsStatic.drawerHeaderBg,
+            drawerCardBg: ColorsStatic.drawerCardBg,
+            drawerText: ColorsStatic.drawerText,
+            drawerTextMuted: ColorsStatic.drawerTextMuted,
+            drawerProgressTrack: ColorsStatic.drawerProgressTrack,
+            drawerProgressFill: ColorsStatic.drawerProgressFill,
+            drawerInvitesIcon: ColorsStatic.drawerInvitesIcon,
+            drawerBorder: ColorsStatic.drawerBorder,
         }),
 });

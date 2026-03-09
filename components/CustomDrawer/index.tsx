@@ -19,7 +19,7 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
     const theme = useTheme()
     const styles = useStyles(theme)
 
-    const DRAWER_WIDTH = xl ? 320 : screenWidth * 0.75;
+    const DRAWER_WIDTH = xl ? 280 : screenWidth * 0.75;
 
     const [drawerVisible, setDrawerVisible] = useState(xl);
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
@@ -52,7 +52,7 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
                     <View style={styles.overlay} />
                 </TouchableWithoutFeedback>
             )}
-            <Animated.View style={[styles.drawer, { width: DRAWER_WIDTH, transform: [{ translateX: slideAnim }], borderRightWidth: 1, borderRightColor: Colors(theme).border }]}>
+            <Animated.View style={[styles.drawer, { width: DRAWER_WIDTH, transform: [{ translateX: slideAnim }] }]}>
                 {DrawerContent}
             </Animated.View>
             {/* </View> */}
@@ -72,8 +72,9 @@ const useStyles = (theme: Parameters<typeof Colors>[0]) => {
             left: 0,
             top: 0,
             bottom: 0,
-            // width: DRAWER_WIDTH,
-            backgroundColor: colors.card,
+            borderRightWidth: 1,
+            borderRightColor: colors.drawerBorder,
+            backgroundColor: colors.drawerBackground,
             zIndex: 9999,
         },
     });
