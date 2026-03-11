@@ -23,7 +23,7 @@ interface ImageComponentProps extends Omit<ImageProps, "source"> {
     size?: "small" | "medium" | "large" | "extraLarge";
     url: string | ImageSourcePropType;
     altText: string;
-    placeholder?: string;
+    placeholder?: string | ImageSourcePropType;
     initials?: string;
     initialsSize?: number;
 }
