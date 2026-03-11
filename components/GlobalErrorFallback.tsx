@@ -1,12 +1,11 @@
 import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import Colors from "@/shared-uis/constants/Colors";
-import { useTheme } from "@react-navigation/native";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
     DarkTheme,
     DefaultTheme,
-    ThemeProvider,
+    ThemeProvider, useTheme
 } from "@react-navigation/native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import type { ErrorBoundaryProps } from "expo-router";
 import { Link } from "expo-router";
 import React, { useMemo } from "react";
@@ -22,7 +21,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const ERROR_CODE = "500";
-const SUPPORT_EMAIL = "support@trendly.com";
+const SUPPORT_EMAIL = "support@trendly.now";
 
 /**
  * Renders the actual error UI. Must be used inside ThemeProvider so that
@@ -44,7 +43,7 @@ function GlobalErrorFallbackContent({
     );
 
     const handleContactSupport = () => {
-        Linking.openURL(`mailto:${SUPPORT_EMAIL}`).catch(() => {});
+        Linking.openURL(`mailto:${SUPPORT_EMAIL}`).catch(() => { });
     };
 
     return (
@@ -134,7 +133,7 @@ function GlobalErrorFallbackContent({
                             </Text>
                         </Pressable>
                         <Pressable
-                            onPress={() => {}}
+                            onPress={() => { }}
                             style={({ pressed }) => [
                                 styles.supportLink,
                                 pressed && styles.supportLinkPressed,
