@@ -338,7 +338,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         ) : null}
                                     </View>
 
-                                    <View style={[styles.row, localStyles.profileDetailsRow]}>
+                                    <View style={localStyles.profileDetailsRow}>
                                         <Pressable
                                             style={styles.row}
                                             onPress={() => {
@@ -391,7 +391,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         </Pressable>
                                         {showGenderChip && (
                                             <>
-                                                <Text style={styles.subTextHeading}> • </Text>
                                                 <View style={styles.row}>
                                                     <FontAwesomeIcon
                                                         icon={faUser}
@@ -407,7 +406,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         )}
                                         {showVerifiedChip && (
                                             <>
-                                                <Text style={styles.subTextHeading}> • </Text>
                                                 <View style={styles.row}>
                                                     <FontAwesomeIcon
                                                         icon={faCheck}
@@ -423,7 +421,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                         )}
                                         {influencer?.location && (
                                             <>
-                                                <Text style={styles.subTextHeading}> • </Text>
                                                 <View style={styles.row}>
                                                     <FontAwesomeIcon
                                                         icon={faLocation}
@@ -844,9 +841,9 @@ const createLocalStyles = (
         },
         chipsMarginTop: { marginTop: 8 },
         profileDetailsRow: {
-            flexDirection: "row" as const,
-            flexWrap: "wrap" as const,
-            alignItems: "center" as const,
+            flexDirection: "column" as const,
+            alignItems: "flex-start",
+            gap: 10,
             marginBottom: 8,
         },
         qualityRow: {
