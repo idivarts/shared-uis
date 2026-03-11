@@ -23,7 +23,7 @@ interface ImageComponentProps extends Omit<ImageProps, "source"> {
     size?: "small" | "medium" | "large" | "extraLarge";
     url: string | ImageSourcePropType;
     altText: string;
-    placeholder?: string | ImageSourcePropType;
+    placeholder?: any;
     initials?: string;
     initialsSize?: number;
 }
@@ -68,7 +68,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
         (async () => {
             setLoadFailed(false);
             if (!url) {
-                setSource(imageUrl(placeholder));
+                setSource(imageUrl(placeholder as string));
                 return;
             }
 
@@ -109,7 +109,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
                     containerStyle,
                     style,
                     {
-                        backgroundColor: Colors(theme).primary, 
+                        backgroundColor: Colors(theme).primary,
                         justifyContent: "center",
                         alignItems: "center",
                     },
