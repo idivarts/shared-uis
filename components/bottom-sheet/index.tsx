@@ -1,13 +1,13 @@
+import Colors from "@/shared-uis/constants/Colors";
 import BottomSheet, { BottomSheetProps, BottomSheetView } from "@gorhom/bottom-sheet";
 import { Theme, useTheme } from "@react-navigation/native";
-import React, { useEffect } from "react";
+import React from "react";
 import {
     Modal,
     Pressable,
     StyleSheet,
     View,
 } from "react-native";
-import Colors from "@/shared-uis/constants/Colors";
 
 interface BottomSheetContainerProps extends BottomSheetProps {
     isVisible: boolean;
@@ -28,14 +28,14 @@ const BottomSheetContainer: React.FC<BottomSheetContainerProps> = ({
     const theme = useTheme();
     const styles = stylesFn(theme);
 
-    // Force snap to initial index after mount so sheet opens to the right height (fixes % snap points when mounted inside Modal)
-    useEffect(() => {
-        if (!isVisible || index < 0) return;
-        const id = setTimeout(() => {
-            sheetRef.current?.snapToIndex(index);
-        }, 50);
-        return () => clearTimeout(id);
-    }, [isVisible, index]);
+    // // Force snap to initial index after mount so sheet opens to the right height (fixes % snap points when mounted inside Modal)
+    // useEffect(() => {
+    //     if (!isVisible || index < 0) return;
+    //     const id = setTimeout(() => {
+    //         sheetRef.current?.snapToIndex(index);
+    //     }, 50);
+    //     return () => clearTimeout(id);
+    // }, [isVisible, index]);
 
     const handleClose = () => {
         if (sheetRef.current) {
