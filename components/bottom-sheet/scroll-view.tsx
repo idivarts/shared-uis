@@ -1,9 +1,8 @@
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Theme, useTheme } from "@react-navigation/native";
 import React, { PropsWithChildren } from "react";
 import {
     Modal,
-    Pressable,
     StyleSheet,
     View,
 } from "react-native";
@@ -41,6 +40,18 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
     };
 
     const paperTheme = usePaperTheme();
+    const renderBackdrop = React.useCallback(
+        (props: any) => (
+            <BottomSheetBackdrop
+                {...props}
+                appearsOnIndex={0}
+                disappearsOnIndex={-1}
+                pressBehavior="close"
+                style={styles.overlay}
+            />
+        ),
+        [styles.overlay]
+    );
 
     return (
         <Modal
@@ -56,9 +67,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                         index={0}
                         snapPoints={snapPoints}
                         enablePanDownToClose
-                        backdropComponent={() => {
-                            return <Pressable style={styles.overlay} onPress={handleClose} />;
-                        }}
+                        backdropComponent={renderBackdrop}
                         onClose={handleClose}
                         style={styles.bottomSheet}
                     >
