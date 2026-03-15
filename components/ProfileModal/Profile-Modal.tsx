@@ -340,7 +340,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
                                     <View style={localStyles.profileDetailsRow}>
                                         <Pressable
-                                            style={styles.row}
+                                            style={[styles.row, localStyles.profileDetailItem]}
                                             onPress={() => {
                                                 if (isOnFreePlan) {
                                                     upgradeNow();
@@ -390,158 +390,147 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             </Text>
                                         </Pressable>
                                         {showGenderChip && (
-                                            <>
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faUser}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Gender: {trendlyGender}
-                                                    </Text>
-                                                </View>
-                                            </>
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faUser}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                <Text style={styles.subTextHeading}>
+                                                    Gender: {trendlyGender}
+                                                </Text>
+                                            </View>
                                         )}
                                         {showVerifiedChip && (
-                                            <>
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Verified
-                                                    </Text>
-                                                </View>
-                                            </>
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faCheck}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                <Text style={styles.subTextHeading}>
+                                                    Verified
+                                                </Text>
+                                            </View>
                                         )}
                                         {influencer?.location && (
-                                            <>
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faLocation}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        {influencer.location}
-                                                    </Text>
-                                                </View>
-                                            </>
-                                        )}
-                                    </View>
-
-                                    {/* Email */}
-                                    {influencer?.email && (
-                                        <Pressable
-                                            style={styles.row}
-                                            onPress={() => {
-                                                if (isEmailMasked || isOnFreePlan || lockProfile) {
-                                                    if (closeModal) {
-                                                        closeModal();
-                                                        openModal({
-                                                            title: "Email Unavailable",
-                                                            description:
-                                                                "You can only get the influencers email if they apply on your collaboration",
-                                                            confirmAction: () => {
-                                                                router.push("/collaborations");
-                                                            },
-                                                            confirmText: "Post Collaboration",
-                                                        });
-                                                    }
-                                                } else
-                                                    Linking.openURL(`mailto:${influencer?.email}`);
-                                            }}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faEnvelope}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            {isEmailMasked || isOnFreePlan || lockProfile ? (
-                                                <>
-                                                    <Text style={styles.subTextHeading}>
-                                                        {maskEmail(influencer?.email)}
-                                                    </Text>
-                                                </>
-                                            ) : (
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faLocation}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
                                                 <Text style={styles.subTextHeading}>
-                                                    {influencer?.email}
+                                                    {influencer.location}
                                                 </Text>
-                                            )}
-                                        </Pressable>
-                                    )}
-
-                                    {/* Phone */}
-                                    {influencer?.phoneNumber && (
-                                        <Pressable
-                                            style={styles.row}
-                                            onPress={() => {
-                                                if (isPhoneMasked || isOnFreePlan || lockProfile) {
-                                                    if (closeModal) {
-                                                        closeModal();
-                                                        if (isBrandsApp)
+                                            </View>
+                                        )}
+                                        {/* Email */}
+                                        {influencer?.email && (
+                                            <Pressable
+                                                style={[styles.row, localStyles.profileDetailItem]}
+                                                onPress={() => {
+                                                    if (isEmailMasked || isOnFreePlan || lockProfile) {
+                                                        if (closeModal) {
+                                                            closeModal();
                                                             openModal({
-                                                                title: "Phone Access Unavailable",
+                                                                title: "Email Unavailable",
                                                                 description:
-                                                                    "You can only get the influencers phone number if they apply on your collaboration",
+                                                                    "You can only get the influencers email if they apply on your collaboration",
                                                                 confirmAction: () => {
                                                                     router.push("/collaborations");
                                                                 },
                                                                 confirmText: "Post Collaboration",
                                                             });
-                                                        else
-                                                            openModal({
-                                                                title: "Phone Access Unavailable",
-                                                                description:
-                                                                    "You can only get the influencers phone number if they accept your invitation to connect",
-                                                                confirmAction: () => { },
-                                                                confirmText: "Understood",
-                                                            });
-                                                    }
-                                                } else
-                                                    Linking.openURL(`tel:${influencer?.phoneNumber}`);
-                                            }}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faPhone}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            {isPhoneMasked || isOnFreePlan || lockProfile ? (
-                                                <>
+                                                        }
+                                                    } else
+                                                        Linking.openURL(`mailto:${influencer?.email}`);
+                                                }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faEnvelope}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                {isEmailMasked || isOnFreePlan || lockProfile ? (
+                                                    <Text style={styles.subTextHeading}>
+                                                        {maskEmail(influencer?.email)}
+                                                    </Text>
+                                                ) : (
+                                                    <Text style={styles.subTextHeading}>
+                                                        {influencer?.email}
+                                                    </Text>
+                                                )}
+                                            </Pressable>
+                                        )}
+
+                                        {/* Phone */}
+                                        {influencer?.phoneNumber && (
+                                            <Pressable
+                                                style={[styles.row, localStyles.profileDetailItem]}
+                                                onPress={() => {
+                                                    if (isPhoneMasked || isOnFreePlan || lockProfile) {
+                                                        if (closeModal) {
+                                                            closeModal();
+                                                            if (isBrandsApp)
+                                                                openModal({
+                                                                    title: "Phone Access Unavailable",
+                                                                    description:
+                                                                        "You can only get the influencers phone number if they apply on your collaboration",
+                                                                    confirmAction: () => {
+                                                                        router.push("/collaborations");
+                                                                    },
+                                                                    confirmText: "Post Collaboration",
+                                                                });
+                                                            else
+                                                                openModal({
+                                                                    title: "Phone Access Unavailable",
+                                                                    description:
+                                                                        "You can only get the influencers phone number if they accept your invitation to connect",
+                                                                    confirmAction: () => { },
+                                                                    confirmText: "Understood",
+                                                                });
+                                                        }
+                                                    } else
+                                                        Linking.openURL(`tel:${influencer?.phoneNumber}`);
+                                                }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faPhone}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                {isPhoneMasked || isOnFreePlan || lockProfile ? (
                                                     <Text style={styles.subTextHeading}>
                                                         {maskPhone(influencer?.phoneNumber)}
                                                     </Text>
-                                                </>
-                                            ) : (
-                                                <Text style={styles.subTextHeading}>
-                                                    {influencer?.phoneNumber}
-                                                </Text>
-                                            )}
-                                        </Pressable>
-                                    )}
+                                                ) : (
+                                                    <Text style={styles.subTextHeading}>
+                                                        {influencer?.phoneNumber}
+                                                    </Text>
+                                                )}
+                                            </Pressable>
+                                        )}
 
-                                    {influencer?.profile?.timeCommitment && (
-                                        <View style={styles.row}>
-                                            <FontAwesomeIcon
-                                                icon={faClock}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            <Text style={styles.subTextHeading}>
-                                                {influencer?.profile?.timeCommitment}
-                                            </Text>
-                                        </View>
-                                    )}
+                                        {influencer?.profile?.timeCommitment && (
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faClock}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                <Text style={styles.subTextHeading}>
+                                                    {influencer?.profile?.timeCommitment}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </View>
                                 </View>
                             </View>
 
@@ -845,6 +834,9 @@ const createLocalStyles = (
             alignItems: "flex-start",
             gap: 10,
             marginBottom: 8,
+        },
+        profileDetailItem: {
+            marginBottom: 0,
         },
         qualityRow: {
             alignItems: "center" as const,
