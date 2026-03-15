@@ -1,9 +1,9 @@
-import { SOCIAL_ACCESS_RESTRICTED } from "@/shared-constants/app";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
@@ -16,7 +16,6 @@ import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { collection, doc, getDoc } from "firebase/firestore";
-import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useRef, useState } from "react";
 import {
     Pressable,
@@ -128,24 +127,23 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     useEffect(() => {
         let mImg = [];
         if (!props.customAttachments) {
-            mImg =
-                props.influencer.profile?.attachments?.map((attachment) =>
-                    processRawAttachment(attachment)
-                ) || [];
-            if (
-                socials &&
-                socials.socialScreenShots &&
-                socials.socialScreenShots.length > 0
-            ) {
-                const sdata = socials.socialScreenShots?.map((s) => ({
-                    type: "image",
-                    url:
-                        props.isOnFreePlan || props.lockProfile
-                            ? SOCIAL_ACCESS_RESTRICTED
-                            : s,
-                }));
-                mImg.push(...sdata);
-            }
+            mImg = props.influencer.profile?.attachments?.map((attachment) =>
+                processRawAttachment(attachment)
+            ) || [];
+            // if (
+            //     socials &&
+            //     socials.socialScreenShots &&
+            //     socials.socialScreenShots.length > 0
+            // ) {
+            //     const sdata = socials.socialScreenShots?.map((s) => ({
+            //         type: "image",
+            //         url:
+            //             props.isOnFreePlan || props.lockProfile
+            //                 ? SOCIAL_ACCESS_RESTRICTED
+            //                 : s,
+            //     }));
+            //     mImg.push(...sdata);
+            // }
         } else {
             mImg =
                 props.customAttachments.map((attachment) =>
