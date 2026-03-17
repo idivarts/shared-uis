@@ -11,7 +11,7 @@ import { Text } from "../theme/Themed";
 import Colors from "../../constants/Colors";
 
 export interface ContractStatusViewProps {
-    /** Contract status (1–14). Legacy 0 treated as CONTRACT_PENDING. */
+    /** Contract status (0–10). Matches Firestore. */
     status: number;
     /** Who is viewing: brand or influencer (different copy). */
     actor: ContractStatusActor;
@@ -41,11 +41,12 @@ const ContractStatusView: React.FC<ContractStatusViewProps> = ({
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors), [colors]);
 
-    const normalizedStatus = status === 0 ? ContractStatus.CONTRACT_PENDING : (status as ContractStatus);
+    const normalizedStatus =
+        status >= 0 && status <= 10 ? (status as ContractStatus) : ContractStatus.Pending;
     const label = overrideLabel ?? CONTRACT_STATUS_LABELS[normalizedStatus] ?? `Status ${status}`;
     const description = overrideDescription ?? getContractStatusDescription(normalizedStatus, actor);
-    const isPaymentFailed = normalizedStatus === ContractStatus.PAYMENT_FAILED;
-    const isReleaseScheduled = normalizedStatus === ContractStatus.RELEASE_SCHEDULED;
+    const isPaymentFailed = normalizedStatus === ContractStatus.PaymentFailed;
+    const isReleaseScheduled = normalizedStatus === ContractStatus.PostScheduled;
 
     const releaseDateText =
         isReleaseScheduled && scheduledReleaseAt
