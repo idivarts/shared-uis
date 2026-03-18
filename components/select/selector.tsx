@@ -2,9 +2,10 @@ import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome';
 import { Theme } from '@react-navigation/native';
 import React from 'react';
-import { Platform, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
 
 import Colors from '../../constants/Colors';
+import useBreakpoints from '@/shared-libs/utils/use-breakpoints';
 
 interface OptionType {
     icon?: IconProp;
@@ -35,7 +36,8 @@ type SelectorProps = SelectorPropsSingle | SelectorPropsMulti;
 
 export const Selector: React.FC<SelectorProps> = (props) => {
     const { options, theme, variant } = props;
-    const effectiveVariant = variant || (Platform.OS === 'web' ? 'horizontal' : 'vertical');
+    const { xl } = useBreakpoints();
+    const effectiveVariant = variant || (xl ? 'horizontal' : 'vertical');
     const styles = stylesFn(theme, effectiveVariant);
 
     const isSelected = (value: string) =>

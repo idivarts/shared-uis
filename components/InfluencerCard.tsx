@@ -50,6 +50,8 @@ interface InfluencerCardPropsType {
     isOnFreePlan?: boolean;
     lockProfile?: boolean;
     fullHeight?: boolean;
+    /** When true, card uses full container width instead of MAX_WIDTH_WEB (e.g. invitation carousel). */
+    fullWidth?: boolean;
 }
 
 const InfluencerCard = (props: InfluencerCardPropsType) => {
@@ -79,8 +81,9 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     elevation: 5,
                 },
                 cardInner: {
-                    maxWidth: MAX_WIDTH_WEB,
-                    alignSelf: "center",
+                    ...(props.fullWidth
+                        ? {}
+                        : { maxWidth: MAX_WIDTH_WEB, alignSelf: "center" as const }),
                     overflow: "hidden",
                     backgroundColor: colors.background,
                 },
@@ -113,7 +116,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                 chip: { backgroundColor: colors.primary },
                 chipText: { color: colors.white },
             }),
-        [colors]
+        [colors, props.fullWidth]
     );
     const [socials, setSocials] = useState<ISocials | undefined>(undefined);
 
