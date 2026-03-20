@@ -22,13 +22,15 @@ export interface ContractActionsMessage {
 }
 
 export interface ContractActionsWithMessageProps {
-    /** Zero, one, or two buttons. When one, it takes full width. When zero, only the message box is shown. */
+    /** Zero, one, or two buttons. When one, it takes full width. When zero, only the message box (or custom content) is shown. */
     buttons:
         | []
         | [ContractActionButton]
         | [ContractActionButton, ContractActionButton];
-    /** Message box. When buttons are present, shown below them; otherwise stands alone. */
+    /** Message box. When buttons are present, shown below them; otherwise stands alone. Ignored when customMessageContent is set. */
     message: ContractActionsMessage;
+    /** When set, rendered in place of the message box (e.g. video viewer for Review Pending state). */
+    customMessageContent?: React.ReactNode;
 }
 
 /**
@@ -39,53 +41,60 @@ export interface ContractActionsWithMessageProps {
 const ContractActionsWithMessage: React.FC<ContractActionsWithMessageProps> = ({
     buttons,
     message,
+    customMessageContent,
 }) => {
     const theme = useTheme();
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors, message.variant), [colors, message.variant]);
 
-    const [first, second] = buttons;
+    const hasButtons = buttons.length > 0;
+    const firstButton = hasButtons ? buttons[0] : undefined;
+    const secondButton = buttons.length > 1 ? buttons[1] : undefined;
 
     return (
         <View style={styles.root}>
-            {buttons.length > 0 && (
+            {firstButton && (
                 <View style={styles.buttonsRow}>
                     <Button
-                        mode={first.variant}
-                        onPress={first.onPress}
-                        disabled={first.disabled}
+                        mode={firstButton.variant}
+                        onPress={firstButton.onPress}
+                        disabled={firstButton.disabled}
                         style={[styles.button, buttons.length === 1 && styles.buttonSingle]}
                         contentStyle={styles.buttonContent}
                         labelStyle={styles.buttonLabel}
-                        icon={first.icon as never}
+                        icon={firstButton.icon as never}
                     >
-                        {first.label}
+                        {firstButton.label}
                     </Button>
-                    {second ? (
+                    {secondButton ? (
                         <Button
-                            mode={second.variant}
-                            onPress={second.onPress}
-                            disabled={second.disabled}
+                            mode={secondButton.variant}
+                            onPress={secondButton.onPress}
+                            disabled={secondButton.disabled}
                             style={styles.button}
                             contentStyle={styles.buttonContent}
                             labelStyle={styles.buttonLabel}
-                            icon={second.icon as never}
+                            icon={secondButton.icon as never}
                         >
-                            {second.label}
+                            {secondButton.label}
                         </Button>
                     ) : null}
                 </View>
             )}
-            <View style={styles.messageBox}>
-                {message.icon ? (
-                    <View style={styles.messageIconWrap}>{message.icon}</View>
-                ) : (
-                    <View style={[styles.messageIconWrap, styles.messageIconDefault]} />
-                )}
-                <Text style={styles.messageText} numberOfLines={0}>
-                    {message.text}
-                </Text>
-            </View>
+            {customMessageContent != null ? (
+                <View style={styles.customContentWrap}>{customMessageContent}</View>
+            ) : (
+                <View style={styles.messageBox}>
+                    {message.icon ? (
+                        <View style={styles.messageIconWrap}>{message.icon}</View>
+                    ) : (
+                        <View style={[styles.messageIconWrap, styles.messageIconDefault]} />
+                    )}
+                    <Text style={styles.messageText} numberOfLines={0}>
+                        {message.text}
+                    </Text>
+                </View>
+            )}
         </View>
     );
 };
@@ -104,6 +113,9 @@ function createStyles(
             flexDirection: "row",
             gap: 12,
             marginBottom: 12,
+        },
+        customContentWrap: {
+            width: "100%",
         },
         button: {
             flex: 1,
