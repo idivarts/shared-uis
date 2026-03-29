@@ -256,6 +256,10 @@ export default (theme: Theme) => ({
             glassLightCompression: "rgba(255, 255, 255, 0.07)",
             glassOuterStroke: "rgba(255, 255, 255, 0.12)",
             glassAndroidSurface: "rgba(255, 255, 255, 0.14)",
+            /** Floating tab bar (glass pill) */
+            glassTabBarSurface: "rgba(30, 30, 30, 0.65)",
+            glassTabBarBorder: "rgba(255, 255, 255, 0.12)",
+            glassTabBarWrapperShadow: "rgba(0, 0, 0, 0.6)",
             secondarySurface: "rgba(255, 255, 255, 0.16)",
             secondaryBorder: "rgba(255, 255, 255, 0.28)",
             secondaryText: ColorsStatic.white,
@@ -307,6 +311,10 @@ export default (theme: Theme) => ({
             glassLightCompression: "rgba(255, 255, 255, 0.07)",
             glassOuterStroke: "rgba(255, 255, 255, 0.12)",
             glassAndroidSurface: "rgba(255, 255, 255, 0.14)",
+            /** Floating tab bar (glass pill) */
+            glassTabBarSurface: "rgba(245, 245, 248, 0.82)",
+            glassTabBarBorder: "rgba(0, 0, 0, 0.08)",
+            glassTabBarWrapperShadow: "rgba(0, 0, 0, 0.15)",
             secondarySurface: "rgba(15, 23, 42, 0.16)",
             secondaryBorder: "rgba(15, 23, 42, 0.28)",
             secondaryText: ColorsStatic.secondaryTextLight,
