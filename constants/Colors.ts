@@ -318,7 +318,7 @@ export default (theme: Theme) => ({
             secondarySurface: "rgba(15, 23, 42, 0.16)",
             secondaryBorder: "rgba(15, 23, 42, 0.28)",
             secondaryText: ColorsStatic.secondaryTextLight,
-            drawerBackground: ColorsStatic.drawerBackground,
+            drawerBackground: ColorsStatic.aliceBlue,
             drawerHeaderBg: ColorsStatic.drawerHeaderBg,
             drawerCardBg: ColorsStatic.drawerCardBg,
             drawerText: ColorsStatic.drawerText,
