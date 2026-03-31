@@ -12,14 +12,22 @@ import {
     View,
 } from "react-native";
 
-const TAB_BAR_HEIGHT = 64;
-const TAB_BAR_RADIUS = 24;
-const TAB_BAR_MARGIN_H = 16;
-const TAB_BAR_MARGIN_B = 24;
-const BLUR_INTENSITY = 80;
+import {
+    GLASS_CHROME_BLUR_INTENSITY,
+    GLASS_CHROME_MARGIN_H,
+    GLASS_CHROME_RADIUS,
+    GLASS_TAB_BAR_HEIGHT,
+    GLASS_TAB_BAR_MARGIN_BOTTOM,
+} from "./glassChromeConstants";
+
 const INDICATOR_SIZE = 5;
 
-const GlassTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
+const GlassTabBar = ({
+    state,
+    descriptors,
+    navigation,
+    insets,
+}: BottomTabBarProps) => {
     const theme = useTheme();
     const colors = Colors(theme);
 
@@ -28,10 +36,10 @@ const GlassTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             StyleSheet.create({
                 wrapper: {
                     position: "absolute",
-                    bottom: TAB_BAR_MARGIN_B,
-                    left: TAB_BAR_MARGIN_H,
-                    right: TAB_BAR_MARGIN_H,
-                    borderRadius: TAB_BAR_RADIUS,
+                    bottom: GLASS_TAB_BAR_MARGIN_BOTTOM + insets.bottom,
+                    left: GLASS_CHROME_MARGIN_H,
+                    right: GLASS_CHROME_MARGIN_H,
+                    borderRadius: GLASS_CHROME_RADIUS,
                     borderWidth: 1,
                     borderColor: colors.glassTabBarBorder,
                     shadowColor: colors.glassTabBarWrapperShadow,
@@ -41,8 +49,8 @@ const GlassTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                     elevation: 16,
                 },
                 surface: {
-                    height: TAB_BAR_HEIGHT,
-                    borderRadius: TAB_BAR_RADIUS,
+                    height: GLASS_TAB_BAR_HEIGHT,
+                    borderRadius: GLASS_CHROME_RADIUS,
                     overflow: "hidden",
                     backgroundColor: colors.glassTabBarSurface,
                 },
@@ -82,7 +90,7 @@ const GlassTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                     backgroundColor: colors.primary,
                 },
             }),
-        [colors]
+        [colors, insets.bottom]
     );
 
     const content = (
@@ -138,7 +146,7 @@ const GlassTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
                         >
                             {label}
                         </Text>
-                        {isFocused ? <View style={styles.indicator} /> : null}
+                        {/* {isFocused ? <View style={styles.indicator} /> : null} */}
                     </Pressable>
                 );
             })}
@@ -152,7 +160,7 @@ const GlassTabBar = ({ state, descriptors, navigation }: BottomTabBarProps) => {
             {isAndroid ? <View style={styles.surface}>{content}</View> : null}
             {!isAndroid ? (
                 <BlurView
-                    intensity={BLUR_INTENSITY}
+                    intensity={GLASS_CHROME_BLUR_INTENSITY}
                     tint={theme.dark ? "dark" : "light"}
                     style={styles.surface}
                 >
