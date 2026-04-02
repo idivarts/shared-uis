@@ -1,7 +1,7 @@
-import { PropsWithChildren } from "react";
-
+import { useTheme } from "@react-navigation/native";
+import { PropsWithChildren, useMemo } from "react";
 import { DimensionValue, View } from "react-native";
-import styles from "../../styles/dropdown/Dropdown.styles";
+import getDropdownStyles from "../../styles/dropdown/Dropdown.styles";
 
 type Position = {
     top?: DimensionValue;
@@ -13,11 +13,11 @@ type Position = {
 interface DropdownOptionsProps extends PropsWithChildren {
     gap?: number;
     visible?: boolean;
-    position?: Position,
+    position?: Position;
     transform?: {
         translateX?: number;
         translateY?: number;
-    },
+    };
 }
 
 const DropdownOptions: React.FC<DropdownOptionsProps> = ({
@@ -25,11 +25,13 @@ const DropdownOptions: React.FC<DropdownOptionsProps> = ({
     gap = 2,
     visible,
     position = {
-        top: '100%',
+        top: "100%",
         right: 0,
     },
     transform,
 }) => {
+    const theme = useTheme();
+    const styles = useMemo(() => getDropdownStyles(theme), [theme]);
     if (!visible) return null;
 
     return (
@@ -45,13 +47,13 @@ const DropdownOptions: React.FC<DropdownOptionsProps> = ({
                     transform: [
                         { translateX: transform?.translateX ?? 0 },
                         { translateY: transform?.translateY ?? 0 },
-                    ]
-                }
+                    ],
+                },
             ]}
         >
             {children}
         </View>
-    )
+    );
 };
 
 export default DropdownOptions;

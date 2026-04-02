@@ -1,9 +1,9 @@
-import { SOCIAL_ACCESS_RESTRICTED } from "@/shared-constants/app";
 import { Attachment } from "@/shared-libs/firestore/trendly-pro/constants/attachment";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { AuthApp } from "@/shared-libs/utils/firebase/auth";
 import { FirestoreDB } from "@/shared-libs/utils/firebase/firestore";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import AssetPreviewModal from "@/shared-uis/components/carousel/asset-preview-modal";
 import Carousel from "@/shared-uis/components/carousel/carousel";
 import { MediaItem } from "@/shared-uis/components/carousel/render-media-item";
@@ -11,15 +11,16 @@ import { stylesFn } from "@/shared-uis/styles/InfluencerCard.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
 import { truncateText } from "@/shared-uis/utils/text";
 import { imageUrl } from "@/shared-uis/utils/url";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { useTheme } from "@react-navigation/native";
 import { collection, doc, getDoc } from "firebase/firestore";
 import React, { useEffect, useRef, useState } from "react";
 import {
-    Dimensions,
     Pressable,
     StyleProp,
+    StyleSheet,
     Text,
     ViewStyle,
 } from "react-native";
@@ -48,6 +49,8 @@ interface InfluencerCardPropsType {
     isOnFreePlan?: boolean;
     lockProfile?: boolean;
     fullHeight?: boolean;
+    /** When true, card uses full container width instead of MAX_WIDTH_WEB (e.g. invitation carousel). */
+    fullWidth?: boolean;
 }
 
 const InfluencerCard = (props: InfluencerCardPropsType) => {
@@ -61,7 +64,59 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     const influencer = props.influencer;
     const type = props.type;
     const theme = useTheme();
+    const colors = Colors(theme);
     const styles = stylesFn(theme);
+    const layoutStyles = React.useMemo(
+        () =>
+            StyleSheet.create({
+                cardNotFullHeight: {
+                    borderRadius: 20,
+                    borderColor: colors.border,
+                    borderWidth: 1,
+                    shadowColor: colors.text,
+                    shadowOffset: { width: 0, height: 2 },
+                    shadowOpacity: 0.25,
+                    shadowRadius: 3.84,
+                    elevation: 5,
+                },
+                cardInner: {
+                    ...(props.fullWidth
+                        ? {}
+                        : { maxWidth: MAX_WIDTH_WEB, alignSelf: "center" as const }),
+                    overflow: "hidden",
+                    backgroundColor: colors.background,
+                },
+                fullHeight: { height: "100%" },
+                headerRow: {
+                    gap: 10,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                },
+                nameRow: {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 6,
+                },
+                ellipsisButton: { padding: 6 },
+                cardActionWrap: { paddingVertical: 16 },
+                aboutText: {
+                    color: colors.text,
+                    fontSize: 16,
+                    lineHeight: 22,
+                },
+                taxonomiesRow: {
+                    flexDirection: "row",
+                    marginTop: 10,
+                    flexWrap: "wrap",
+                    rowGap: 10,
+                    gap: 8,
+                },
+                chip: { backgroundColor: colors.primary },
+                chipText: { color: colors.white },
+            }),
+        [colors, props.fullWidth]
+    );
     const [socials, setSocials] = useState<ISocials | undefined>(undefined);
 
     const [images, setImages] = useState(
@@ -75,24 +130,23 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
     useEffect(() => {
         let mImg = [];
         if (!props.customAttachments) {
-            mImg =
-                props.influencer.profile?.attachments?.map((attachment) =>
-                    processRawAttachment(attachment)
-                ) || [];
-            if (
-                socials &&
-                socials.socialScreenShots &&
-                socials.socialScreenShots.length > 0
-            ) {
-                const sdata = socials.socialScreenShots?.map((s) => ({
-                    type: "image",
-                    url:
-                        props.isOnFreePlan || props.lockProfile
-                            ? SOCIAL_ACCESS_RESTRICTED
-                            : s,
-                }));
-                mImg.push(...sdata);
-            }
+            mImg = props.influencer.profile?.attachments?.map((attachment) =>
+                processRawAttachment(attachment)
+            ) || [];
+            // if (
+            //     socials &&
+            //     socials.socialScreenShots &&
+            //     socials.socialScreenShots.length > 0
+            // ) {
+            //     const sdata = socials.socialScreenShots?.map((s) => ({
+            //         type: "image",
+            //         url:
+            //             props.isOnFreePlan || props.lockProfile
+            //                 ? SOCIAL_ACCESS_RESTRICTED
+            //                 : s,
+            //     }));
+            //     mImg.push(...sdata);
+            // }
         } else {
             mImg =
                 props.customAttachments.map((attachment) =>
@@ -122,7 +176,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
         getSocial();
     }, []);
 
-    const screenWidth = Dimensions.get("window").width;
+    const { width: screenWidth } = useBreakpoints();
 
     const onImagePress = (data: MediaItem) => {
         setPreviewImageUrl(data.url);
@@ -136,39 +190,15 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     styles.card,
                     props.style,
                     props.fullHeight
-                        ? { height: "100%" }
-                        : {
-                            borderRadius: 20,
-                            borderColor: Colors(theme).border,
-                            borderWidth: 1,
-                            shadowColor: "#000",
-                            shadowOffset: {
-                                width: 0,
-                                height: 2,
-                            },
-                            shadowOpacity: 0.25,
-                            shadowRadius: 3.84,
-                            elevation: 5,
-                        },
-                    {
-                        maxWidth: MAX_WIDTH_WEB,
-                        alignSelf: "center",
-                        overflow: "hidden",
-                        backgroundColor: Colors(theme).background,
-                    },
+                        ? layoutStyles.fullHeight
+                        : layoutStyles.cardNotFullHeight,
+                    layoutStyles.cardInner,
                 ]}
             >
                 <View style={[styles.header]}>
                     <View>
                         {props.topHeaderNode}
-                        <View
-                            style={{
-                                gap: 10,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                justifyContent: "space-between",
-                            }}
-                        >
+                        <View style={layoutStyles.headerRow}>
                             <Pressable
                                 onPressIn={(e) => {
                                     startX.current = e.nativeEvent.pageX;
@@ -201,11 +231,16 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                     }
                                 }}
                             >
-                                <Text style={styles.name}>
-                                    {props.isOnFreePlan || props.lockProfile
-                                        ? maskName(influencer.name)
-                                        : influencer.name}
-                                </Text>
+                                <View style={layoutStyles.nameRow}>
+                                    <Text style={styles.name}>
+                                        {props.isOnFreePlan || props.lockProfile
+                                            ? maskName(influencer.name)
+                                            : influencer.name}
+                                    </Text>
+                                    {influencer.isKYCDone && (
+                                        <MaterialIcons name="verified" size={16} color={colors.primary} />
+                                    )}
+                                </View>
                                 {socialHandle && (
                                     <Text style={styles.handle}>
                                         {props.isOnFreePlan || props.lockProfile
@@ -224,7 +259,7 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                         }
                                     }}
                                     hitSlop={8}
-                                    style={{ padding: 6 }}
+                                    style={layoutStyles.ellipsisButton}
                                     accessibilityRole="button"
                                     testID="influencer-ellipsis"
                                 >
@@ -271,18 +306,14 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                     >
                         <InfluencerMetrics user={influencer} social={socials} />
                         {props.cardActionNode && (
-                            <View style={{ paddingVertical: 16 }}>
+                            <View style={layoutStyles.cardActionWrap}>
                                 {props.cardActionNode}
                             </View>
                         )}
                         {(props.customText || influencer?.profile?.content?.about) &&
                             type != "influencers" && (
                                 <Text
-                                    style={{
-                                        color: Colors(theme).text,
-                                        fontSize: 16,
-                                        lineHeight: 22,
-                                    }}
+                                    style={layoutStyles.aboutText}
                                 >
                                     {props.customText
                                         ? props.customText
@@ -293,29 +324,17 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                                 </Text>
                             )}
                         {props.customTaxonomies && props.customTaxonomies.length > 0 && (
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                    marginTop: 10,
-                                    flexWrap: "wrap",
-                                    rowGap: 10,
-                                    gap: 8,
-                                }}
-                            >
+                            <View style={layoutStyles.taxonomiesRow}>
                                 {props.customTaxonomies.map((tag, index) => (
-                                    <Chip style={{ backgroundColor: Colors(theme).primary }}>
-                                        <Text style={{ color: Colors(theme).white }}>{tag}</Text>
+                                    <Chip style={layoutStyles.chip}>
+                                        <Text style={layoutStyles.chipText}>{tag}</Text>
                                     </Chip>
                                 ))}
                             </View>
                         )}
                         {type == "influencers" && (
                             <Text
-                                style={{
-                                    color: Colors(theme).text,
-                                    fontSize: 16,
-                                    lineHeight: 22,
-                                }}
+                                style={layoutStyles.aboutText}
                             >
                                 {truncateText(
                                     (influencer?.profile?.content?.influencerConectionGoals

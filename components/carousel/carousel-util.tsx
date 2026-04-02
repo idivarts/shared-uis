@@ -1,35 +1,20 @@
-import { Dimensions, Platform } from 'react-native';
+import { getConstrainedWidth } from '@/shared-libs/contexts/mobile-layout-context.provider';
+import { Platform } from 'react-native';
 export const MAX_WIDTH_WEB = 500;
 export const MAX_HEIGHT_WEB = 500;
 export const APPROX_CARD_HEIGHT = 710;
 
 const getMediaDimensions = async (url: string, type: string) => {
     return new Promise((resolve, reject) => {
-        const { width } = Dimensions.get('window');
+        const width = getConstrainedWidth();
         if (type === 'image') {
             resolve({
-                width: Platform.OS === 'web' ? MAX_WIDTH_WEB : Dimensions.get('window').width,
+                width: Platform.OS === 'web' ? MAX_WIDTH_WEB : width,
                 height: Platform.OS === 'web' ? MAX_HEIGHT_WEB : width,
             });
-            // Image.getSize(
-            //     url,
-            //     (width, height) => {
-            //         // resolve({ width, height })
-            //         const { width: mWidth } = Dimensions.get('window');
-            //         const iWidth = Platform.OS === 'web' ? MAX_WIDTH_WEB : mWidth;
-            //         const iHeight = (iWidth * height) / width;
-            //         const fHeight = Math.round(Math.min(Math.max(iHeight, 0.8 * mWidth), 1.3 * mWidth));
-            //         resolve({
-            //             width: Platform.OS === 'web' ? MAX_WIDTH_WEB : Dimensions.get('window').width,
-            //             height: fHeight,
-            //         });
-            //     },
-            //     (error) => reject(error)
-            // );
         } else if (type === 'video') {
-            // const videoRef = new Video({});
             resolve({
-                width: Platform.OS === 'web' ? MAX_WIDTH_WEB : Dimensions.get('window').width,
+                width: Platform.OS === 'web' ? MAX_WIDTH_WEB : width,
                 height: Platform.OS === 'web' ? MAX_HEIGHT_WEB : width,
             });
         } else {

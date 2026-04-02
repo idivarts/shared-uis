@@ -1,11 +1,10 @@
+import useBreakpoints from '@/shared-libs/utils/use-breakpoints';
 import { Theme, useTheme } from '@react-navigation/native';
 import React, { useEffect, useRef } from 'react';
-import { Animated, Dimensions, DimensionValue, Easing, StyleSheet } from 'react-native';
+import { Animated, DimensionValue, Easing, StyleSheet } from 'react-native';
 
 import Colors from '@/shared-uis/constants/Colors';
 import { View } from '../theme/Themed';
-
-const { width } = Dimensions.get('window');
 
 interface ShimmerProps {
     width?: DimensionValue;
@@ -17,6 +16,7 @@ const Shimmer: React.FC<ShimmerProps> = ({
     height = 50,
 }) => {
     const animatedValue = useRef(new Animated.Value(0)).current;
+    const { width } = useBreakpoints();
 
     const theme = useTheme();
     const styles = stylesFn(theme);

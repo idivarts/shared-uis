@@ -1,4 +1,5 @@
 import { Console } from "@/shared-libs/utils/console";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import Colors from "@/shared-uis/constants/Colors";
 import {
     IMAGE_LARGE,
@@ -9,7 +10,6 @@ import { imageUrl, imageUrlWithHeic } from "@/shared-uis/utils/url";
 import { useTheme } from "@react-navigation/native";
 import React, { FC, useEffect, useState } from "react";
 import {
-    Dimensions,
     Image,
     ImageProps,
     ImageSourcePropType,
@@ -23,7 +23,7 @@ interface ImageComponentProps extends Omit<ImageProps, "source"> {
     size?: "small" | "medium" | "large" | "extraLarge";
     url: string | ImageSourcePropType;
     altText: string;
-    placeholder?: string;
+    placeholder?: any;
     initials?: string;
     initialsSize?: number;
 }
@@ -39,21 +39,23 @@ const ImageComponent: FC<ImageComponentProps> = ({
     initialsSize = 16,
     ...imageProps
 }) => {
+    const { width: constrainedWidth } = useBreakpoints();
+
     const dimensions = {
         small: IMAGE_SMALL,
         medium: IMAGE_MEDIUM,
         large: IMAGE_LARGE,
-        extraLarge: Dimensions.get("window").width
+        extraLarge: constrainedWidth
     };
 
     const containerStyle: ImageStyle = {
-        width: size !== "extraLarge" ? dimensions[size] : Dimensions.get("window").width,
+        width: size !== "extraLarge" ? dimensions[size] : constrainedWidth,
         height:
             size !== "extraLarge"
                 ? dimensions[size]
                 : Platform.OS === "web"
                     ? 580
-                    : Dimensions.get("window").width,
+                    : constrainedWidth,
         borderRadius: shape === "circle" ? dimensions[size] / 2 : 0,
         overflow: "hidden",
     };
@@ -66,7 +68,7 @@ const ImageComponent: FC<ImageComponentProps> = ({
         (async () => {
             setLoadFailed(false);
             if (!url) {
-                setSource(imageUrl(placeholder));
+                setSource(imageUrl(placeholder as string));
                 return;
             }
 
@@ -107,13 +109,13 @@ const ImageComponent: FC<ImageComponentProps> = ({
                     containerStyle,
                     style,
                     {
-                        backgroundColor: Colors(theme).primary, 
+                        backgroundColor: Colors(theme).primary,
                         justifyContent: "center",
                         alignItems: "center",
                     },
                 ]}
             >
-                <Text style={{ color: "white", fontSize: initialsSize }}>
+                <Text style={{ color: Colors(theme).white, fontSize: initialsSize }}>
                     {initials
                         ?.split(" ")
                         .map((word) => word[0])

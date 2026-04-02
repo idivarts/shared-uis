@@ -1,13 +1,14 @@
-import BottomSheet, { BottomSheetScrollView } from "@gorhom/bottom-sheet";
+import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
 import { Theme, useTheme } from "@react-navigation/native";
 import React, { PropsWithChildren } from "react";
 import {
     Modal,
-    Pressable,
     StyleSheet,
     View,
 } from "react-native";
+import { Provider, useTheme as usePaperTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
+import Colors from "@/shared-uis/constants/Colors";
 
 interface BottomSheetContainerProps extends PropsWithChildren {
     isVisible: boolean;
@@ -38,6 +39,20 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
         onClose();
     };
 
+    const paperTheme = usePaperTheme();
+    const renderBackdrop = React.useCallback(
+        (props: any) => (
+            <BottomSheetBackdrop
+                {...props}
+                appearsOnIndex={0}
+                disappearsOnIndex={-1}
+                pressBehavior="close"
+                style={styles.overlay}
+            />
+        ),
+        [styles.overlay]
+    );
+
     return (
         <Modal
             visible={isVisible}
@@ -45,24 +60,24 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
             animationType="fade"
             onRequestClose={handleClose}
         >
-            <View style={styles.bottomSheetContainer}>
-                <BottomSheet
-                    ref={sheetRef}
-                    index={0}
-                    snapPoints={snapPoints}
-                    enablePanDownToClose
-                    backdropComponent={() => {
-                        return <Pressable style={styles.overlay} onPress={handleClose} />;
-                    }}
-                    onClose={handleClose}
-                    style={styles.bottomSheet}
-                >
-                    <BottomSheetScrollView>
-                        {children}
-                    </BottomSheetScrollView>
-                </BottomSheet>
-                <Toast />
-            </View>
+            <Provider theme={paperTheme}>
+                <View style={styles.bottomSheetContainer}>
+                    <BottomSheet
+                        ref={sheetRef}
+                        index={0}
+                        snapPoints={snapPoints}
+                        enablePanDownToClose
+                        backdropComponent={renderBackdrop}
+                        onClose={handleClose}
+                        style={styles.bottomSheet}
+                    >
+                        <BottomSheetScrollView>
+                            {children}
+                        </BottomSheetScrollView>
+                    </BottomSheet>
+                    <Toast />
+                </View>
+            </Provider>
         </Modal>
     );
 };
@@ -76,7 +91,7 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
         bottom: 0,
         left: 0,
         right: 0,
-        backgroundColor: "rgba(0, 0, 0, 0.5)",
+        backgroundColor: Colors(theme).backdrop,
     },
     bottomSheetContainer: {
         flex: 1,

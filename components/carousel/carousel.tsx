@@ -5,8 +5,9 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useRef, useState } from "react";
-import { Dimensions, Platform, Pressable, StyleProp, ViewProps } from "react-native";
+import { Platform, Pressable, StyleProp, ViewProps } from "react-native";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
 import {
     ICarouselInstance,
@@ -83,19 +84,18 @@ const Carousel: React.FC<CarouselProps> = ({
         }
     }, [data]);
 
-    const { width: mWidth } = Dimensions.get('window');
-    const screenWidth = Dimensions.get("screen").width;
+    const { width: screenWidth } = useBreakpoints();
 
     const [carouselHeight, setCarouselHeight] = useState<any>(Platform.OS === "web"
         ? (MAX_WIDTH_WEB < screenWidth ? MAX_HEIGHT_WEB : screenWidth)
-        : mWidth);
-    const [carouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : mWidth))
+        : screenWidth);
+    const [carouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : screenWidth))
 
     useEffect(() => {
-        if (containerHeight) {
-            setCarouselHeight(containerHeight - 20);
+        if (containerHeight != null && containerHeight > 0) {
+            setCarouselHeight(Math.max(0, containerHeight - 20));
         }
-    }, [containerHeight])
+    }, [containerHeight]);
     if (data.length == 0) {
         return null;
     }

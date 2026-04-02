@@ -1,8 +1,7 @@
-
-import { PropsWithChildren } from "react";
+import { useTheme } from "@react-navigation/native";
+import { PropsWithChildren, useMemo } from "react";
 import { Pressable } from "react-native";
-
-import styles from "../../styles/dropdown/Dropdown.styles";
+import getDropdownStyles from "../../styles/dropdown/Dropdown.styles";
 
 interface DropdownTriggerProps extends PropsWithChildren {
     onPress?: () => void;
@@ -11,10 +10,14 @@ interface DropdownTriggerProps extends PropsWithChildren {
 const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
     children,
     onPress,
-}) => (
-    <Pressable onPress={onPress} style={styles.dropdownTrigger}>
-        {children}
-    </Pressable>
-);
+}) => {
+    const theme = useTheme();
+    const styles = useMemo(() => getDropdownStyles(theme), [theme]);
+    return (
+        <Pressable onPress={onPress} style={styles.dropdownTrigger}>
+            {children}
+        </Pressable>
+    );
+};
 
 export default DropdownTrigger;

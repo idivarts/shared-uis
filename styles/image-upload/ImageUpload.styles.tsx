@@ -23,7 +23,11 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     },
     cameraButton: {
         backgroundColor: Colors(theme).primary,
-        padding: 10,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        justifyContent: "center",
+        alignItems: "center",
         position: "absolute",
         right: 0,
         bottom: 0,

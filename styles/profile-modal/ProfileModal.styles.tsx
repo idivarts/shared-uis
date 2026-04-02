@@ -103,9 +103,9 @@ export const stylesFn = (theme: any) =>
             position: "absolute",
             bottom: 0,
             width: "100%",
-            backgroundColor: "#fff",
+            backgroundColor: Colors(theme).background,
             borderTopWidth: 1,
-            borderTopColor: "#ccc",
+            borderTopColor: Colors(theme).border,
             padding: 10,
         },
         dot: {

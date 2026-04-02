@@ -1,7 +1,7 @@
 import Colors from '@/shared-uis/constants/Colors';
 import { useTheme } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Image, Text, View } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ActivityIndicator, Image, StyleSheet, Text, View } from 'react-native';
 //  import LottieView from 'lottie-react-native';
 
 const MyMessage = [
@@ -14,6 +14,7 @@ const MyMessage = [
 
 const SlowLoader: React.FC<{ messages?: string[] }> = ({ messages = MyMessage }) => {
     const theme = useTheme();
+    const styles = useMemo(() => useStyles(theme), [theme]);
     const [messageIndex, setMessageIndex] = useState(0);
 
     useEffect(() => {
@@ -25,41 +26,39 @@ const SlowLoader: React.FC<{ messages?: string[] }> = ({ messages = MyMessage })
     }, []);
 
     return (
-        <View
-            style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-                zIndex: 1000,
-                backgroundColor: Colors(theme).background,
-                padding: 20,
-            }}
-        >
-            {/* Lottie Animation */}
-            {/* <LottieView
-                source={require('@/assets/animations/loading.json')} // Use your own animation file
-                autoPlay
-                loop
-                style={{ width: 150, height: 150 }}
-            /> */}
-            {/* <Image /> */}
-            {/* GIF Loader */}
+        <View style={styles.container}>
             <Image
-                source={require('@/assets/images/loader-gif1.gif')} // Local GIF file
-                style={{ width: 300, height: 300 }}
+                source={require('@/assets/images/loader-gif1.gif')}
+                style={styles.image}
                 resizeMode="contain"
             />
-
-            {/* Progress Message */}
-            <Text style={{ color: Colors(theme).text, fontSize: 16, marginTop: 20, textAlign: "center" }}>
+            <Text style={styles.message}>
                 {messages[messageIndex]}
             </Text>
-
-            {/* Fallback Activity Indicator */}
-            <ActivityIndicator size="large" color={Colors(theme).text} style={{ marginTop: 20 }} />
-
+            <ActivityIndicator size="large" color={Colors(theme).text} style={styles.spinner} />
         </View>
     );
+}
+
+function useStyles(theme: ReturnType<typeof useTheme>) {
+    return StyleSheet.create({
+        container: {
+            flex: 1,
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+            backgroundColor: Colors(theme).background,
+            padding: 20,
+        },
+        image: { width: 300, height: 300 },
+        message: {
+            color: Colors(theme).text,
+            fontSize: 16,
+            marginTop: 20,
+            textAlign: "center",
+        },
+        spinner: { marginTop: 20 },
+    });
 }
 
 export default SlowLoader;

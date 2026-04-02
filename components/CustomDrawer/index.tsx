@@ -7,20 +7,19 @@ import React from "react";
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
 import { useEffect, useRef, useState } from "react";
-import { Animated, Dimensions, StyleSheet, TouchableWithoutFeedback } from "react-native";
+import { Animated, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { Subject } from "rxjs";
 import { View } from "../theme/Themed";
-
-const SCREEN_WIDTH = Dimensions.get("window").width;
 
 export const OpenDrawerSubject = new Subject<boolean | undefined>()
 
 const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: React.ReactNode, DrawerContent: any, isFixed: boolean }) => {
 
-    const { xl } = useBreakpoints()
+    const { xl, width: screenWidth } = useBreakpoints()
     const theme = useTheme()
+    const styles = useStyles(theme)
 
-    const DRAWER_WIDTH = xl ? 320 : SCREEN_WIDTH * 0.75;
+    const DRAWER_WIDTH = xl ? 280 : screenWidth * 0.75;
 
     const [drawerVisible, setDrawerVisible] = useState(xl);
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
@@ -53,7 +52,7 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
                     <View style={styles.overlay} />
                 </TouchableWithoutFeedback>
             )}
-            <Animated.View style={[styles.drawer, { width: DRAWER_WIDTH, transform: [{ translateX: slideAnim }], borderRightWidth: 1, borderRightColor: Colors(theme).border }]}>
+            <Animated.View style={[styles.drawer, { width: DRAWER_WIDTH, transform: [{ translateX: slideAnim }] }]}>
                 {DrawerContent}
             </Animated.View>
             {/* </View> */}
@@ -61,20 +60,21 @@ const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: R
     );
 };
 
-const styles = StyleSheet.create({
-    overlay: {
-        ...StyleSheet.absoluteFillObject,
-        backgroundColor: "rgba(0,0,0,0.4)",
-    },
-    drawer: {
-        position: "absolute",
-        left: 0,
-        top: 0,
-        bottom: 0,
-        // width: DRAWER_WIDTH,
-        backgroundColor: "white",
-        zIndex: 9999,
-    },
-});
+const useStyles = (theme: Parameters<typeof Colors>[0]) => {
+    const colors = Colors(theme);
+    return StyleSheet.create({
+        overlay: {
+            ...StyleSheet.absoluteFillObject,
+            backgroundColor: colors.backdrop,
+        },
+        drawer: {
+            position: "absolute",
+            left: 0,
+            top: 0,
+            bottom: 0,
+            zIndex: 9999,
+        },
+    });
+};
 
 export default CustomDrawerWrapper;
