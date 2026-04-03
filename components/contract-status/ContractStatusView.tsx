@@ -46,17 +46,16 @@ const ContractStatusView: React.FC<ContractStatusViewProps> = ({
     const label = overrideLabel ?? CONTRACT_STATUS_LABELS[normalizedStatus] ?? `Status ${status}`;
     const description = overrideDescription ?? getContractStatusDescription(normalizedStatus, actor);
     const isPaymentFailed = normalizedStatus === ContractStatus.PaymentFailed;
-    const isReleaseScheduled =
-        normalizedStatus === ContractStatus.PostingPending && !!scheduledReleaseAt;
+    const showReleaseDateLine =
+        normalizedStatus === ContractStatus.PostingPending && Boolean(scheduledReleaseAt);
 
-    const releaseDateText =
-        isReleaseScheduled && scheduledReleaseAt
-            ? new Date(scheduledReleaseAt).toLocaleDateString(undefined, {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-              })
-            : null;
+    const releaseDateText = showReleaseDateLine
+        ? new Date(scheduledReleaseAt!).toLocaleDateString(undefined, {
+              day: "numeric",
+              month: "short",
+              year: "numeric",
+          })
+        : null;
 
     return (
         <View style={styles.root}>

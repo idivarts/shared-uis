@@ -11,6 +11,7 @@ export interface ContractActionButton {
     label: string;
     onPress: () => void;
     disabled?: boolean;
+    loading?: boolean;
     variant: "outlined" | "contained" | "contained-tonal";
     icon?: React.ReactNode;
 }
@@ -59,6 +60,7 @@ const ContractActionsWithMessage: React.FC<ContractActionsWithMessageProps> = ({
                         mode={firstButton.variant}
                         onPress={firstButton.onPress}
                         disabled={firstButton.disabled}
+                        loading={firstButton.loading}
                         style={[styles.button, buttons.length === 1 && styles.buttonSingle]}
                         contentStyle={styles.buttonContent}
                         labelStyle={styles.buttonLabel}
@@ -71,6 +73,7 @@ const ContractActionsWithMessage: React.FC<ContractActionsWithMessageProps> = ({
                             mode={secondButton.variant}
                             onPress={secondButton.onPress}
                             disabled={secondButton.disabled}
+                            loading={secondButton.loading}
                             style={styles.button}
                             contentStyle={styles.buttonContent}
                             labelStyle={styles.buttonLabel}
