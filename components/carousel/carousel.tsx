@@ -1,3 +1,4 @@
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import Colors from "@/shared-uis/constants/Colors";
 import {
     faChevronLeft,
@@ -5,7 +6,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
-import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useRef, useState } from "react";
 import { Platform, Pressable, StyleProp, ViewProps } from "react-native";
 import { runOnJS, useSharedValue } from "react-native-reanimated";
@@ -205,40 +205,10 @@ const Carousel: React.FC<CarouselProps> = ({
                             },
                         ]}
                         horizontal
-                    // onPress={(index) => {
-                    //   swiperRef.current?.scrollTo({
-                    //     count: index - progress.value,
-                    //     animated: true,
-                    //   });
-                    // }}
                     />
                 </>}
             </>
-            {/* ) : (
-        <Swiper
-          ref={nativeRef}
-          height={carouselHeight}
-          style={[styles.carouselContainer]}
-          dotStyle={styles.dot}
-          activeDotStyle={[styles.dot, styles.activeDot]}
-          paginationStyle={styles.pagination}
-          onIndexChanged={(index) => { setCurrentItem(index) }}
-          pagingEnabled
-          {...props}
-        >
-          {data.map((item: MediaItem, index: number) => (
-            <RenderMediaItem
-              handleImagePress={handleImagePress}
-              height={carouselHeight}
-              width={carouselWidth}
-              currentIndex={currentItem}
-              index={index}
-              item={item}
-              key={item.url || index}
-            />
-          ))}
-        </Swiper>
-      )} */}
+
         </View>
     );
 };
