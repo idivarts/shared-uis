@@ -5,6 +5,7 @@ import {
     ContractStatus,
     CONTRACT_STATUS_LABELS,
     getContractStatusDescription,
+    normalizeStatus,
     type ContractStatusActor,
 } from "../../../shared-constants/contract-status";
 import { Text } from "../theme/Themed";
@@ -41,12 +42,12 @@ const ContractStatusView: React.FC<ContractStatusViewProps> = ({
     const colors = Colors(theme);
     const styles = useMemo(() => createStyles(colors), [colors]);
 
-    const normalizedStatus =
-        status >= 0 && status <= 10 ? (status as ContractStatus) : ContractStatus.Pending;
+    const normalizedStatus = normalizeStatus(status);
     const label = overrideLabel ?? CONTRACT_STATUS_LABELS[normalizedStatus] ?? `Status ${status}`;
     const description = overrideDescription ?? getContractStatusDescription(normalizedStatus, actor);
     const isPaymentFailed = normalizedStatus === ContractStatus.PaymentFailed;
-    const isReleaseScheduled = normalizedStatus === ContractStatus.PostScheduled;
+    const isReleaseScheduled =
+        normalizedStatus === ContractStatus.PostingPending && !!scheduledReleaseAt;
 
     const releaseDateText =
         isReleaseScheduled && scheduledReleaseAt
