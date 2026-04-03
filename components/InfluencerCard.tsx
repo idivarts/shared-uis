@@ -285,7 +285,6 @@ const InfluencerCard = (props: InfluencerCardPropsType) => {
                         data={images}
                         onImagePress={onImagePress}
                         theme={theme}
-                        parentId={influencer.id}
                         containerHeight={bodyHeight > 0 ? bodyHeight : undefined}
                     />
                 </View>

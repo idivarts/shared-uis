@@ -1,27 +1,36 @@
-import { useIsFocused, useTheme } from "@react-navigation/native";
-import { ResizeMode, Video } from "expo-av";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ActivityIndicator } from "react-native";
+import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
+import { captureVideoFrameAsDataUrl } from "@/shared-libs/utils/capture-video-frame-web";
+import { Console } from "@/shared-libs/utils/console";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
+import Colors from "@/shared-uis/constants/Colors";
+import { faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
+import { Zoomable } from "@likashefqet/react-native-image-zoom";
+import { useTheme } from "@react-navigation/native";
+import * as VideoThumbnails from "expo-video-thumbnails";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+    ActivityIndicator,
+    Linking,
+    Modal,
+    Platform,
+    Pressable,
+    View as RNView,
+    StyleSheet,
+    type ViewStyle,
+} from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 import { runOnJS } from "react-native-worklets";
-import { useScrollContext } from "@/shared-libs/contexts/scroll-context";
-import { Console } from "@/shared-libs/utils/console";
-import Colors from "@/shared-uis/constants/Colors";
-import { Zoomable } from '@likashefqet/react-native-image-zoom';
-import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
-import React from "react";
-import { Linking, Platform, Pressable, View as RNView, type ViewStyle } from "react-native";
-import { faPlay } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { stylesFn } from "../../styles/carousel/RenderMediaItem.styles";
 import ImageComponent from "../image-component";
-import { useCarouselInViewContext } from "../scroller/CarouselInViewContext";
-import { Text, View } from "../theme/Themed";
+import { View } from "../theme/Themed";
 
 export interface MediaItem {
     type: string;
+    /** Video or image URL. For video-only items, a poster is generated from this URL when `imageUrl` is omitted. */
     url: string;
+    /** Optional poster; when set for video items, thumbnail extraction is skipped. */
     imageUrl?: string;
     playUrl?: string;
 }
@@ -34,7 +43,6 @@ interface RenderMediaItemProps {
     item: MediaItem;
     width?: number;
     cKey?: string;
-    parentId?: string
     shape?: "circle" | "square";
     size?: "small" | "medium" | "large" | "extraLarge";
 }
@@ -47,102 +55,98 @@ function RenderMediaItem({
     item,
     currentIndex,
     width,
-    parentId,
     shape = "square",
     size = "extraLarge",
 }: RenderMediaItemProps) {
     const theme = useTheme();
     const styles = stylesFn(theme);
+    const colors = Colors(theme);
     const [isLoading, setIsLoading] = useState(true);
-    const [isError, setIsError] = useState(false);
-    const [isMuted, setIsMuted] = useState(true)
-    const [inView, setInView] = useState(false)
-    const videoRef = useRef<HTMLVideoElement | null>(null)
-    const nativeVideoRef = useRef<Video | null>(null)
-    const videoMeasureRef = useRef<React.ElementRef<typeof RNView> | null>(null)
-    const isFocused = useIsFocused();
-    const { scrollRef, scrollHeight } = useScrollContext()
-    const [topPosition, setTopPosition] = useState<number | null>(null)
-    const [bottomPosition, setBottomPosition] = useState<number | null>(null)
-    const { currentItemId } = useCarouselInViewContext()
-    const { width: constrainedWidth, height: windowHeight } = useBreakpoints();
+    const [extractedPosterUri, setExtractedPosterUri] = useState<string | null>(null);
+    const [desktopVideoOpen, setDesktopVideoOpen] = useState(false);
+    const modalVideoRef = useRef<HTMLVideoElement | null>(null);
+    const { scrollRef, scrollHeight } = useScrollContext();
+    const { width: constrainedWidth, xl } = useBreakpoints();
+    const videoModalStyles = useMemo(() => createVideoModalStyles(colors), [colors]);
+
+    const isCarouselVideo =
+        !!item &&
+        !item.type.includes("image") &&
+        !item.type.includes("reel");
 
     useEffect(() => {
-        if (currentIndex == index && inView && isFocused) {
-            if (!parentId || parentId == currentItemId) {
-                if (videoRef.current) {
-                    videoRef.current.play();
-                    if (index != 0)
-                        setIsMuted(false)
+        if (!isCarouselVideo) {
+            return undefined;
+        }
+        if (Math.abs((currentIndex ?? 0) - index) > 1) {
+            return undefined;
+        }
+
+        let cancelled = false;
+
+        if (item.imageUrl) {
+            setExtractedPosterUri(null);
+            setIsLoading(true);
+            return () => {
+                cancelled = true;
+            };
+        }
+
+        setExtractedPosterUri(null);
+        setIsLoading(true);
+
+        (async () => {
+            try {
+                if (Platform.OS === "web") {
+                    const dataUrl = await captureVideoFrameAsDataUrl(item.url);
+                    console.log("Data URL :", item.url, dataUrl);
+
+                    if (!cancelled && dataUrl) {
+                        setExtractedPosterUri(dataUrl);
+                    }
+                } else {
+                    const { uri } = await VideoThumbnails.getThumbnailAsync(item.url, {
+                        time: 500,
+                        quality: 0.78,
+                    });
+                    if (!cancelled) {
+                        setExtractedPosterUri(uri);
+                    }
                 }
-                if (nativeVideoRef.current) {
-                    nativeVideoRef.current.playAsync();
-                    if (index != 0)
-                        setIsMuted(false)
+            } catch (e) {
+                if (__DEV__) {
+                    console.warn("video poster thumbnail", e);
                 }
-            } else {
-                if (videoRef.current) {
-                    videoRef.current.pause();
-                }
-                if (nativeVideoRef.current) {
-                    nativeVideoRef.current.pauseAsync();
+            } finally {
+                if (!cancelled) {
+                    setIsLoading(false);
                 }
             }
-        }
-    }, [currentIndex, inView, isFocused, currentItemId])
+        })();
 
-    useEffect(() => {
-        if (Platform.OS === 'web' && videoRef.current) {
-            const rect = videoRef.current.getBoundingClientRect();
-            setTopPosition(rect.top)
-            setBottomPosition(rect.bottom)
-        }
-        if (Platform.OS !== "web" && videoMeasureRef.current) {
-            videoMeasureRef.current.measureInWindow((x: number, y: number, _w: number, h: number) => {
-                setTopPosition(y);
-                setBottomPosition(y + h);
-            });
-        }
-    }, [item.url, isLoading])
+        return () => {
+            cancelled = true;
+        };
+    }, [isCarouselVideo, item.url, item.imageUrl, currentIndex, index]);
 
-    useEffect(() => {
-        if (!parentId)
-            return;
-        if (parentId == currentItemId) {
-            setInView(true);
-        } else {
-            setInView(false);
-        }
-    }, [currentItemId])
-
-    useEffect(() => {
-        if (topPosition == null || bottomPosition == null || scrollHeight === undefined) {
-            return;
-        }
-        const yStart = scrollHeight;
-        const yEnd = scrollHeight + windowHeight; // height doesn't need constraining
-
-        const cardHeight = bottomPosition - topPosition;
-        const visibleHeight = Math.min(bottomPosition, yEnd) - Math.max(topPosition, yStart);
-        const percentageInView = (visibleHeight / cardHeight) * 100;
-
-        const isInView = percentageInView > 70;
-
-        setInView(isInView);
-    }, [scrollHeight, windowHeight]);
-
-    const LoadingCircle = () => isLoading ? <View
-        style={[
-            {
-                position: "absolute",
-                top: (height || 250) / 2,
-                left: (width || constrainedWidth) / 2 - 12,
-                backgroundColor: "transparent"
-            },
-        ]}
-    >
-        <ActivityIndicator style={{ backgroundColor: "transparent" }} color={Colors(theme).text} />
-    </View> : null
+    const LoadingCircle = () =>
+        isLoading ? (
+            <View
+                style={[
+                    {
+                        position: "absolute",
+                        top: (height || 250) / 2,
+                        left: (width || constrainedWidth) / 2 - 12,
+                        backgroundColor: "transparent",
+                    },
+                ]}
+            >
+                <ActivityIndicator
+                    style={{ backgroundColor: "transparent" }}
+                    color={colors.text}
+                />
+            </View>
+        ) : null;
 
     const applyPanScroll = useCallback(
         (translationY: number) => {
@@ -183,46 +187,79 @@ function RenderMediaItem({
         [panScrollGesture, onImageTap]
     );
 
+    const closeDesktopVideoModal = useCallback(() => {
+        modalVideoRef.current?.pause();
+        setDesktopVideoOpen(false);
+    }, []);
+
+    const openVideoPlayback = useCallback(async () => {
+        if (item.playUrl) {
+            try {
+                const ok = await Linking.canOpenURL(item.playUrl);
+                if (ok) {
+                    await Linking.openURL(item.playUrl);
+                }
+            } catch (e) {
+                Console.error(e, "openVideoPlayback playUrl");
+            }
+            return;
+        }
+        if (Platform.OS === "web" && xl) {
+            setDesktopVideoOpen(true);
+            return;
+        }
+        try {
+            const ok = await Linking.canOpenURL(item.url);
+            if (ok) {
+                await Linking.openURL(item.url);
+            }
+        } catch (e) {
+            Console.error(e, "openVideoPlayback url");
+        }
+    }, [item.playUrl, item.url, xl]);
+
     if (Math.abs((currentIndex || 0) - index) > 1) {
-        return <View style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}></View>
+        return (
+            <View
+                style={{ width: width || "100%", height: height || 250, overflow: "hidden" }}
+            />
+        );
     }
 
     if (item?.type.includes("image")) {
-        const mImage = <ImageComponent
-            url={item.url}
-            altText="Media"
-            style={[
-                styles.media,
-                {
-                    height: height || 250,
-                    width: width || "100%",
-                    
-                },
-            ]}
-            shape={shape}
-            size={size}
-            resizeMode={"cover"}
-            resizeMethod={"resize"}
-            onLoadEnd={() => setIsLoading(false)}
-            onError={() => {
-                setIsError(true);
-            }}
-        />
+        const mImage = (
+            <ImageComponent
+                url={item.url}
+                altText="Media"
+                style={[
+                    styles.media,
+                    {
+                        height: height || 250,
+                        width: width || "100%",
+                    },
+                ]}
+                shape={shape}
+                size={size}
+                resizeMode={"cover"}
+                resizeMethod={"resize"}
+                onLoadEnd={() => setIsLoading(false)}
+            />
+        );
 
-        const AnimatedImageView = <Animated.View
-            style={{
-                position: "relative",
-            }}
-        >
-            {Platform.OS == "web" ? (
-                mImage
-            ) : (
-                <Zoomable maxPanPointers={2}>
-                    {mImage}
-                </Zoomable>
-            )}
-            <LoadingCircle />
-        </Animated.View>
+        const AnimatedImageView = (
+            <Animated.View
+                style={{
+                    position: "relative",
+                }}
+            >
+                {Platform.OS == "web" ? (
+                    mImage
+                ) : (
+                    <Zoomable maxPanPointers={2}>{mImage}</Zoomable>
+                )}
+                <LoadingCircle />
+            </Animated.View>
+        );
 
         return (
             <GestureDetector gesture={imageTapAndPanGesture}>
@@ -242,25 +279,25 @@ function RenderMediaItem({
                 handleImagePress(item);
             }
         };
-        const mImage = <ImageComponent
-            url={reelImageUrl}
-            altText="Media"
-            style={[
-                styles.media,
-                {
-                    height: height || 250,
-                    width: width || "100%",
-                },
-            ]}
-            shape={shape}
-            size={size}
-            resizeMode={"cover"}
-            resizeMethod={"resize"}
-            onLoadEnd={() => setIsLoading(false)}
-            onError={() => {
-                setIsError(true);
-            }}
-        />
+        const mImage = (
+            <ImageComponent
+                url={reelImageUrl}
+                altText="Media"
+                style={[
+                    styles.media,
+                    {
+                        height: height || 250,
+                        width: width || "100%",
+                    },
+                ]}
+                shape={shape}
+                size={size}
+                resizeMode={"cover"}
+                resizeMethod={"resize"}
+                onLoadEnd={() => setIsLoading(false)}
+                onError={() => setIsLoading(false)}
+            />
+        );
 
         const reelFrameStyle: ViewStyle = {
             width: width || "100%",
@@ -278,9 +315,7 @@ function RenderMediaItem({
                     mImage
                 ) : (
                     <View style={reelFrameStyle}>
-                        <Zoomable maxPanPointers={2}>
-                            {mImage}
-                        </Zoomable>
+                        <Zoomable maxPanPointers={2}>{mImage}</Zoomable>
                     </View>
                 )}
                 <View
@@ -302,12 +337,12 @@ function RenderMediaItem({
                             height: 52,
                             width: 52,
                             borderRadius: 26,
-                            backgroundColor: Colors(theme).backdrop,
+                            backgroundColor: colors.backdrop,
                             alignItems: "center",
                             justifyContent: "center",
                         }}
                     >
-                        <FontAwesomeIcon icon={faPlay} size={20} color={Colors(theme).white} />
+                        <FontAwesomeIcon icon={faPlay} size={20} color={colors.white} />
                     </Pressable>
                 </View>
                 <LoadingCircle />
@@ -321,81 +356,164 @@ function RenderMediaItem({
         );
     }
 
-    return <>
-        <Pressable
-            style={{ width: width || "100%", height: height || 250, overflow: "hidden", }}
-            onPress={() => {
-                videoRef.current?.play();
-                setIsMuted(false)
-            }}
-            onTouchEnd={() => {
-                videoRef.current?.play();
-                setIsMuted(false)
-            }} >
+    const frameHeight = height || 250;
+    const frameWidth = width || "100%";
+    const displayPosterUri = item.imageUrl ?? extractedPosterUri;
+
+    const posterBody = displayPosterUri ? (
+        <ImageComponent
+            url={displayPosterUri}
+            altText="Video poster"
+            style={[
+                styles.media,
+                {
+                    height: frameHeight,
+                    width: frameWidth as ViewStyle["width"],
+                },
+            ]}
+            shape={shape}
+            size={size}
+            resizeMode="cover"
+            resizeMethod="resize"
+            onLoadEnd={() => setIsLoading(false)}
+            onError={() => setIsLoading(false)}
+        />
+    ) : (
+        <View
+            style={[
+                styles.media,
+                {
+                    height: frameHeight,
+                    width: frameWidth as ViewStyle["width"],
+                    backgroundColor: colors.card,
+                    alignItems: "center",
+                    justifyContent: "center",
+                },
+            ]}
+        >
+            <FontAwesomeIcon icon={faPlay} size={36} color={colors.textSecondary} />
+        </View>
+    );
+
+    return (
+        <>
+            {Platform.OS === "web" && xl ? (
+                <Modal
+                    visible={desktopVideoOpen}
+                    animationType="fade"
+                    transparent
+                    onRequestClose={closeDesktopVideoModal}
+                >
+                    <Pressable
+                        style={videoModalStyles.backdrop}
+                        onPress={closeDesktopVideoModal}
+                    >
+                        <Pressable style={videoModalStyles.sheet} onPress={() => { }}>
+                            <Pressable
+                                accessibilityRole="button"
+                                onPress={closeDesktopVideoModal}
+                                style={videoModalStyles.closeBtn}
+                            >
+                                <FontAwesomeIcon icon={faXmark} size={18} color={colors.text} />
+                            </Pressable>
+                            <video
+                                ref={(el: HTMLVideoElement | null) => {
+                                    modalVideoRef.current = el;
+                                }}
+                                src={item.url}
+                                controls
+                                autoPlay
+                                playsInline
+                                style={videoModalStyles.player}
+                                onError={(error: unknown) => {
+                                    Console.error(error, "Video modal error");
+                                }}
+                            />
+                        </Pressable>
+                    </Pressable>
+                </Modal>
+            ) : null}
             <GestureDetector gesture={panScrollGesture}>
                 <Animated.View
-                    style={{ width: width || "100%", height: height || 250, overflow: "hidden" ,}}
+                    style={{
+                        width: frameWidth as ViewStyle["width"],
+                        height: frameHeight,
+                        overflow: "hidden",
+                    }}
                 >
-                    {Platform.OS == "web" ? <video
-                        ref={(ref) => {
-                            if (ref) {
-                                videoRef.current = ref;
-                            }
-                        }}
-                        src={item.url}
-                        style={{ width: "100%", height: "100%" }}
-                        muted
-                        controls
-                        onLoadedMetadata={() => setIsLoading(false)}
-                        onError={(error: any) => {
-                            setIsLoading(false);
-                            setIsError(true);
-                            Console.error(error, "Video Error:")
-                        }}
-                        loop={false}
-                    /> : (
-                        <RNView
-                            ref={videoMeasureRef}
-                            style={{ width: "100%", height: "100%" }}
-                            collapsable={false}
+                    <RNView style={{ position: "relative", width: "100%", height: "100%" }}>
+                        {posterBody}
+                        <View
+                            pointerEvents="box-none"
+                            style={{
+                                position: "absolute",
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0,
+                                backgroundColor: "transparent",
+                                alignItems: "center",
+                                justifyContent: "center",
+                            }}
                         >
-                            <Video
-                                onTouchEnd={() => {
-                                    nativeVideoRef.current?.playAsync();
-                                    setIsMuted(false)
+                            <Pressable
+                                onPress={openVideoPlayback}
+                                style={{
+                                    height: 52,
+                                    width: 52,
+                                    borderRadius: 26,
+                                    backgroundColor: colors.backdrop,
+                                    alignItems: "center",
+                                    justifyContent: "center",
                                 }}
-                                ref={(ref) => {
-                                    if (ref) {
-                                        nativeVideoRef.current = ref;
-                                    }
-                                }}
-                                source={{ uri: item.url, }}
-                                style={[
-                                    styles.media,
-                                    {
-                                        height: height || 250,
-                                        width: width || "100%",
-                                    },
-                                ]}
-                                resizeMode={ResizeMode.CONTAIN}
-                                isLooping={false}
-                                useNativeControls
-                                shouldPlay={true}
-                                isMuted={isMuted}
-                                onError={(error: any) => {
-                                    setIsLoading(false);
-                                    setIsError(true);
-                                    Console.error(error, "Video Error:")
-                                }}
-                                onLoad={() => setIsLoading(false)}
-                            />
-                        </RNView>
-                    )}
+                            >
+                                <FontAwesomeIcon icon={faPlay} size={20} color={colors.white} />
+                            </Pressable>
+                        </View>
+                        <LoadingCircle />
+                    </RNView>
                 </Animated.View>
             </GestureDetector>
-        </Pressable>
-        <LoadingCircle />
-    </>
+        </>
+    );
+}
+
+function createVideoModalStyles(colors: ReturnType<typeof Colors>) {
+    return StyleSheet.create({
+        backdrop: {
+            flex: 1,
+            backgroundColor: colors.backdropStrong,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 24,
+        },
+        sheet: {
+            width: "100%",
+            maxWidth: 960,
+            maxHeight: "85%",
+            backgroundColor: colors.modalBackground,
+            borderRadius: 12,
+            overflow: "hidden",
+            padding: 12,
+        },
+        player: {
+            width: "100%",
+            aspectRatio: 16 / 9,
+            backgroundColor: colors.reverseBackground,
+        },
+        closeBtn: {
+            position: "absolute",
+            top: 8,
+            right: 8,
+            zIndex: 2,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: colors.backdrop,
+            alignItems: "center",
+            justifyContent: "center",
+        },
+    });
 }
 
 export default RenderMediaItem;
