@@ -72,9 +72,6 @@ const useStyles = (theme: Parameters<typeof Colors>[0]) => {
             left: 0,
             top: 0,
             bottom: 0,
-            borderRightWidth: 1,
-            borderRightColor: colors.drawerBorder,
-            backgroundColor: colors.drawerBackground,
             zIndex: 9999,
         },
     });

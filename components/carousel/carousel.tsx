@@ -92,10 +92,10 @@ const Carousel: React.FC<CarouselProps> = ({
     const [carouselWidth] = useState((Platform.OS === "web" && MAX_WIDTH_WEB < screenWidth) ? MAX_WIDTH_WEB : (width ? width : screenWidth))
 
     useEffect(() => {
-        if (containerHeight) {
-            setCarouselHeight(containerHeight - 20);
+        if (containerHeight != null && containerHeight > 0) {
+            setCarouselHeight(Math.max(0, containerHeight - 20));
         }
-    }, [containerHeight])
+    }, [containerHeight]);
     if (data.length == 0) {
         return null;
     }

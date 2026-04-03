@@ -1,5 +1,5 @@
 import * as ImageManipulator from 'expo-image-manipulator';
-import { Platform } from 'react-native';
+import { ImageSourcePropType, Platform } from 'react-native';
 
 export const imageUrlWithHeic = async (image: string | NodeRequire | number | undefined) => {
 
@@ -44,14 +44,14 @@ export const imageUrl = (image: string | NodeRequire | number | undefined) => {
 };
 
 /** Returns gender-specific placeholder image for influencer avatars (male/female); otherwise default placeholder. */
-export const getPlaceholderImageForGender = (gender: string | undefined): NodeRequire => {
+export const getPlaceholderImageForGender = (gender: string | undefined): ImageSourcePropType => {
     if (!gender || typeof gender !== "string") {
-        return require("@/assets/images/placeholder-image.jpg");
+        return require("@/assets/images/placeholder-image.jpg") as ImageSourcePropType;
     }
     const g = gender.toLowerCase().trim();
-    if (g === "male") return require("@/assets/images/placeholder-image-male.jpeg");
-    if (g === "female") return require("@/assets/images/placeholder-image-female.jpeg");
-    return require("@/assets/images/placeholder-image.jpg");
+    if (g === "male") return require("@/assets/images/placeholder-image-male.jpeg") as ImageSourcePropType;
+    if (g === "female") return require("@/assets/images/placeholder-image-female.jpeg") as ImageSourcePropType;
+    return require("@/assets/images/placeholder-image.jpg") as ImageSourcePropType;
 };
 
 export const queryParams = (

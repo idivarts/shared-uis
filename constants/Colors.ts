@@ -108,10 +108,10 @@ export const ColorsStatic = {
     offerExpiredPillBorder: "rgba(255,255,255,0.22)",
     offerExpiredPillText: "rgb(229, 236, 245)",
 
-    // Auth layout (gradient, floating card, showcase)
-    authGradient1: "rgb(247, 249, 252)",
-    authGradient2: "rgb(239, 243, 249)",
-    authGradient3: "rgb(233, 238, 246)",
+    // Auth layout (gradient, floating card, showcase) — light: cool top → mid blue-gray → deeper slate (brand-adjacent)
+    authGradient1: "rgb(250, 252, 255)",
+    authGradient2: "rgb(225, 238, 250)",
+    authGradient3: "rgb(196, 218, 238)",
     floatingCardBg: "rgba(255,255,255,0.9)",
     floatingCardBorder: "rgba(15, 23, 42, 0.08)",
     floatingCardShadow: "rgba(15, 23, 42, 0.12)",
@@ -256,6 +256,10 @@ export default (theme: Theme) => ({
             glassLightCompression: "rgba(255, 255, 255, 0.07)",
             glassOuterStroke: "rgba(255, 255, 255, 0.12)",
             glassAndroidSurface: "rgba(255, 255, 255, 0.14)",
+            /** Floating tab bar (glass pill) */
+            glassTabBarSurface: "rgba(30, 30, 30, 0.65)",
+            glassTabBarBorder: "rgba(255, 255, 255, 0.12)",
+            glassTabBarWrapperShadow: "rgba(0, 0, 0, 0.6)",
             secondarySurface: "rgba(255, 255, 255, 0.16)",
             secondaryBorder: "rgba(255, 255, 255, 0.28)",
             secondaryText: ColorsStatic.white,
@@ -268,6 +272,10 @@ export default (theme: Theme) => ({
             drawerProgressFill: ColorsStatic.drawerProgressFill,
             drawerInvitesIcon: ColorsStatic.drawerInvitesIcon,
             drawerBorder: ColorsStatic.drawerBorder,
+            // Auth: deep navy gradient (readable with light floating card + forms)
+            authGradient1: "rgb(28, 42, 62)",
+            authGradient2: "rgb(16, 32, 54)",
+            authGradient3: "rgb(8, 22, 42)",
         }
         : {
             primary: ColorsStatic.primary, // Main accent color
@@ -303,10 +311,14 @@ export default (theme: Theme) => ({
             glassLightCompression: "rgba(255, 255, 255, 0.07)",
             glassOuterStroke: "rgba(255, 255, 255, 0.12)",
             glassAndroidSurface: "rgba(255, 255, 255, 0.14)",
+            /** Floating tab bar (glass pill) */
+            glassTabBarSurface: "rgba(245, 245, 248, 0.82)",
+            glassTabBarBorder: "rgba(0, 0, 0, 0.08)",
+            glassTabBarWrapperShadow: "rgba(0, 0, 0, 0.15)",
             secondarySurface: "rgba(15, 23, 42, 0.16)",
             secondaryBorder: "rgba(15, 23, 42, 0.28)",
             secondaryText: ColorsStatic.secondaryTextLight,
-            drawerBackground: ColorsStatic.drawerBackground,
+            drawerBackground: ColorsStatic.aliceBlue,
             drawerHeaderBg: ColorsStatic.drawerHeaderBg,
             drawerCardBg: ColorsStatic.drawerCardBg,
             drawerText: ColorsStatic.drawerText,

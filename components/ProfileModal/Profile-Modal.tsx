@@ -3,6 +3,7 @@ import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
+import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import Colors from "@/shared-uis/constants/Colors";
 import { stylesFn } from "@/shared-uis/styles/profile-modal/ProfileModal.styles";
 import { processRawAttachment } from "@/shared-uis/utils/attachments";
@@ -25,7 +26,6 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Theme } from "@react-navigation/native";
 import { doc, Firestore, getDoc } from "firebase/firestore";
-import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import React, { useEffect, useMemo, useState } from "react";
 import {
     ActivityIndicator,
@@ -47,7 +47,7 @@ import Carousel from "../carousel/carousel";
 import { MAX_WIDTH_WEB } from "../carousel/carousel-util";
 import { MediaItem } from "../carousel/render-media-item";
 import { InfluencerMetrics } from "../influencers/influencer-metrics";
-import { Stars, qualityScoreToStars } from "../rating-section";
+import { qualityScoreToStars, Stars } from "../rating-section";
 import SelectGroup from "../select/select-group";
 
 
@@ -221,6 +221,63 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
     const showQualityChip = typeof trendlyQuality === "number";
     const showVerifiedChip = !!trendlyVerified;
     const showTrendlyChips = showGenderChip || showQualityChip || showVerifiedChip;
+    const profileContent = influencer?.profile?.content;
+    const profileSections = [
+        {
+            key: "about",
+            title: "About Me",
+            subtitle: "The real intro",
+            icon: "auto-awesome",
+            sectionTag: "Know More",
+            html: profileContent?.about,
+            visible: !!profileContent?.about,
+        },
+        {
+            key: "social-highlight",
+            title: "Social Media Highlight",
+            subtitle: "Main character moment",
+            icon: "bolt",
+            sectionTag: "My Socials",
+            html: profileContent?.socialMediaHighlight,
+            visible: !!profileContent?.socialMediaHighlight,
+        },
+        {
+            key: "campaign-goals",
+            title: "Campaign Goals",
+            subtitle: "What they want to build",
+            icon: "campaign",
+            sectionTag: "Why Chose Me",
+            html: profileContent?.collaborationGoals,
+            visible: showCampaignGoals && !!profileContent?.collaborationGoals,
+        },
+        {
+            key: "influencer-goals",
+            title: "Influencer Connection Goals",
+            subtitle: "Collab energy",
+            icon: "groups",
+            sectionTag: "Why Connect",
+            html: profileContent?.influencerConectionGoals,
+            visible: showInfluencerGoals && !!profileContent?.influencerConectionGoals,
+        },
+        {
+            key: "audience-insights",
+            title: "Audience Insights",
+            subtitle: "Who is tuning in",
+            icon: "insights",
+            sectionTag: "My Audience",
+            html: profileContent?.audienceInsights,
+            visible: !!profileContent?.audienceInsights,
+        },
+        {
+            key: "fun-fact",
+            title: "Fun Fact About You",
+            subtitle: "Lore drop",
+            icon: "emoji-objects",
+            sectionTag: "Fun",
+            html: profileContent?.funFactAboutUser,
+            visible: !!profileContent?.funFactAboutUser,
+        },
+    ].filter((section) => section.visible && section.html);
     const actionButtonNode =
         actionButton != undefined
             ? actionButton
@@ -340,7 +397,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
 
                                     <View style={localStyles.profileDetailsRow}>
                                         <Pressable
-                                            style={styles.row}
+                                            style={[styles.row, localStyles.profileDetailItem]}
                                             onPress={() => {
                                                 if (isOnFreePlan) {
                                                     upgradeNow();
@@ -390,158 +447,147 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                             </Text>
                                         </Pressable>
                                         {showGenderChip && (
-                                            <>
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faUser}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Gender: {trendlyGender}
-                                                    </Text>
-                                                </View>
-                                            </>
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faUser}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                <Text style={styles.subTextHeading}>
+                                                    Gender: {trendlyGender}
+                                                </Text>
+                                            </View>
                                         )}
                                         {showVerifiedChip && (
-                                            <>
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        Verified
-                                                    </Text>
-                                                </View>
-                                            </>
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faCheck}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                <Text style={styles.subTextHeading}>
+                                                    Verified
+                                                </Text>
+                                            </View>
                                         )}
                                         {influencer?.location && (
-                                            <>
-                                                <View style={styles.row}>
-                                                    <FontAwesomeIcon
-                                                        icon={faLocation}
-                                                        size={16}
-                                                        color={Colors(theme).primary}
-                                                        style={styles.icon}
-                                                    />
-                                                    <Text style={styles.subTextHeading}>
-                                                        {influencer.location}
-                                                    </Text>
-                                                </View>
-                                            </>
-                                        )}
-                                    </View>
-
-                                    {/* Email */}
-                                    {influencer?.email && (
-                                        <Pressable
-                                            style={styles.row}
-                                            onPress={() => {
-                                                if (isEmailMasked || isOnFreePlan || lockProfile) {
-                                                    if (closeModal) {
-                                                        closeModal();
-                                                        openModal({
-                                                            title: "Email Unavailable",
-                                                            description:
-                                                                "You can only get the influencers email if they apply on your collaboration",
-                                                            confirmAction: () => {
-                                                                router.push("/collaborations");
-                                                            },
-                                                            confirmText: "Post Collaboration",
-                                                        });
-                                                    }
-                                                } else
-                                                    Linking.openURL(`mailto:${influencer?.email}`);
-                                            }}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faEnvelope}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            {isEmailMasked || isOnFreePlan || lockProfile ? (
-                                                <>
-                                                    <Text style={styles.subTextHeading}>
-                                                        {maskEmail(influencer?.email)}
-                                                    </Text>
-                                                </>
-                                            ) : (
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faLocation}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
                                                 <Text style={styles.subTextHeading}>
-                                                    {influencer?.email}
+                                                    {influencer.location}
                                                 </Text>
-                                            )}
-                                        </Pressable>
-                                    )}
-
-                                    {/* Phone */}
-                                    {influencer?.phoneNumber && (
-                                        <Pressable
-                                            style={styles.row}
-                                            onPress={() => {
-                                                if (isPhoneMasked || isOnFreePlan || lockProfile) {
-                                                    if (closeModal) {
-                                                        closeModal();
-                                                        if (isBrandsApp)
+                                            </View>
+                                        )}
+                                        {/* Email */}
+                                        {influencer?.email && (
+                                            <Pressable
+                                                style={[styles.row, localStyles.profileDetailItem]}
+                                                onPress={() => {
+                                                    if (isEmailMasked || isOnFreePlan || lockProfile) {
+                                                        if (closeModal) {
+                                                            closeModal();
                                                             openModal({
-                                                                title: "Phone Access Unavailable",
+                                                                title: "Email Unavailable",
                                                                 description:
-                                                                    "You can only get the influencers phone number if they apply on your collaboration",
+                                                                    "You can only get the influencers email if they apply on your collaboration",
                                                                 confirmAction: () => {
                                                                     router.push("/collaborations");
                                                                 },
                                                                 confirmText: "Post Collaboration",
                                                             });
-                                                        else
-                                                            openModal({
-                                                                title: "Phone Access Unavailable",
-                                                                description:
-                                                                    "You can only get the influencers phone number if they accept your invitation to connect",
-                                                                confirmAction: () => { },
-                                                                confirmText: "Understood",
-                                                            });
-                                                    }
-                                                } else
-                                                    Linking.openURL(`tel:${influencer?.phoneNumber}`);
-                                            }}
-                                        >
-                                            <FontAwesomeIcon
-                                                icon={faPhone}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            {isPhoneMasked || isOnFreePlan || lockProfile ? (
-                                                <>
+                                                        }
+                                                    } else
+                                                        Linking.openURL(`mailto:${influencer?.email}`);
+                                                }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faEnvelope}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                {isEmailMasked || isOnFreePlan || lockProfile ? (
+                                                    <Text style={styles.subTextHeading}>
+                                                        {maskEmail(influencer?.email)}
+                                                    </Text>
+                                                ) : (
+                                                    <Text style={styles.subTextHeading}>
+                                                        {influencer?.email}
+                                                    </Text>
+                                                )}
+                                            </Pressable>
+                                        )}
+
+                                        {/* Phone */}
+                                        {influencer?.phoneNumber && (
+                                            <Pressable
+                                                style={[styles.row, localStyles.profileDetailItem]}
+                                                onPress={() => {
+                                                    if (isPhoneMasked || isOnFreePlan || lockProfile) {
+                                                        if (closeModal) {
+                                                            closeModal();
+                                                            if (isBrandsApp)
+                                                                openModal({
+                                                                    title: "Phone Access Unavailable",
+                                                                    description:
+                                                                        "You can only get the influencers phone number if they apply on your collaboration",
+                                                                    confirmAction: () => {
+                                                                        router.push("/collaborations");
+                                                                    },
+                                                                    confirmText: "Post Collaboration",
+                                                                });
+                                                            else
+                                                                openModal({
+                                                                    title: "Phone Access Unavailable",
+                                                                    description:
+                                                                        "You can only get the influencers phone number if they accept your invitation to connect",
+                                                                    confirmAction: () => { },
+                                                                    confirmText: "Understood",
+                                                                });
+                                                        }
+                                                    } else
+                                                        Linking.openURL(`tel:${influencer?.phoneNumber}`);
+                                                }}
+                                            >
+                                                <FontAwesomeIcon
+                                                    icon={faPhone}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                {isPhoneMasked || isOnFreePlan || lockProfile ? (
                                                     <Text style={styles.subTextHeading}>
                                                         {maskPhone(influencer?.phoneNumber)}
                                                     </Text>
-                                                </>
-                                            ) : (
-                                                <Text style={styles.subTextHeading}>
-                                                    {influencer?.phoneNumber}
-                                                </Text>
-                                            )}
-                                        </Pressable>
-                                    )}
+                                                ) : (
+                                                    <Text style={styles.subTextHeading}>
+                                                        {influencer?.phoneNumber}
+                                                    </Text>
+                                                )}
+                                            </Pressable>
+                                        )}
 
-                                    {influencer?.profile?.timeCommitment && (
-                                        <View style={styles.row}>
-                                            <FontAwesomeIcon
-                                                icon={faClock}
-                                                size={16}
-                                                color={Colors(theme).primary}
-                                                style={styles.icon}
-                                            />
-                                            <Text style={styles.subTextHeading}>
-                                                {influencer?.profile?.timeCommitment}
-                                            </Text>
-                                        </View>
-                                    )}
+                                        {influencer?.profile?.timeCommitment && (
+                                            <View style={[styles.row, localStyles.profileDetailItem]}>
+                                                <FontAwesomeIcon
+                                                    icon={faClock}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                    style={styles.icon}
+                                                />
+                                                <Text style={styles.subTextHeading}>
+                                                    {influencer?.profile?.timeCommitment}
+                                                </Text>
+                                            </View>
+                                        )}
+                                    </View>
                                 </View>
                             </View>
 
@@ -557,122 +603,63 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                             )}
                             {actionCard}
 
-                            <View style={styles.aboutContainer}>
-                                {influencer?.profile?.content?.about ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>About Me</Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content?.about ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={localStyles.htmlBaseStyle}
-                                        />
-                                    </View>
-                                ) : null}
-
-                                {influencer?.profile?.content?.socialMediaHighlight ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Social Media Highlight
+                            <View style={[styles.aboutContainer, localStyles.aboutFeedContainer]}>
+                                {profileSections.map((section) => (
+                                    <View key={section.key} style={[styles.aboutCard, localStyles.aboutSection]}>
+                                        <View style={localStyles.aboutCardHeader}>
+                                            <View style={localStyles.aboutBadge}>
+                                                <MaterialIcons
+                                                    name={section.icon as any}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                />
+                                                <Text style={localStyles.aboutBadgeText}>{section.sectionTag}</Text>
+                                            </View>
+                                        </View>
+                                        <Title style={[styles.cardColor, localStyles.aboutTitle]}>
+                                            {section.title}
                                         </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content
-                                                        ?.socialMediaHighlight ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={localStyles.htmlBaseStyle}
-                                        />
+                                        <Text style={localStyles.aboutSubtitle}>{section.subtitle}</Text>
+                                        <View style={localStyles.aboutHtmlWrap}>
+                                            <RenderHTML
+                                                contentWidth={screenWidth}
+                                                source={{ html: section.html || "<p>No content available.</p>" }}
+                                                baseStyle={localStyles.htmlBaseStyle}
+                                            />
+                                        </View>
                                     </View>
-                                ) : null}
-                                {showCampaignGoals &&
-                                    influencer?.profile?.content?.collaborationGoals ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>Campaign Goals</Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content
-                                                        ?.collaborationGoals ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={localStyles.htmlBaseStyle}
-                                        />
-                                    </View>
-                                ) : null}
-                                {showInfluencerGoals &&
-                                    influencer?.profile?.content?.influencerConectionGoals ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Influencer Connection Goals
-                                        </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content
-                                                        ?.influencerConectionGoals ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={localStyles.htmlBaseStyle}
-                                        />
-                                    </View>
-                                ) : null}
-                                {influencer?.profile?.content?.audienceInsights ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Audience Insights
-                                        </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content?.audienceInsights ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={localStyles.htmlBaseStyle}
-                                        />
-                                    </View>
-                                ) : null}
-                                {influencer?.profile?.content?.funFactAboutUser ? (
-                                    <View style={styles.aboutCard}>
-                                        <Title style={styles.cardColor}>
-                                            Fun Fact About You
-                                        </Title>
-                                        <RenderHTML
-                                            contentWidth={screenWidth}
-                                            source={{
-                                                html:
-                                                    influencer?.profile?.content?.funFactAboutUser ||
-                                                    "<p>No content available.</p>",
-                                            }}
-                                            baseStyle={localStyles.htmlBaseStyle}
-                                        />
-                                    </View>
-                                ) : null}
+                                ))}
                                 {loadingPosts ? (
                                     <ActivityIndicator
                                         size="large"
                                         color={Colors(theme).primary}
                                     />
                                 ) : posts.length > 0 ? (
-                                    <View style={styles.aboutCard}>
+                                    <View style={[styles.aboutCard, localStyles.aboutSection, localStyles.postsSection]}>
+                                        <View style={localStyles.aboutCardHeader}>
+                                            <View style={localStyles.aboutBadge}>
+                                                <MaterialIcons
+                                                    name={isInstagram ? "photo-camera" : "facebook"}
+                                                    size={16}
+                                                    color={Colors(theme).primary}
+                                                />
+                                                <Text style={localStyles.aboutBadgeText}>Feed</Text>
+                                            </View>
+                                        </View>
                                         <Title
-                                            style={[styles.cardColor, localStyles.cardTitleWithMargin]}
+                                            style={[styles.cardColor, localStyles.cardTitleWithMargin, localStyles.aboutTitle]}
                                         >
                                             {influencer.name}'s{" "}
                                             {isInstagram ? "Instagram" : "Facebook"} Posts
                                         </Title>
+                                        <Text style={localStyles.aboutSubtitle}>
+                                            Fresh drops from socials
+                                        </Text>
 
                                         <ScrollView
                                             horizontal
                                             showsHorizontalScrollIndicator={false}
+                                            contentContainerStyle={localStyles.postsScrollContent}
                                         >
                                             <View style={localStyles.postsColumn}>
                                                 <View style={localStyles.postsRow}>
@@ -681,6 +668,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                             .filter((_, index) => index % 2 === 0)
                                                             .map((item: any, index) => (
                                                                 <Pressable
+                                                                    key={`top-${index}`}
+                                                                    style={localStyles.postPressable}
                                                                     onPress={() => {
                                                                         Linking.openURL(
                                                                             isInstagram
@@ -690,7 +679,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                     }}
                                                                 >
                                                                     <Image
-                                                                        key={`bottom-${index}`}
                                                                         source={{
                                                                             uri: isInstagram
                                                                                 ? item.media_type === "IMAGE"
@@ -709,6 +697,8 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                             .filter((_, index) => index % 2 !== 0)
                                                             .map((item: any, index) => (
                                                                 <Pressable
+                                                                    key={`bottom-${index}`}
+                                                                    style={localStyles.postPressable}
                                                                     onPress={() => {
                                                                         Linking.openURL(
                                                                             isInstagram
@@ -718,7 +708,6 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
                                                                     }}
                                                                 >
                                                                     <Image
-                                                                        key={`bottom-${index}`}
                                                                         source={{
                                                                             uri: isInstagram
                                                                                 ? item.media_type === "IMAGE"
@@ -846,6 +835,9 @@ const createLocalStyles = (
             gap: 10,
             marginBottom: 8,
         },
+        profileDetailItem: {
+            marginBottom: 0,
+        },
         qualityRow: {
             alignItems: "center" as const,
             marginTop: 4,
@@ -857,15 +849,68 @@ const createLocalStyles = (
             fontSize: 16,
             lineHeight: 22,
         },
-        cardTitleWithMargin: { marginBottom: 20 },
+        aboutFeedContainer: {
+            marginTop: 8,
+        },
+        aboutSection: {
+            marginVertical: 0,
+            paddingTop: 10,
+            paddingBottom: 18,
+            borderBottomWidth: StyleSheet.hairlineWidth,
+            borderBottomColor: colors.border,
+        },
+        aboutCardHeader: {
+            flexDirection: "row",
+            alignItems: "center",
+            marginBottom: 6,
+        },
+        aboutBadge: {
+            flexDirection: "row",
+            alignItems: "center",
+            gap: 6,
+            borderRadius: 999,
+            backgroundColor: colors.tag,
+            paddingHorizontal: 10,
+            paddingVertical: 4,
+        },
+        aboutBadgeText: {
+            color: colors.tagForeground,
+            fontSize: 11,
+            fontWeight: "600",
+            letterSpacing: 0.2,
+            textTransform: "uppercase",
+        },
+        aboutSubtitle: {
+            color: colors.textSecondary,
+            fontSize: 13,
+            marginBottom: 8,
+        },
+        aboutTitle: {
+            marginBottom: 2,
+            fontSize: 24,
+            lineHeight: 30,
+        },
+        aboutHtmlWrap: {
+            paddingTop: 2,
+        },
+        postsSection: {
+            paddingBottom: 8,
+            borderBottomWidth: 0,
+        },
+        cardTitleWithMargin: { marginBottom: 4 },
+        postsScrollContent: { paddingBottom: 4 },
         postsColumn: { flexDirection: "column" as const },
-        postsRow: { flexDirection: "row" as const, marginBottom: 10 },
+        postsRow: { flexDirection: "row" as const, marginBottom: 12 },
         postsRowOnly: { flexDirection: "row" as const },
+        postPressable: {
+            borderRadius: 14,
+            overflow: "hidden",
+        },
         postImage: {
-            width: 100,
-            height: 100,
-            borderRadius: 10,
-            marginRight: 10,
+            width: 112,
+            height: 112,
+            borderRadius: 14,
+            marginRight: 12,
         },
         singleColumnPadding: {
             padding: isTwoColumn ? 20 : 0,
