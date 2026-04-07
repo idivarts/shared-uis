@@ -71,7 +71,11 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                         onClose={handleClose}
                         style={styles.bottomSheet}
                     >
-                        <BottomSheetScrollView>
+                        <BottomSheetScrollView
+                            contentContainerStyle={styles.sheetContentContainer}
+                            keyboardShouldPersistTaps="handled"
+                            showsVerticalScrollIndicator={false}
+                        >
                             {children}
                         </BottomSheetScrollView>
                     </BottomSheet>
@@ -100,5 +104,8 @@ const stylesFn = (theme: Theme) => StyleSheet.create({
     },
     bottomSheet: {
         zIndex: 9999,
+    },
+    sheetContentContainer: {
+        flexGrow: 1,
     },
 });
