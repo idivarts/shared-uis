@@ -29,7 +29,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
 
     const snapPoints = React.useMemo(
         () => [snapPointsRange[0], snapPointsRange[1]],
-        []
+        [snapPointsRange]
     );
 
     const handleClose = () => {
