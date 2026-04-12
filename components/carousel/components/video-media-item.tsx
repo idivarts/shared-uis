@@ -378,7 +378,7 @@ function createVideoModalStyles(colors: ReturnType<typeof Colors>) {
             backgroundColor: colors.modalBackground,
             justifyContent: "center",
             alignItems: "center",
-            padding: 12,
+            padding: 0,
         },
         mobilePlayer: {
             width: "100%",
