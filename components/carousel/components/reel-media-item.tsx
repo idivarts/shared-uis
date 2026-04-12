@@ -40,7 +40,7 @@ function ReelMediaItem({
 }: ReelMediaItemProps) {
     const reelImageUrl = item.imageUrl || item.url;
     const reelFrameStyle: ViewStyle = {
-        width: frameWidth,
+        width: frameWidth as any,
         height: frameHeight,
         alignSelf: "center",
     };

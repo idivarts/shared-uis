@@ -1,4 +1,3 @@
-import { captureVideoFrameAsDataUrl } from "@/shared-libs/utils/capture-video-frame-web";
 import { Console } from "@/shared-libs/utils/console";
 import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
@@ -49,12 +48,15 @@ function VideoMediaItem({
     const [isLoading, setIsLoading] = useState(true);
     const [extractedPosterUri, setExtractedPosterUri] = useState<string | null>(null);
     const [videoModalOpen, setVideoModalOpen] = useState(false);
+    const [webPosterReady, setWebPosterReady] = useState(false);
     const modalWebVideoRef = useRef<HTMLVideoElement | null>(null);
+    const webPosterVideoRef = useRef<HTMLVideoElement | null>(null);
     const modalNativeVideoRef = useRef<Video | null>(null);
     const styles = useMemo(() => createVideoModalStyles(colors), [colors]);
 
     useEffect(() => {
         let cancelled = false;
+        setWebPosterReady(false);
 
         if (item.imageUrl) {
             setExtractedPosterUri(null);
@@ -69,12 +71,7 @@ function VideoMediaItem({
 
         (async () => {
             try {
-                if (Platform.OS === "web") {
-                    const dataUrl = await captureVideoFrameAsDataUrl(item.url);
-                    if (!cancelled && dataUrl) {
-                        setExtractedPosterUri(dataUrl);
-                    }
-                } else {
+                if (Platform.OS !== "web") {
                     const { uri } = await VideoThumbnails.getThumbnailAsync(item.url, {
                         time: 500,
                         quality: 0.78,
@@ -82,13 +79,18 @@ function VideoMediaItem({
                     if (!cancelled) {
                         setExtractedPosterUri(uri);
                     }
+                    return;
+                }
+                if (!cancelled) {
+                    // Web uses an inline <video> first-frame preview for poster rendering.
+                    setExtractedPosterUri(null);
                 }
             } catch (error) {
                 if (__DEV__) {
                     console.warn("video poster thumbnail", error);
                 }
             } finally {
-                if (!cancelled) {
+                if (!cancelled && Platform.OS !== "web") {
                     setIsLoading(false);
                 }
             }
@@ -164,6 +166,43 @@ function VideoMediaItem({
             resizeMethod="resize"
             onLoadEnd={() => setIsLoading(false)}
             onError={() => setIsLoading(false)}
+        />
+    ) : Platform.OS === "web" ? (
+        <video
+            ref={(el: HTMLVideoElement | null) => {
+                webPosterVideoRef.current = el;
+            }}
+            src={item.url}
+            preload="metadata"
+            muted
+            playsInline
+            style={{
+                width: frameWidth,
+                height: frameHeight,
+                backgroundColor: colors.card,
+            }}
+            onLoadedMetadata={() => {
+                const videoEl = webPosterVideoRef.current;
+                if (!videoEl) {
+                    setIsLoading(false);
+                    return;
+                }
+                try {
+                    const d = videoEl.duration;
+                    const t = Number.isFinite(d) && d > 0 ? Math.min(0.5, Math.max(0.05, d * 0.05)) : 0.1;
+                    videoEl.currentTime = t;
+                } catch {
+                    setIsLoading(false);
+                }
+            }}
+            onSeeked={() => {
+                webPosterVideoRef.current?.pause();
+                setWebPosterReady(true);
+                setIsLoading(false);
+            }}
+            onError={() => {
+                setIsLoading(false);
+            }}
         />
     ) : (
         <View
@@ -256,7 +295,7 @@ function VideoMediaItem({
                             iconColor={colors.white}
                         />
                         <LoadingCircle
-                            visible={isLoading}
+                            visible={isLoading || (Platform.OS === "web" && !displayPosterUri && !webPosterReady)}
                             color={colors.text}
                             frameHeight={frameHeight}
                             frameWidth={typeof frameWidth === "number" ? frameWidth : 250}
