@@ -3,7 +3,7 @@ import ImageComponent from "@/shared-uis/components/image-component";
 import Colors from "@/shared-uis/constants/Colors";
 import { faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
-import { ResizeMode, Video } from "expo-av";
+import { ResizeMode, Video, VideoFullscreenUpdate } from "expo-av";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -107,6 +107,15 @@ function VideoMediaItem({
         setVideoModalOpen(false);
     }, []);
 
+    const handleNativeFullscreenUpdate = useCallback(
+        (event: { fullscreenUpdate: number }) => {
+            if (event.fullscreenUpdate === VideoFullscreenUpdate.PLAYER_DID_DISMISS) {
+                closeVideoModal();
+            }
+        },
+        [closeVideoModal]
+    );
+
     const openVideoPlayback = useCallback(async () => {
         if (item.playUrl) {
             try {
@@ -147,6 +156,28 @@ function VideoMediaItem({
         }
         modalNativeVideoRef.current?.presentFullscreenPlayer?.();
     }, [videoModalOpen, xl]);
+
+    useEffect(() => {
+        if (!videoModalOpen || Platform.OS !== "web" || xl) {
+            return;
+        }
+
+        const handleFullscreenChange = () => {
+            const doc = document as Document & { webkitFullscreenElement?: Element | null };
+            const fullscreenElement = doc.fullscreenElement || doc.webkitFullscreenElement || null;
+            if (!fullscreenElement) {
+                closeVideoModal();
+            }
+        };
+
+        document.addEventListener("fullscreenchange", handleFullscreenChange);
+        document.addEventListener("webkitfullscreenchange", handleFullscreenChange as EventListener);
+
+        return () => {
+            document.removeEventListener("fullscreenchange", handleFullscreenChange);
+            document.removeEventListener("webkitfullscreenchange", handleFullscreenChange as EventListener);
+        };
+    }, [videoModalOpen, xl, closeVideoModal]);
 
     const displayPosterUri = item.imageUrl ?? extractedPosterUri;
     const posterBody = displayPosterUri ? (
@@ -268,6 +299,7 @@ function VideoMediaItem({
                                     shouldPlay
                                     useNativeControls
                                     resizeMode={ResizeMode.CONTAIN}
+                                    onFullscreenUpdate={handleNativeFullscreenUpdate}
                                     style={styles.mobilePlayer}
                                     onError={(error) => {
                                         Console.error(error, "Native video modal error");
