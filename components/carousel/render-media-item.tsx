@@ -7,6 +7,7 @@ import { faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { Zoomable } from "@likashefqet/react-native-image-zoom";
 import { useTheme } from "@react-navigation/native";
+import { ResizeMode, Video } from "expo-av";
 import * as VideoThumbnails from "expo-video-thumbnails";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -63,8 +64,9 @@ function RenderMediaItem({
     const colors = Colors(theme);
     const [isLoading, setIsLoading] = useState(true);
     const [extractedPosterUri, setExtractedPosterUri] = useState<string | null>(null);
-    const [desktopVideoOpen, setDesktopVideoOpen] = useState(false);
-    const modalVideoRef = useRef<HTMLVideoElement | null>(null);
+    const [videoModalOpen, setVideoModalOpen] = useState(false);
+    const modalWebVideoRef = useRef<HTMLVideoElement | null>(null);
+    const modalNativeVideoRef = useRef<Video | null>(null);
     const { scrollRef, scrollHeight } = useScrollContext();
     const { width: constrainedWidth, xl } = useBreakpoints();
     const videoModalStyles = useMemo(() => createVideoModalStyles(colors), [colors]);
@@ -188,8 +190,9 @@ function RenderMediaItem({
     );
 
     const closeDesktopVideoModal = useCallback(() => {
-        modalVideoRef.current?.pause();
-        setDesktopVideoOpen(false);
+        modalWebVideoRef.current?.pause();
+        modalNativeVideoRef.current?.pauseAsync?.();
+        setVideoModalOpen(false);
     }, []);
 
     const openVideoPlayback = useCallback(async () => {
@@ -204,19 +207,35 @@ function RenderMediaItem({
             }
             return;
         }
-        if (Platform.OS === "web" && xl) {
-            setDesktopVideoOpen(true);
+        setVideoModalOpen(true);
+    }, [item.playUrl, item.url, xl]);
+
+    useEffect(() => {
+        if (!videoModalOpen) {
             return;
         }
-        try {
-            const ok = await Linking.canOpenURL(item.url);
-            if (ok) {
-                await Linking.openURL(item.url);
+        if (Platform.OS === "web") {
+            const videoEl = modalWebVideoRef.current;
+            if (!videoEl) {
+                return;
             }
-        } catch (e) {
-            Console.error(e, "openVideoPlayback url");
+            if (!xl) {
+                const requestFullscreen =
+                    videoEl.requestFullscreen ||
+                    (videoEl as HTMLVideoElement & { webkitRequestFullscreen?: () => Promise<void> })
+                        .webkitRequestFullscreen;
+                requestFullscreen?.call(videoEl)?.catch?.((error: unknown) => {
+                    Console.error(error, "Video mobile web fullscreen");
+                });
+            }
+            videoEl.play().catch((error: unknown) => {
+                Console.error(error, "Video mobile web autoplay");
+            });
+            return;
+        } else {
+            modalNativeVideoRef.current?.presentFullscreenPlayer?.();
         }
-    }, [item.playUrl, item.url, xl]);
+    }, [videoModalOpen, xl]);
 
     if (Math.abs((currentIndex || 0) - index) > 1) {
         return (
@@ -397,18 +416,21 @@ function RenderMediaItem({
 
     return (
         <>
-            {Platform.OS === "web" && xl ? (
+            {videoModalOpen ? (
                 <Modal
-                    visible={desktopVideoOpen}
+                    visible={videoModalOpen}
                     animationType="fade"
                     transparent
                     onRequestClose={closeDesktopVideoModal}
                 >
                     <Pressable
-                        style={videoModalStyles.backdrop}
+                        style={xl ? videoModalStyles.backdrop : videoModalStyles.mobileBackdrop}
                         onPress={closeDesktopVideoModal}
                     >
-                        <Pressable style={videoModalStyles.sheet} onPress={() => { }}>
+                        <Pressable
+                            style={xl ? videoModalStyles.sheet : videoModalStyles.mobileSheet}
+                            onPress={() => { }}
+                        >
                             <Pressable
                                 accessibilityRole="button"
                                 onPress={closeDesktopVideoModal}
@@ -416,19 +438,35 @@ function RenderMediaItem({
                             >
                                 <FontAwesomeIcon icon={faXmark} size={18} color={colors.text} />
                             </Pressable>
-                            <video
-                                ref={(el: HTMLVideoElement | null) => {
-                                    modalVideoRef.current = el;
-                                }}
-                                src={item.url}
-                                controls
-                                autoPlay
-                                playsInline
-                                style={videoModalStyles.player}
-                                onError={(error: unknown) => {
-                                    Console.error(error, "Video modal error");
-                                }}
-                            />
+                            {Platform.OS === "web" ? (
+                                <video
+                                    ref={(el: HTMLVideoElement | null) => {
+                                        modalWebVideoRef.current = el;
+                                    }}
+                                    src={item.url}
+                                    controls
+                                    autoPlay
+                                    playsInline={xl}
+                                    style={xl ? videoModalStyles.player : videoModalStyles.mobilePlayer}
+                                    onError={(error: unknown) => {
+                                        Console.error(error, "Video modal error");
+                                    }}
+                                />
+                            ) : (
+                                <Video
+                                    ref={(ref) => {
+                                        modalNativeVideoRef.current = ref;
+                                    }}
+                                    source={{ uri: item.url }}
+                                    shouldPlay
+                                    useNativeControls
+                                    resizeMode={ResizeMode.CONTAIN}
+                                    style={videoModalStyles.mobilePlayer}
+                                    onError={(error) => {
+                                        Console.error(error, "Native video modal error");
+                                    }}
+                                />
+                            )}
                         </Pressable>
                     </Pressable>
                 </Modal>
@@ -487,6 +525,12 @@ function createVideoModalStyles(colors: ReturnType<typeof Colors>) {
             alignItems: "center",
             padding: 24,
         },
+        mobileBackdrop: {
+            flex: 1,
+            backgroundColor: colors.backdropStrong,
+            justifyContent: "center",
+            alignItems: "center",
+        },
         sheet: {
             width: "100%",
             maxWidth: 960,
@@ -499,6 +543,19 @@ function createVideoModalStyles(colors: ReturnType<typeof Colors>) {
         player: {
             width: "100%",
             aspectRatio: 16 / 9,
+            backgroundColor: colors.reverseBackground,
+        },
+        mobileSheet: {
+            width: "100%",
+            height: "100%",
+            backgroundColor: colors.modalBackground,
+            justifyContent: "center",
+            alignItems: "center",
+            padding: 12,
+        },
+        mobilePlayer: {
+            width: "100%",
+            height: "100%",
             backgroundColor: colors.reverseBackground,
         },
         closeBtn: {
