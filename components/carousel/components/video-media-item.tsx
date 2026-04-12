@@ -12,9 +12,9 @@ import {
     Modal,
     Platform,
     Pressable,
+    View as RNView,
     StyleSheet,
     type ViewStyle,
-    View as RNView,
 } from "react-native";
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
