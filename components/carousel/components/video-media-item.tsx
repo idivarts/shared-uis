@@ -154,8 +154,9 @@ function VideoMediaItem({
             });
             return;
         }
-        modalNativeVideoRef.current?.presentFullscreenPlayer?.();
-    }, [videoModalOpen, xl]);
+        // Moved this line on Load
+        // modalNativeVideoRef.current?.presentFullscreenPlayer?.();
+    }, [videoModalOpen, modalNativeVideoRef.current, modalWebVideoRef.current, xl]);
 
     useEffect(() => {
         if (!videoModalOpen || Platform.OS !== "web" || xl) {
@@ -297,6 +298,9 @@ function VideoMediaItem({
                                     }}
                                     source={{ uri: item.url }}
                                     shouldPlay
+                                    onLoad={() => {
+                                        modalNativeVideoRef.current?.presentFullscreenPlayer()
+                                    }}
                                     useNativeControls
                                     resizeMode={ResizeMode.CONTAIN}
                                     onFullscreenUpdate={handleNativeFullscreenUpdate}
