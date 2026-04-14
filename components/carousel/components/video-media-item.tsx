@@ -4,7 +4,6 @@ import Colors from "@/shared-uis/constants/Colors";
 import { faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { ResizeMode, Video, VideoFullscreenUpdate } from "expo-av";
-import * as VideoThumbnails from "expo-video-thumbnails";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Linking,
@@ -18,6 +17,7 @@ import {
 import { GestureDetector } from "react-native-gesture-handler";
 import Animated from "react-native-reanimated";
 import { View } from "../../theme/Themed";
+import { getVideoPosterThumbnail } from "./get-video-thumbnail";
 import LoadingCircle from "./loading-circle";
 import PlayOverlay from "./play-overlay";
 import type { MediaItem, MediaShape, MediaSize } from "./types";
@@ -72,11 +72,11 @@ function VideoMediaItem({
         (async () => {
             try {
                 if (Platform.OS !== "web") {
-                    const { uri } = await VideoThumbnails.getThumbnailAsync(item.url, {
+                    const uri = await getVideoPosterThumbnail(item.url, {
                         time: 500,
                         quality: 0.78,
                     });
-                    if (!cancelled) {
+                    if (!cancelled && uri) {
                         setExtractedPosterUri(uri);
                     }
                     return;
