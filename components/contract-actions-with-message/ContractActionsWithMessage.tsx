@@ -59,7 +59,7 @@ const ContractActionsWithMessage: React.FC<ContractActionsWithMessageProps> = ({
                     <Button
                         mode={firstButton.variant}
                         onPress={firstButton.onPress}
-                        disabled={firstButton.disabled}
+                        disabled={Boolean(firstButton.disabled) || Boolean(firstButton.loading)}
                         loading={firstButton.loading}
                         style={[styles.button, buttons.length === 1 && styles.buttonSingle]}
                         contentStyle={styles.buttonContent}
@@ -72,7 +72,7 @@ const ContractActionsWithMessage: React.FC<ContractActionsWithMessageProps> = ({
                         <Button
                             mode={secondButton.variant}
                             onPress={secondButton.onPress}
-                            disabled={secondButton.disabled}
+                            disabled={Boolean(secondButton.disabled) || Boolean(secondButton.loading)}
                             loading={secondButton.loading}
                             style={styles.button}
                             contentStyle={styles.buttonContent}
