@@ -68,6 +68,9 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                         index={0}
                         snapPoints={snapPoints}
                         enablePanDownToClose
+                        keyboardBehavior="interactive"
+                        keyboardBlurBehavior="restore"
+                        android_keyboardInputMode="adjustResize"
                         backdropComponent={renderBackdrop}
                         onClose={handleClose}
                         style={styles.bottomSheet}
@@ -77,6 +80,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                         <BottomSheetScrollView
                             style={styles.sheetScroll}
                             contentContainerStyle={styles.sheetScrollContent}
+                            keyboardShouldPersistTaps="handled"
                         >
                             {children}
                         </BottomSheetScrollView>
