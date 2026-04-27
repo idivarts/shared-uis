@@ -174,14 +174,15 @@ function getMessageColors(
             return {
                 bg: colors.reachCardBg ?? "rgba(157, 213, 134, 0.2)",
                 border: colors.reachCardBorder ?? "rgba(157, 213, 134, 0.4)",
+                // Dark surfaces prefer high-contrast text.
                 text: isDark ? colors.text : colors.savingsGreen ?? colors.green ?? colors.text,
                 iconBg: colors.green,
             };
         case "error":
             return isDark
                 ? {
-                      bg: colors.secondarySurface,
-                      border: colors.secondaryBorder,
+                      bg: colors.secondarySurface ?? colors.card,
+                      border: colors.secondaryBorder ?? colors.budgetCardBorder ?? colors.primary,
                       text: colors.errorBannerText ?? colors.text,
                       iconBg: colors.errorBannerText ?? colors.red,
                   }
@@ -194,8 +195,8 @@ function getMessageColors(
         case "info":
             return isDark
                 ? {
-                      bg: colors.secondarySurface,
-                      border: colors.secondaryBorder,
+                      bg: colors.secondarySurface ?? colors.card,
+                      border: colors.secondaryBorder ?? colors.budgetCardBorder ?? colors.primary,
                       text: colors.text,
                       iconBg: colors.primary,
                   }
@@ -210,6 +211,7 @@ function getMessageColors(
             return {
                 bg: colors.planBadgeProBg ?? "rgba(236, 214, 148, 0.2)",
                 border: colors.budgetCardBorder ?? "rgba(236, 214, 148, 0.5)",
+                // `gray100` is a light-theme token; use main text for dark-mode contrast.
                 text: colors.text,
                 iconBg: colors.gold,
             };
