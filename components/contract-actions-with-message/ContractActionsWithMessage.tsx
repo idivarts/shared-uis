@@ -46,7 +46,10 @@ const ContractActionsWithMessage: React.FC<ContractActionsWithMessageProps> = ({
 }) => {
     const theme = useTheme();
     const colors = Colors(theme);
-    const styles = useMemo(() => createStyles(colors, message.variant), [colors, message.variant]);
+    const styles = useMemo(
+        () => createStyles(colors, message.variant, theme.dark),
+        [colors, message.variant, theme.dark]
+    );
 
     const hasButtons = buttons.length > 0;
     const firstButton = hasButtons ? buttons[0] : undefined;
@@ -104,9 +107,10 @@ const ContractActionsWithMessage: React.FC<ContractActionsWithMessageProps> = ({
 
 function createStyles(
     colors: ReturnType<typeof Colors>,
-    messageVariant: MessageVariant
+    messageVariant: MessageVariant,
+    isDark: boolean
 ) {
-    const messageColors = getMessageColors(colors, messageVariant);
+    const messageColors = getMessageColors(colors, messageVariant, isDark);
     return StyleSheet.create({
         root: {
             width: "100%",
@@ -162,36 +166,51 @@ function createStyles(
 
 function getMessageColors(
     colors: ReturnType<typeof Colors>,
-    variant: MessageVariant
+    variant: MessageVariant,
+    isDark: boolean
 ): { bg: string; border: string; text: string; iconBg: string } {
     switch (variant) {
         case "success":
             return {
                 bg: colors.reachCardBg ?? "rgba(157, 213, 134, 0.2)",
                 border: colors.reachCardBorder ?? "rgba(157, 213, 134, 0.4)",
-                text: colors.savingsGreen ?? colors.green ?? colors.text,
+                text: isDark ? colors.text : colors.savingsGreen ?? colors.green ?? colors.text,
                 iconBg: colors.green,
             };
         case "error":
-            return {
-                bg: colors.errorBannerBg ?? colors.red,
-                border: colors.errorBannerBorder ?? colors.errorBorder,
-                text: colors.errorBannerText ?? colors.text,
-                iconBg: colors.errorBannerText ?? colors.text,
-            };
+            return isDark
+                ? {
+                      bg: colors.secondarySurface,
+                      border: colors.secondaryBorder,
+                      text: colors.errorBannerText ?? colors.text,
+                      iconBg: colors.errorBannerText ?? colors.red,
+                  }
+                : {
+                      bg: colors.errorBannerBg ?? colors.red,
+                      border: colors.errorBannerBorder ?? colors.errorBorder,
+                      text: colors.errorBannerText ?? colors.text,
+                      iconBg: colors.errorBannerText ?? colors.text,
+                  };
         case "info":
-            return {
-                bg: colors.primaryLight ?? colors.aliceBlue ?? colors.gold,
-                border: colors.budgetCardBorder ?? colors.primary,
-                text: colors.text,
-                iconBg: colors.primary,
-            };
+            return isDark
+                ? {
+                      bg: colors.secondarySurface,
+                      border: colors.secondaryBorder,
+                      text: colors.text,
+                      iconBg: colors.primary,
+                  }
+                : {
+                      bg: colors.primaryLight ?? colors.aliceBlue ?? colors.gold,
+                      border: colors.budgetCardBorder ?? colors.primary,
+                      text: colors.text,
+                      iconBg: colors.primary,
+                  };
         case "warning":
         default:
             return {
                 bg: colors.planBadgeProBg ?? "rgba(236, 214, 148, 0.2)",
                 border: colors.budgetCardBorder ?? "rgba(236, 214, 148, 0.5)",
-                text: colors.gray100 ?? colors.text,
+                text: colors.text,
                 iconBg: colors.gold,
             };
     }
