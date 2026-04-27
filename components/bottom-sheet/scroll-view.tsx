@@ -1,14 +1,16 @@
 import BottomSheet, { BottomSheetBackdrop, BottomSheetScrollView } from "@gorhom/bottom-sheet";
-import { useTheme } from "@react-navigation/native";
+import { Theme, useTheme } from "@react-navigation/native";
 import React, { PropsWithChildren } from "react";
 import {
     Modal,
+    Platform,
     StyleSheet,
     View,
 } from "react-native";
 import { Provider, useTheme as usePaperTheme } from "react-native-paper";
 import Toast from "react-native-toast-message";
 import Colors from "@/shared-uis/constants/Colors";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface BottomSheetContainerProps extends PropsWithChildren {
     isVisible: boolean;
@@ -25,8 +27,8 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
     const sheetRef = React.useRef<BottomSheet>(null);
 
     const theme = useTheme();
-    const colors = Colors(theme);
-    const styles = stylesFn(colors);
+    const insets = useSafeAreaInsets();
+    const styles = stylesFn(theme, insets.bottom);
 
     const snapPoints = React.useMemo(
         () => [snapPointsRange[0], snapPointsRange[1]],
@@ -68,14 +70,17 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                         index={0}
                         snapPoints={snapPoints}
                         enablePanDownToClose
-                        keyboardBehavior="interactive"
+                        keyboardBehavior={Platform.OS === "android" ? "fillParent" : "extend"}
                         keyboardBlurBehavior="restore"
                         android_keyboardInputMode="adjustResize"
+                        bottomInset={insets.bottom}
+                        topInset={insets.top}
                         backdropComponent={renderBackdrop}
                         onClose={handleClose}
                         style={styles.bottomSheet}
                         backgroundStyle={styles.sheetBackground}
-                        handleIndicatorStyle={styles.sheetHandle}
+                        handleStyle={styles.handle}
+                        handleIndicatorStyle={styles.handleIndicator}
                     >
                         <BottomSheetScrollView
                             style={styles.sheetScroll}
@@ -94,8 +99,9 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
 
 export default BottomSheetScrollContainer;
 
-const stylesFn = (colors: ReturnType<typeof Colors>) =>
-    StyleSheet.create({
+const stylesFn = (theme: Theme, bottomInset: number) => {
+    const colors = Colors(theme);
+    return StyleSheet.create({
         overlay: {
             position: "absolute",
             top: 0,
@@ -108,23 +114,36 @@ const stylesFn = (colors: ReturnType<typeof Colors>) =>
             flex: 1,
             justifyContent: "flex-end",
             zIndex: 2,
-            backgroundColor: colors.transparent,
         },
         bottomSheet: {
             zIndex: 9999,
         },
-        /** Default @gorhom/bottom-sheet surface is light; match app theme (fixes white strip in dark mode). */
-        sheetBackground: {
-            backgroundColor: colors.modalBackground ?? colors.card,
-        },
-        sheetHandle: {
-            backgroundColor: colors.gray300,
-        },
         sheetScroll: {
-            backgroundColor: colors.modalBackground ?? colors.card,
+            backgroundColor: colors.modalBackground,
         },
         sheetScrollContent: {
-            backgroundColor: colors.modalBackground ?? colors.card,
+            backgroundColor: colors.modalBackground,
             flexGrow: 1,
+            paddingBottom: Math.max(bottomInset, 16) + 24,
+        },
+        sheetBackground: {
+            backgroundColor: colors.modalBackground,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+        },
+        handle: {
+            backgroundColor: colors.modalBackground,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            paddingTop: 10,
+            paddingBottom: 8,
+        },
+        handleIndicator: {
+            width: 44,
+            height: 4,
+            borderRadius: 2,
+            opacity: 0.9,
+            backgroundColor: theme.dark ? colors.textSecondary : colors.outline,
         },
     });
+};
