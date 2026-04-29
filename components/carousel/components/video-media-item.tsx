@@ -4,7 +4,6 @@ import Colors from "@/shared-uis/constants/Colors";
 import { faPlay, faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-native-fontawesome";
 import { ResizeMode, Video, VideoFullscreenUpdate } from "expo-av";
-import * as VideoThumbnails from "expo-video-thumbnails";
 import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
     Linking,
@@ -32,6 +31,26 @@ interface VideoMediaItemProps {
     panGesture: any;
     colors: ReturnType<typeof Colors>;
     xl: boolean;
+}
+
+function getVideoThumbnailsModule():
+    | null
+    | {
+          getThumbnailAsync: (
+              source: string,
+              options?: { time?: number; quality?: number }
+          ) => Promise<{ uri: string }>;
+      } {
+    if (Platform.OS === "web") {
+        return null;
+    }
+    try {
+        // Lazy require so environments without the native module don't hard-crash on import.
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        return require("expo-video-thumbnails");
+    } catch {
+        return null;
+    }
 }
 
 function VideoMediaItem({
@@ -72,6 +91,13 @@ function VideoMediaItem({
         (async () => {
             try {
                 if (Platform.OS !== "web") {
+                    const VideoThumbnails = getVideoThumbnailsModule();
+                    if (!VideoThumbnails) {
+                        if (!cancelled) {
+                            setExtractedPosterUri(null);
+                        }
+                        return;
+                    }
                     const { uri } = await VideoThumbnails.getThumbnailAsync(item.url, {
                         time: 500,
                         quality: 0.78,
