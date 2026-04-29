@@ -16,23 +16,29 @@ interface BottomSheetContainerProps extends PropsWithChildren {
     isVisible: boolean;
     snapPointsRange: [string, string];
     onClose: () => void;
+    /**
+     * Single full-height snap point; flush top corners. Use on native for contract / form sheets
+     * that should read as a full screen instead of a partial bottom card.
+     */
+    fullScreen?: boolean;
 }
 
 const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
     isVisible,
     snapPointsRange,
     onClose,
+    fullScreen = false,
     children,
 }) => {
     const sheetRef = React.useRef<BottomSheet>(null);
 
     const theme = useTheme();
     const insets = useSafeAreaInsets();
-    const styles = stylesFn(theme, insets.bottom);
+    const styles = stylesFn(theme, insets.bottom, insets.top, fullScreen);
 
     const snapPoints = React.useMemo(
-        () => [snapPointsRange[0], snapPointsRange[1]],
-        [snapPointsRange]
+        () => (fullScreen ? (["100%"] as const) : [snapPointsRange[0], snapPointsRange[1]]),
+        [fullScreen, snapPointsRange]
     );
 
     const handleClose = () => {
@@ -62,6 +68,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
             transparent
             animationType="fade"
             onRequestClose={handleClose}
+            statusBarTranslucent={fullScreen}
         >
             <Provider theme={paperTheme}>
                 <View style={styles.bottomSheetContainer}>
@@ -74,7 +81,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                         keyboardBlurBehavior="restore"
                         android_keyboardInputMode="adjustResize"
                         bottomInset={insets.bottom}
-                        topInset={insets.top}
+                        topInset={fullScreen ? 0 : insets.top}
                         backdropComponent={renderBackdrop}
                         onClose={handleClose}
                         style={styles.bottomSheet}
@@ -99,8 +106,14 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
 
 export default BottomSheetScrollContainer;
 
-const stylesFn = (theme: Theme, bottomInset: number) => {
+const stylesFn = (
+    theme: Theme,
+    bottomInset: number,
+    topInset: number,
+    fullScreen: boolean
+) => {
     const colors = Colors(theme);
+    const radius = fullScreen ? 0 : 16;
     return StyleSheet.create({
         overlay: {
             position: "absolute",
@@ -124,18 +137,19 @@ const stylesFn = (theme: Theme, bottomInset: number) => {
         sheetScrollContent: {
             backgroundColor: colors.modalBackground,
             flexGrow: 1,
+            paddingTop: fullScreen ? Math.max(topInset, 8) : 0,
             paddingBottom: Math.max(bottomInset, 16) + 24,
         },
         sheetBackground: {
             backgroundColor: colors.modalBackground,
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
+            borderTopLeftRadius: radius,
+            borderTopRightRadius: radius,
         },
         handle: {
             backgroundColor: colors.modalBackground,
-            borderTopLeftRadius: 16,
-            borderTopRightRadius: 16,
-            paddingTop: 10,
+            borderTopLeftRadius: radius,
+            borderTopRightRadius: radius,
+            paddingTop: fullScreen ? 8 : 10,
             paddingBottom: 8,
         },
         handleIndicator: {
