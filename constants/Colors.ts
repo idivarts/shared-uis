@@ -58,6 +58,9 @@ export const ColorsStatic = {
     reachCardBg: "rgba(157, 213, 134, 0.2)",
     reachCardBorder: "rgba(157, 213, 134, 0.4)",
 
+    platinum: "rgb(229, 228, 226)",
+    pink: "rgb(255, 105, 180)",
+
     // Landing / form (light-oriented; use via Colors(theme))
     formLabel: "rgb(108, 122, 137)",
     formBorder: "rgb(225, 230, 238)",

@@ -37,7 +37,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
     const styles = stylesFn(theme, insets.bottom, insets.top, fullScreen);
 
     const snapPoints = React.useMemo(
-        () => (fullScreen ? (["100%"] as const) : [snapPointsRange[0], snapPointsRange[1]]),
+        () => (fullScreen ? (["100%"] as string[]) : [snapPointsRange[0], snapPointsRange[1]]),
         [fullScreen, snapPointsRange]
     );
 

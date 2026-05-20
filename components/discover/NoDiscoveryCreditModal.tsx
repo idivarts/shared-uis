@@ -187,7 +187,7 @@ export const NoDiscoveryCreditModal: React.FC<NoDiscoveryCreditModalProps> = ({
 
     const handleGoToBilling = () => {
         onClose();
-        router.push("/billing");
+        router.push("/settings");
     };
 
     const handleScheduleDemo = () => {

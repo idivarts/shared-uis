@@ -45,7 +45,7 @@ const LoginUI: React.FC<LoginUIProps> = ({
                 />
                 <Button title="Login" onPress={handleSubmit} />
                 <View style={styles.linksContainer}>
-                    <Link href={"/signup"}>
+                    <Link href={"/create-new-account"}>
                         <Text style={styles.link}>Don't have an account? Signup</Text>
                     </Link>
                     <Link href={"/forgot-password"} style={styles.link}>

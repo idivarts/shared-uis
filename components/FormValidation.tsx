@@ -30,7 +30,7 @@ const withValidation = (WrappedComponent: React.ComponentType<any>) => {
         const handleSubmit = () => {
             const result = schema.safeParse(formData);
             if (!result.success) {
-                setError(result.error.errors[0]?.message ?? "Invalid input");
+                setError(result.error.issues[0]?.message ?? "Invalid input");
                 return;
             }
             setError("");

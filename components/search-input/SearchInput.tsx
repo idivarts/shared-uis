@@ -18,7 +18,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
     const styles = useMemo(() => useStyles(theme), [theme]);
 
     return (
-        <View style={[styles.container, style]}>
+        <View style={[styles.container, style as any]}>
             <Ionicons
                 name="search"
                 size={24}

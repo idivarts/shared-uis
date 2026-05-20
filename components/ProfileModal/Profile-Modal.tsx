@@ -170,7 +170,7 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             description:
                 "You can only get the access to influencers social media after you subscribe to a paid plan",
             confirmAction: () => {
-                router.push("/billing");
+                router.push("/settings");
             },
             confirmText: "Upgrade now",
         });
