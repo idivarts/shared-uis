@@ -9,8 +9,8 @@ import { View } from "../../theme/Themed";
 import Toaster from "../../toaster/Toaster";
 import Colors from "../../../constants/Colors";
 import { convertToMUnits } from "../../../utils/conversion-million";
-import { Brand } from "@/types/Brand";
-import { getTrustabilityLevel } from "@/utils/trustability";
+import { IBrands } from "@/shared-libs/firestore/trendly-pro/models/brands";
+import { getTrustabilityLevel } from "../../../utils/trustability";
 import {
     faArrowDown,
     faArrowTrendDown,
@@ -38,7 +38,7 @@ import { useDiscoverConfig } from "../discover-config";
 
 interface IProps {
     influencer: InfluencerItem;
-    selectedBrand: Brand;
+    selectedBrand: IBrands;
     initialSocial?: ISocials | null;
     initialAnalytics?: ISocialAnalytics | null;
     onLoadingChange?: (loading: boolean) => void;
