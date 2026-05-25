@@ -181,6 +181,7 @@ export const ColorsStatic = {
     drawerSectionLabelDark: "#253545",
     drawerSectionLabelLight: "#8aaabb", // lighter than nav items, clearly secondary
     drawerBorderLight: "rgba(5, 68, 99, 0.1)",
+    drawerRightBorderLight: "rgba(5, 68, 99, 0.12)",
 
     // Overlay / panel shadow
     panelShadow: "rgba(0, 0, 0, 0.18)",
@@ -292,6 +293,7 @@ export default (theme: Theme) => ({
             drawerBorder: ColorsStatic.drawerBorder,
             drawerActiveBg: ColorsStatic.drawerActiveBgDark,
             drawerActiveBorder: ColorsStatic.drawerActiveBorderDark,
+            drawerRightBorder: "transparent",
             // Auth: deep navy gradient (readable with light floating card + forms)
             authGradient1: "rgb(28, 42, 62)",
             authGradient2: "rgb(16, 32, 54)",
@@ -339,9 +341,10 @@ export default (theme: Theme) => ({
             secondaryBorder: "rgba(15, 23, 42, 0.28)",
             secondaryText: ColorsStatic.secondaryTextLight,
             drawerBackground: ColorsStatic.aliceBlue,
-            drawerHeaderBg: ColorsStatic.drawerHeaderCardBgLight,
-            drawerHeaderCardBg: ColorsStatic.drawerHeaderCardBgLight,
+            drawerHeaderBg: "#ffffff",
+            drawerHeaderCardBg: "#ffffff",
             drawerHeaderCardBorder: ColorsStatic.drawerHeaderCardBorderLight,
+            drawerRightBorder: ColorsStatic.drawerRightBorderLight,
             drawerCardBg: ColorsStatic.drawerCardBgLight,
             drawerText: ColorsStatic.black,
             drawerTextMuted: ColorsStatic.drawerTextMutedLight,
