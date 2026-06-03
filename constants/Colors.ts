@@ -292,6 +292,20 @@ export default (theme: Theme) => ({
             influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleDark,
             aiGradientStart: ColorsStatic.aiGradientPurpleDark,
             aiGradientEnd: ColorsStatic.aiGradientPrimaryDark,
+            // Status badges — dark theme: lighter foregrounds so small badge
+            // text clears WCAG AA (4.5:1) on the dark-composited translucent fill.
+            statusDraftFg: "rgb(190, 190, 190)",
+            statusDraftBg: "rgba(190, 190, 190, 0.16)",
+            statusReviewFg: "rgb(245, 176, 66)",
+            statusReviewBg: "rgba(245, 176, 66, 0.16)",
+            statusApprovedFg: "rgb(94, 214, 133)",
+            statusApprovedBg: "rgba(94, 214, 133, 0.16)",
+            statusScheduledFg: "rgb(96, 186, 255)",
+            statusScheduledBg: "rgba(96, 186, 255, 0.16)",
+            statusPostedFg: "rgb(184, 164, 255)",
+            statusPostedBg: "rgba(184, 164, 255, 0.16)",
+            statusRejectedFg: "rgb(255, 128, 156)",
+            statusRejectedBg: "rgba(255, 128, 156, 0.16)",
             // Glass card / secondary button (dark theme)
             glassSurface: "rgba(255, 255, 255, 0.12)",
             glassBorder: "rgba(255, 255, 255, 0.22)",
@@ -355,6 +369,20 @@ export default (theme: Theme) => ({
             influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleLight,
             aiGradientStart: ColorsStatic.aiGradientPurpleLight,
             aiGradientEnd: ColorsStatic.aiGradientPrimaryLight,
+            // Status badges — light theme: darker foregrounds so small badge
+            // text clears WCAG AA (4.5:1) on the near-white translucent fill.
+            statusDraftFg: "rgb(89, 89, 89)",
+            statusDraftBg: "rgba(89, 89, 89, 0.14)",
+            statusReviewFg: "rgb(158, 84, 0)",
+            statusReviewBg: "rgba(224, 122, 0, 0.16)",
+            statusApprovedFg: "rgb(20, 110, 52)",
+            statusApprovedBg: "rgba(26, 140, 66, 0.15)",
+            statusScheduledFg: "rgb(0, 94, 170)",
+            statusScheduledBg: "rgba(0, 122, 217, 0.15)",
+            statusPostedFg: "rgb(94, 68, 205)",
+            statusPostedBg: "rgba(124, 92, 255, 0.16)",
+            statusRejectedFg: "rgb(192, 28, 64)",
+            statusRejectedBg: "rgba(214, 45, 80, 0.15)",
             // Glass card / secondary button (light theme)
             glassSurface: "rgba(255, 255, 255, 0.12)",
             glassBorder: "rgba(255, 255, 255, 0.22)",
