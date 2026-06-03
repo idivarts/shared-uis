@@ -50,6 +50,11 @@ export const ColorsStatic = {
     primaryDark: "#1A3B5C",
     influencerCardGradientPurpleLight: "#E8DEFF",
     influencerCardGradientPurpleDark: "#36284D",
+    // AI surfaces (FloatingPromptInput, magic-wand gradients) — purple → primary.
+    aiGradientPurpleLight: "rgb(142, 45, 226)",
+    aiGradientPurpleDark: "rgb(167, 124, 255)",
+    aiGradientPrimaryLight: "rgb(5, 68, 99)",
+    aiGradientPrimaryDark: "rgb(83, 139, 166)",
     surface: "#EEF4FB",
     planBadgeProBg: "rgba(236, 214, 148, 0.16)",
     planBadgeEnterpriseBg: "rgba(83, 139, 166, 0.16)",
@@ -285,6 +290,8 @@ export default (theme: Theme) => ({
             InfluencerStatCard: ColorsStatic.secondary,
             influencerCardGradientStart: ColorsStatic.primaryDark,
             influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleDark,
+            aiGradientStart: ColorsStatic.aiGradientPurpleDark,
+            aiGradientEnd: ColorsStatic.aiGradientPrimaryDark,
             // Glass card / secondary button (dark theme)
             glassSurface: "rgba(255, 255, 255, 0.12)",
             glassBorder: "rgba(255, 255, 255, 0.22)",
@@ -346,6 +353,8 @@ export default (theme: Theme) => ({
             InfluencerStatCard: ColorsStatic.white,
             influencerCardGradientStart: ColorsStatic.primaryLight,
             influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleLight,
+            aiGradientStart: ColorsStatic.aiGradientPurpleLight,
+            aiGradientEnd: ColorsStatic.aiGradientPrimaryLight,
             // Glass card / secondary button (light theme)
             glassSurface: "rgba(255, 255, 255, 0.12)",
             glassBorder: "rgba(255, 255, 255, 0.22)",
