@@ -232,6 +232,28 @@ export const ColorsStatic = {
     toastWarning: "#ff9800",
     toastWarningBg: "#4a3a1a",
     toastText: "#ffffff",
+
+    // Content status badges — mid-tone hues with translucent backgrounds so the
+    // same token reads correctly on both light (white) and dark (eerie-black) cards.
+    statusDraftFg: "rgb(130, 130, 130)",
+    statusDraftBg: "rgba(130, 130, 130, 0.15)",
+    statusReviewFg: "rgb(224, 122, 0)",
+    statusReviewBg: "rgba(224, 122, 0, 0.15)",
+    statusApprovedFg: "rgb(26, 140, 66)",
+    statusApprovedBg: "rgba(26, 140, 66, 0.15)",
+    statusScheduledFg: "rgb(0, 122, 217)",
+    statusScheduledBg: "rgba(0, 122, 217, 0.15)",
+    statusPostedFg: "rgb(124, 92, 255)",
+    statusPostedBg: "rgba(124, 92, 255, 0.16)",
+    statusRejectedFg: "rgb(214, 45, 80)",
+    statusRejectedBg: "rgba(214, 45, 80, 0.15)",
+
+    // Content-type accents (reel / post / story / carousel / live)
+    typeReel: "rgb(108, 71, 255)",
+    typePost: "rgb(26, 140, 66)",
+    typeStory: "rgb(224, 122, 0)",
+    typeCarousel: "rgb(0, 112, 204)",
+    typeLive: "rgb(204, 0, 68)",
 }
 
 export default (theme: Theme) => ({
