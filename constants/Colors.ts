@@ -261,6 +261,12 @@ export const ColorsStatic = {
     typeStory: "rgb(224, 122, 0)",
     typeCarousel: "rgb(0, 112, 204)",
     typeLive: "rgb(204, 0, 68)",
+
+    // Auth split-screen brand panel — fixed deep navy in BOTH themes (it's a
+    // branded panel, not a theme surface), with light text tokens for it.
+    authPanel: "rgb(16, 32, 54)",
+    authPanelDeep: "rgb(8, 20, 38)",
+    authPanelMuted: "rgba(255, 255, 255, 0.72)",
 }
 
 export default (theme: Theme) => ({
