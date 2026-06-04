@@ -242,6 +242,8 @@ export const ColorsStatic = {
     // same token reads correctly on both light (white) and dark (eerie-black) cards.
     statusDraftFg: "rgb(130, 130, 130)",
     statusDraftBg: "rgba(130, 130, 130, 0.15)",
+    statusInProgressFg: "rgb(0, 150, 150)",
+    statusInProgressBg: "rgba(0, 150, 150, 0.15)",
     statusReviewFg: "rgb(224, 122, 0)",
     statusReviewBg: "rgba(224, 122, 0, 0.15)",
     statusApprovedFg: "rgb(26, 140, 66)",
@@ -296,6 +298,8 @@ export default (theme: Theme) => ({
             // text clears WCAG AA (4.5:1) on the dark-composited translucent fill.
             statusDraftFg: "rgb(190, 190, 190)",
             statusDraftBg: "rgba(190, 190, 190, 0.16)",
+            statusInProgressFg: "rgb(90, 210, 210)",
+            statusInProgressBg: "rgba(90, 210, 210, 0.16)",
             statusReviewFg: "rgb(245, 176, 66)",
             statusReviewBg: "rgba(245, 176, 66, 0.16)",
             statusApprovedFg: "rgb(94, 214, 133)",
@@ -373,6 +377,8 @@ export default (theme: Theme) => ({
             // text clears WCAG AA (4.5:1) on the near-white translucent fill.
             statusDraftFg: "rgb(89, 89, 89)",
             statusDraftBg: "rgba(89, 89, 89, 0.14)",
+            statusInProgressFg: "rgb(0, 118, 118)",
+            statusInProgressBg: "rgba(0, 150, 150, 0.15)",
             statusReviewFg: "rgb(158, 84, 0)",
             statusReviewBg: "rgba(224, 122, 0, 0.16)",
             statusApprovedFg: "rgb(20, 110, 52)",
