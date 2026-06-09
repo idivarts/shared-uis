@@ -24,7 +24,7 @@ export const ColorsStatic = {
 
     backdrop: "rgba(0, 0, 0, 0.5)",
     backdropStrong: "rgba(0, 0, 0, 0.78)",
-    backdropDark: "rgba(255, 255, 255, 0.5)",
+    backdropDark: "rgba(0, 0, 0, 0.6)",
     success: "rgb(2, 202, 48)",
     successForeground: "rgb(40, 167, 69)",
     cardDark: "rgb(30, 30, 30)",
