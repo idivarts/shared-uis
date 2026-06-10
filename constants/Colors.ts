@@ -24,7 +24,7 @@ export const ColorsStatic = {
 
     backdrop: "rgba(0, 0, 0, 0.5)",
     backdropStrong: "rgba(0, 0, 0, 0.78)",
-    backdropDark: "rgba(0, 0, 0, 0.6)",
+    backdropDark: "rgba(0, 0, 0, 0.8)",
     success: "rgb(2, 202, 48)",
     successForeground: "rgb(40, 167, 69)",
     cardDark: "rgb(30, 30, 30)",
@@ -33,7 +33,7 @@ export const ColorsStatic = {
     secondaryTextLight: "rgb(15, 23, 42)",
     tabIconDefault: "rgb(204, 204, 204)",
     onSurfaceDark: "rgb(83, 139, 166)",
-    tagDark: "rgb(95, 99, 104)",
+    tagDark: "rgb(58, 58, 58)",
     tagForegroundDark: "rgb(241, 243, 244)",
     outlineDark: "rgb(83, 139, 166)",
     backgroundDark: "rgb(0, 0, 0)",
@@ -283,7 +283,7 @@ export default (theme: Theme) => ({
             tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
             tabIconSelected: ColorsStatic.secondary, // Active tab icons
             onSurface: ColorsStatic.gray300, // Surface overlay color
-            tag: ColorsStatic.gray100, // Tag background
+            tag: ColorsStatic.tagDark, // Tag background — deeper gray so chips/rows read as proper dark surfaces (not washed-out)
             tagForeground: ColorsStatic.white, // Tag text/icon color
             outline: ColorsStatic.gray300, // Borders and outlines
             border: ColorsStatic.gray300, // Alias for borders
