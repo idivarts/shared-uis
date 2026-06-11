@@ -30,12 +30,14 @@ const CustomDrawerWrapper = ({
     const animatedWidth = useRef(new Animated.Value(DRAWER_WIDTH)).current;
     const animatedMargin = useRef(new Animated.Value(xl ? DRAWER_WIDTH : 0)).current;
 
-    // Animate drawer slide in/out (mobile toggle)
+    // Animate drawer slide in/out (mobile toggle).
+    // useNativeDriver:false because the same Animated.View also animates `width`
+    // (a layout prop the native animation module can't handle).
     useEffect(() => {
         Animated.timing(slideAnim, {
             toValue: drawerVisible ? 0 : -DRAWER_WIDTH,
             duration: 250,
-            useNativeDriver: true,
+            useNativeDriver: false,
         }).start();
     }, [drawerVisible]);
 

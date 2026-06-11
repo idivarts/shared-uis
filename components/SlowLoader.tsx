@@ -14,7 +14,7 @@ const MyMessage = [
 
 const SlowLoader: React.FC<{ messages?: string[] }> = ({ messages = MyMessage }) => {
     const theme = useTheme();
-    const styles = useMemo(() => useStyles(theme), [theme]);
+    const styles = useStyles(theme);
     const [messageIndex, setMessageIndex] = useState(0);
 
     useEffect(() => {
