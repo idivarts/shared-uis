@@ -255,13 +255,14 @@ export const ColorsStatic = {
     statusRejectedFg: "rgb(214, 45, 80)",
     statusRejectedBg: "rgba(214, 45, 80, 0.15)",
 
-    // Content-type accents (reel / post / story / carousel / live / text)
+    // Content-type accents (reel / post / story / carousel / live / text / video)
     typeReel: "rgb(108, 71, 255)",
     typePost: "rgb(26, 140, 66)",
     typeStory: "rgb(224, 122, 0)",
     typeCarousel: "rgb(0, 112, 204)",
     typeLive: "rgb(204, 0, 68)",
     typeText: "rgb(13, 148, 136)",
+    typeVideo: "rgb(192, 38, 211)", // landscape / long-form video (distinct from reel)
 
     // Auth split-screen brand panel — fixed deep navy in BOTH themes (it's a
     // branded panel, not a theme surface), with light text tokens for it.
