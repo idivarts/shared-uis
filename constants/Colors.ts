@@ -24,7 +24,7 @@ export const ColorsStatic = {
 
     backdrop: "rgba(0, 0, 0, 0.5)",
     backdropStrong: "rgba(0, 0, 0, 0.78)",
-    backdropDark: "rgba(255, 255, 255, 0.5)",
+    backdropDark: "rgba(0, 0, 0, 0.8)",
     success: "rgb(2, 202, 48)",
     successForeground: "rgb(40, 167, 69)",
     cardDark: "rgb(30, 30, 30)",
@@ -33,7 +33,7 @@ export const ColorsStatic = {
     secondaryTextLight: "rgb(15, 23, 42)",
     tabIconDefault: "rgb(204, 204, 204)",
     onSurfaceDark: "rgb(83, 139, 166)",
-    tagDark: "rgb(95, 99, 104)",
+    tagDark: "rgb(58, 58, 58)",
     tagForegroundDark: "rgb(241, 243, 244)",
     outlineDark: "rgb(83, 139, 166)",
     backgroundDark: "rgb(0, 0, 0)",
@@ -50,6 +50,11 @@ export const ColorsStatic = {
     primaryDark: "#1A3B5C",
     influencerCardGradientPurpleLight: "#E8DEFF",
     influencerCardGradientPurpleDark: "#36284D",
+    // AI surfaces (FloatingPromptInput, magic-wand gradients) — purple → primary.
+    aiGradientPurpleLight: "rgb(142, 45, 226)",
+    aiGradientPurpleDark: "rgb(167, 124, 255)",
+    aiGradientPrimaryLight: "rgb(5, 68, 99)",
+    aiGradientPrimaryDark: "rgb(83, 139, 166)",
     surface: "#EEF4FB",
     planBadgeProBg: "rgba(236, 214, 148, 0.16)",
     planBadgeEnterpriseBg: "rgba(83, 139, 166, 0.16)",
@@ -156,16 +161,32 @@ export const ColorsStatic = {
     drawerBannerButtonBg: "rgba(255,255,255,0.4)",
     drawerBannerButtonPressed: "rgba(255,255,255,0.3)",
 
-    // Drawer sidebar (always dark theme)
-    drawerBackground: "rgb(26, 59, 92)",
-    drawerHeaderBg: "rgb(42, 72, 104)",
-    drawerCardBg: "rgb(33, 56, 80)",
+    // Drawer sidebar — dark theme (D-A: Void Black + Teal Glow)
+    drawerBackground: "#0a0a0a",
+    drawerHeaderBg: "#141414",
+    drawerCardBg: "#111111",
     drawerText: "rgb(229, 236, 245)",
     drawerTextMuted: "rgb(160, 175, 195)",
-    drawerProgressTrack: "rgb(70, 85, 105)",
-    drawerProgressFill: "rgb(232, 185, 49)",
-    drawerInvitesIcon: "rgb(138, 99, 210)",
-    drawerBorder: "rgba(255, 255, 255, 0.08)",
+    drawerProgressTrack: "#1a1a1a",
+    drawerProgressFill: "#538BA6",
+    drawerInvitesIcon: "#ff6d2d",
+    drawerBorder: "rgba(83, 139, 166, 0.2)",
+    // Drawer sidebar — theme-specific overrides (new)
+    drawerCardBgDark: "#111111",
+    drawerCardBgLight: "#E9F1F7",
+    drawerHeaderCardBorderDark: "#1e1e1e",
+    drawerHeaderCardBgLight: "#E9F1F7",
+    drawerHeaderCardBorderLight: "#d8e8f0",
+    drawerActiveBgDark: "rgba(83, 139, 166, 0.15)",
+    drawerActiveBorderDark: "rgba(83, 139, 166, 0.25)",
+    drawerActiveBgLight: "rgba(5, 68, 99, 0.08)",
+    drawerActiveBorderLight: "rgba(5, 68, 99, 0.15)",
+    drawerTextMutedDark: "#608aa0",   // contrast ~5.7:1 on #0a0a0a — passes AA
+    drawerTextMutedLight: "#506878",   // dark enough to read on white, clearly muted
+    drawerSectionLabelDark: "#253545",
+    drawerSectionLabelLight: "#8aaabb", // lighter than nav items, clearly secondary
+    drawerBorderLight: "rgba(5, 68, 99, 0.1)",
+    drawerRightBorderLight: "rgba(5, 68, 99, 0.12)",
 
     // Overlay / panel shadow
     panelShadow: "rgba(0, 0, 0, 0.18)",
@@ -216,6 +237,38 @@ export const ColorsStatic = {
     toastWarning: "#ff9800",
     toastWarningBg: "#4a3a1a",
     toastText: "#ffffff",
+
+    // Content status badges — mid-tone hues with translucent backgrounds so the
+    // same token reads correctly on both light (white) and dark (eerie-black) cards.
+    statusDraftFg: "rgb(130, 130, 130)",
+    statusDraftBg: "rgba(130, 130, 130, 0.15)",
+    statusInProgressFg: "rgb(0, 150, 150)",
+    statusInProgressBg: "rgba(0, 150, 150, 0.15)",
+    statusReviewFg: "rgb(224, 122, 0)",
+    statusReviewBg: "rgba(224, 122, 0, 0.15)",
+    statusApprovedFg: "rgb(26, 140, 66)",
+    statusApprovedBg: "rgba(26, 140, 66, 0.15)",
+    statusScheduledFg: "rgb(0, 122, 217)",
+    statusScheduledBg: "rgba(0, 122, 217, 0.15)",
+    statusPostedFg: "rgb(124, 92, 255)",
+    statusPostedBg: "rgba(124, 92, 255, 0.16)",
+    statusRejectedFg: "rgb(214, 45, 80)",
+    statusRejectedBg: "rgba(214, 45, 80, 0.15)",
+
+    // Content-type accents (reel / post / story / carousel / live / text / video)
+    typeReel: "rgb(108, 71, 255)",
+    typePost: "rgb(26, 140, 66)",
+    typeStory: "rgb(224, 122, 0)",
+    typeCarousel: "rgb(0, 112, 204)",
+    typeLive: "rgb(204, 0, 68)",
+    typeText: "rgb(13, 148, 136)",
+    typeVideo: "rgb(192, 38, 211)", // landscape / long-form video (distinct from reel)
+
+    // Auth split-screen brand panel — fixed deep navy in BOTH themes (it's a
+    // branded panel, not a theme surface), with light text tokens for it.
+    authPanel: "rgb(16, 32, 54)",
+    authPanelDeep: "rgb(8, 20, 38)",
+    authPanelMuted: "rgba(255, 255, 255, 0.72)",
 }
 
 export default (theme: Theme) => ({
@@ -232,7 +285,7 @@ export default (theme: Theme) => ({
             tabIconDefault: ColorsStatic.gray300, // Inactive tab icons
             tabIconSelected: ColorsStatic.secondary, // Active tab icons
             onSurface: ColorsStatic.gray300, // Surface overlay color
-            tag: ColorsStatic.gray100, // Tag background
+            tag: ColorsStatic.tagDark, // Tag background — deeper gray so chips/rows read as proper dark surfaces (not washed-out)
             tagForeground: ColorsStatic.white, // Tag text/icon color
             outline: ColorsStatic.gray300, // Borders and outlines
             border: ColorsStatic.gray300, // Alias for borders
@@ -247,6 +300,24 @@ export default (theme: Theme) => ({
             InfluencerStatCard: ColorsStatic.secondary,
             influencerCardGradientStart: ColorsStatic.primaryDark,
             influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleDark,
+            aiGradientStart: ColorsStatic.aiGradientPurpleDark,
+            aiGradientEnd: ColorsStatic.aiGradientPrimaryDark,
+            // Status badges — dark theme: lighter foregrounds so small badge
+            // text clears WCAG AA (4.5:1) on the dark-composited translucent fill.
+            statusDraftFg: "rgb(190, 190, 190)",
+            statusDraftBg: "rgba(190, 190, 190, 0.16)",
+            statusInProgressFg: "rgb(90, 210, 210)",
+            statusInProgressBg: "rgba(90, 210, 210, 0.16)",
+            statusReviewFg: "rgb(245, 176, 66)",
+            statusReviewBg: "rgba(245, 176, 66, 0.16)",
+            statusApprovedFg: "rgb(94, 214, 133)",
+            statusApprovedBg: "rgba(94, 214, 133, 0.16)",
+            statusScheduledFg: "rgb(96, 186, 255)",
+            statusScheduledBg: "rgba(96, 186, 255, 0.16)",
+            statusPostedFg: "rgb(184, 164, 255)",
+            statusPostedBg: "rgba(184, 164, 255, 0.16)",
+            statusRejectedFg: "rgb(255, 128, 156)",
+            statusRejectedBg: "rgba(255, 128, 156, 0.16)",
             // Glass card / secondary button (dark theme)
             glassSurface: "rgba(255, 255, 255, 0.12)",
             glassBorder: "rgba(255, 255, 255, 0.22)",
@@ -265,13 +336,19 @@ export default (theme: Theme) => ({
             secondaryText: ColorsStatic.white,
             drawerBackground: ColorsStatic.drawerBackground,
             drawerHeaderBg: ColorsStatic.drawerHeaderBg,
-            drawerCardBg: ColorsStatic.drawerCardBg,
+            drawerHeaderCardBg: ColorsStatic.drawerHeaderBg,
+            drawerHeaderCardBorder: ColorsStatic.drawerHeaderCardBorderDark,
+            drawerCardBg: ColorsStatic.drawerCardBgDark,
             drawerText: ColorsStatic.drawerText,
-            drawerTextMuted: ColorsStatic.drawerTextMuted,
+            drawerTextMuted: ColorsStatic.drawerTextMutedDark,
+            drawerSectionLabel: ColorsStatic.drawerSectionLabelDark,
             drawerProgressTrack: ColorsStatic.drawerProgressTrack,
             drawerProgressFill: ColorsStatic.drawerProgressFill,
             drawerInvitesIcon: ColorsStatic.drawerInvitesIcon,
             drawerBorder: ColorsStatic.drawerBorder,
+            drawerActiveBg: ColorsStatic.drawerActiveBgDark,
+            drawerActiveBorder: ColorsStatic.drawerActiveBorderDark,
+            drawerRightBorder: "transparent",
             // Auth: deep navy gradient (readable with light floating card + forms)
             authGradient1: "rgb(28, 42, 62)",
             authGradient2: "rgb(16, 32, 54)",
@@ -302,6 +379,24 @@ export default (theme: Theme) => ({
             InfluencerStatCard: ColorsStatic.white,
             influencerCardGradientStart: ColorsStatic.primaryLight,
             influencerCardGradientEnd: ColorsStatic.influencerCardGradientPurpleLight,
+            aiGradientStart: ColorsStatic.aiGradientPurpleLight,
+            aiGradientEnd: ColorsStatic.aiGradientPrimaryLight,
+            // Status badges — light theme: darker foregrounds so small badge
+            // text clears WCAG AA (4.5:1) on the near-white translucent fill.
+            statusDraftFg: "rgb(89, 89, 89)",
+            statusDraftBg: "rgba(89, 89, 89, 0.14)",
+            statusInProgressFg: "rgb(0, 118, 118)",
+            statusInProgressBg: "rgba(0, 150, 150, 0.15)",
+            statusReviewFg: "rgb(158, 84, 0)",
+            statusReviewBg: "rgba(224, 122, 0, 0.16)",
+            statusApprovedFg: "rgb(20, 110, 52)",
+            statusApprovedBg: "rgba(26, 140, 66, 0.15)",
+            statusScheduledFg: "rgb(0, 94, 170)",
+            statusScheduledBg: "rgba(0, 122, 217, 0.15)",
+            statusPostedFg: "rgb(94, 68, 205)",
+            statusPostedBg: "rgba(124, 92, 255, 0.16)",
+            statusRejectedFg: "rgb(192, 28, 64)",
+            statusRejectedBg: "rgba(214, 45, 80, 0.15)",
             // Glass card / secondary button (light theme)
             glassSurface: "rgba(255, 255, 255, 0.12)",
             glassBorder: "rgba(255, 255, 255, 0.22)",
@@ -319,13 +414,19 @@ export default (theme: Theme) => ({
             secondaryBorder: "rgba(15, 23, 42, 0.28)",
             secondaryText: ColorsStatic.secondaryTextLight,
             drawerBackground: ColorsStatic.aliceBlue,
-            drawerHeaderBg: ColorsStatic.drawerHeaderBg,
-            drawerCardBg: ColorsStatic.drawerCardBg,
-            drawerText: ColorsStatic.drawerText,
-            drawerTextMuted: ColorsStatic.drawerTextMuted,
-            drawerProgressTrack: ColorsStatic.drawerProgressTrack,
-            drawerProgressFill: ColorsStatic.drawerProgressFill,
-            drawerInvitesIcon: ColorsStatic.drawerInvitesIcon,
-            drawerBorder: ColorsStatic.drawerBorder,
+            drawerHeaderBg: "#ffffff",
+            drawerHeaderCardBg: "#ffffff",
+            drawerHeaderCardBorder: ColorsStatic.drawerHeaderCardBorderLight,
+            drawerRightBorder: ColorsStatic.drawerRightBorderLight,
+            drawerCardBg: ColorsStatic.drawerCardBgLight,
+            drawerText: ColorsStatic.black,
+            drawerTextMuted: ColorsStatic.drawerTextMutedLight,
+            drawerSectionLabel: ColorsStatic.drawerSectionLabelLight,
+            drawerProgressTrack: "#d8e8f0",
+            drawerProgressFill: ColorsStatic.primary,
+            drawerInvitesIcon: "#ff6d2d",
+            drawerBorder: ColorsStatic.drawerBorderLight,
+            drawerActiveBg: ColorsStatic.drawerActiveBgLight,
+            drawerActiveBorder: ColorsStatic.drawerActiveBorderLight,
         }),
 });

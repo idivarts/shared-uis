@@ -59,6 +59,9 @@ const BottomSheetContainer: React.FC<BottomSheetContainerProps> = ({
                     }}
                     onClose={handleClose}
                     style={styles.bottomSheet}
+                    backgroundStyle={styles.sheetBackground}
+                    handleStyle={styles.handle}
+                    handleIndicatorStyle={styles.handleIndicator}
                     index={index}
                     {...props}
                 >
@@ -77,21 +80,43 @@ const BottomSheetContainer: React.FC<BottomSheetContainerProps> = ({
 
 export default BottomSheetContainer;
 
-const stylesFn = (theme: Theme) => StyleSheet.create({
-    overlay: {
-        position: "absolute",
-        top: 0,
-        bottom: 0,
-        left: 0,
-        right: 0,
-        backgroundColor: Colors(theme).backdrop,
-    },
-    bottomSheetContainer: {
-        flex: 1,
-        justifyContent: "flex-end",
-        zIndex: 2,
-    },
-    bottomSheet: {
-        zIndex: 9999,
-    },
-});
+const stylesFn = (theme: Theme) => {
+    const colors = Colors(theme);
+    return StyleSheet.create({
+        overlay: {
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            backgroundColor: colors.backdrop,
+        },
+        bottomSheetContainer: {
+            flex: 1,
+            justifyContent: "flex-end",
+            zIndex: 2,
+        },
+        bottomSheet: {
+            zIndex: 9999,
+        },
+        sheetBackground: {
+            backgroundColor: colors.modalBackground,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+        },
+        handle: {
+            backgroundColor: colors.modalBackground,
+            borderTopLeftRadius: 16,
+            borderTopRightRadius: 16,
+            paddingTop: 10,
+            paddingBottom: 8,
+        },
+        handleIndicator: {
+            width: 44,
+            height: 4,
+            borderRadius: 2,
+            opacity: 0.9,
+            backgroundColor: theme.dark ? colors.textSecondary : colors.outline,
+        },
+    });
+};

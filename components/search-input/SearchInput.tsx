@@ -15,7 +15,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
     ...props
 }) => {
     const theme = useTheme();
-    const styles = useMemo(() => useStyles(theme), [theme]);
+    const styles = useStyles(theme);
 
     return (
         <View style={[styles.container, style]}>

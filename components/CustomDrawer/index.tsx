@@ -1,61 +1,91 @@
-//  import DrawerMenuContent from "@/components/drawer-layout/DrawerMenuContent";
-//  import BackButton from "@/components/ui/back-button/BackButton";
 import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
-import React from "react";
-//  import { Drawer } from "expo-router/drawer";
-
 import Colors from "@/shared-uis/constants/Colors";
 import { useTheme } from "@react-navigation/native";
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Animated, StyleSheet, TouchableWithoutFeedback } from "react-native";
 import { Subject } from "rxjs";
 import { View } from "../theme/Themed";
 
-export const OpenDrawerSubject = new Subject<boolean | undefined>()
+export const OpenDrawerSubject = new Subject<boolean | undefined>();
 
-const CustomDrawerWrapper = ({ children, DrawerContent, isFixed }: { children: React.ReactNode, DrawerContent: any, isFixed: boolean }) => {
+const CustomDrawerWrapper = ({
+    children,
+    DrawerContent,
+    isFixed,
+    drawerWidth: drawerWidthProp,
+}: {
+    children: React.ReactNode;
+    DrawerContent: any;
+    isFixed: boolean;
+    drawerWidth?: number;
+}) => {
+    const { xl, width: screenWidth } = useBreakpoints();
+    const theme = useTheme();
+    const styles = useStyles(theme);
 
-    const { xl, width: screenWidth } = useBreakpoints()
-    const theme = useTheme()
-    const styles = useStyles(theme)
-
-    const DRAWER_WIDTH = xl ? 280 : screenWidth * 0.75;
+    const DRAWER_WIDTH = drawerWidthProp ?? (xl ? 280 : screenWidth * 0.75);
 
     const [drawerVisible, setDrawerVisible] = useState(xl);
     const slideAnim = useRef(new Animated.Value(-DRAWER_WIDTH)).current;
+    const animatedWidth = useRef(new Animated.Value(DRAWER_WIDTH)).current;
+    const animatedMargin = useRef(new Animated.Value(xl ? DRAWER_WIDTH : 0)).current;
 
+    // Animate drawer slide in/out (mobile toggle).
+    // useNativeDriver:false because the same Animated.View also animates `width`
+    // (a layout prop the native animation module can't handle).
     useEffect(() => {
         Animated.timing(slideAnim, {
             toValue: drawerVisible ? 0 : -DRAWER_WIDTH,
             duration: 250,
-            useNativeDriver: true,
+            useNativeDriver: false,
         }).start();
     }, [drawerVisible]);
 
+    // Animate width + margin when collapsed/expanded (desktop only)
+    const prevWidth = useRef(DRAWER_WIDTH);
+    useEffect(() => {
+        if (prevWidth.current === DRAWER_WIDTH) return;
+        prevWidth.current = DRAWER_WIDTH;
+        Animated.parallel([
+            Animated.timing(animatedWidth, {
+                toValue: DRAWER_WIDTH,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+            Animated.timing(animatedMargin, {
+                toValue: xl ? DRAWER_WIDTH : 0,
+                duration: 250,
+                useNativeDriver: false,
+            }),
+        ]).start();
+    }, [DRAWER_WIDTH, xl]);
+
     useEffect(() => {
         const subs = OpenDrawerSubject.subscribe((open = true) => {
-            setDrawerVisible(open)
-        })
-        return () => {
-            subs.unsubscribe()
-        }
-    }, [])
+            setDrawerVisible(open);
+        });
+        return () => subs.unsubscribe();
+    }, []);
 
     return (
         <>
-            <View style={{ flex: 1, marginLeft: xl ? DRAWER_WIDTH : 0 }}>
+            <Animated.View style={{ flex: 1, marginLeft: xl ? animatedMargin : 0 }}>
                 {children}
-            </View>
+            </Animated.View>
 
-            {(drawerVisible && !xl) && (
+            {drawerVisible && !xl && (
                 <TouchableWithoutFeedback onPress={() => setDrawerVisible(false)}>
                     <View style={styles.overlay} />
                 </TouchableWithoutFeedback>
             )}
-            <Animated.View style={[styles.drawer, { width: DRAWER_WIDTH, transform: [{ translateX: slideAnim }] }]}>
+            <Animated.View
+                style={[
+                    styles.drawer,
+                    { width: animatedWidth, transform: [{ translateX: slideAnim }] },
+                ]}
+            >
                 {DrawerContent}
             </Animated.View>
-            {/* </View> */}
         </>
     );
 };

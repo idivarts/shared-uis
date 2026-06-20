@@ -101,6 +101,7 @@ const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
                                 onPress={handleConfirm}
                                 style={styles.button}
                                 loading={loading} // You can manage loading state if needed
+                                disabled={loading}
                             >
                                 {confirmText}
                             </Button>}

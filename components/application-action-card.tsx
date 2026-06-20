@@ -18,7 +18,7 @@ export const ApplicationActionBar: React.FC<{
     application: IApplications & {
         id: string;
     };
-    onAccept?: () => void;
+    onAccept?: () => void | Promise<void>;
     onShortlist?: () => void;
     onReject?: () => void;
     onReopen?: () => void;
@@ -60,7 +60,7 @@ export const ApplicationActionBar: React.FC<{
         switch (type) {
             case "accept":
                 await handleApplication("accepted")
-                if (onAccept) onAccept();
+                if (onAccept) await onAccept();
                 setStatus("accepted")
                 break;
             case "shortlist":
