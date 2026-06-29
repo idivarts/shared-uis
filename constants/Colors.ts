@@ -152,6 +152,7 @@ export const ColorsStatic = {
     socialLinkedin: "rgb(0, 119, 181)",
     socialFacebook: "rgb(24, 119, 242)",
     socialTwitter: "rgb(29, 161, 242)",
+    socialReddit: "rgb(255, 69, 0)",
     socialTiktok: "rgb(0, 0, 0)",
     socialSnapchat: "rgb(255, 252, 0)",
     socialPinterest: "rgb(230, 0, 35)",
