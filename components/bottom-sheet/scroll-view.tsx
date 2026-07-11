@@ -75,7 +75,7 @@ const BottomSheetScrollContainer: React.FC<BottomSheetContainerProps> = ({
                     <BottomSheet
                         ref={sheetRef}
                         index={0}
-                        snapPoints={snapPoints}
+                        snapPoints={snapPoints as (string | number)[]}
                         enablePanDownToClose
                         keyboardBehavior={Platform.OS === "android" ? "fillParent" : "extend"}
                         keyboardBlurBehavior="restore"

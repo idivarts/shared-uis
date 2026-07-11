@@ -270,6 +270,12 @@ export const ColorsStatic = {
     authPanel: "rgb(16, 32, 54)",
     authPanelDeep: "rgb(8, 20, 38)",
     authPanelMuted: "rgba(255, 255, 255, 0.72)",
+
+    // Misc accent tokens referenced across shared-UI styles.
+    platinum: "rgb(229, 228, 226)",
+    orange: "rgb(232, 122, 0)",
+    pink: "rgb(233, 30, 99)",
+    notificationDot: "rgb(214, 45, 80)",
 }
 
 export default (theme: Theme) => ({
