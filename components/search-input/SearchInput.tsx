@@ -18,7 +18,7 @@ const SearchInput: React.FC<SearchInputProps> = ({
     const styles = useStyles(theme);
 
     return (
-        <View style={[styles.container, style]}>
+        <View style={[styles.container, style as object]}>
             <Ionicons
                 name="search"
                 size={24}

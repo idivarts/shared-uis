@@ -23,12 +23,12 @@ const Dropdown: React.FC<DropdownProps> = ({ children }: DropdownProps) => {
     const modifiedChildren = React.Children.map(children, (child) => {
         if (isReactElement(child)) {
             if (child.type === DropdownTrigger) {
-                return React.cloneElement(child, {
+                return React.cloneElement(child as React.ReactElement<any>, {
                     onPress: toggleDropdown,
                 });
             }
             if (child.type === DropdownOptions) {
-                return React.cloneElement(child, {
+                return React.cloneElement(child as React.ReactElement<any>, {
                     visible: showDropdown,
                 });
             }

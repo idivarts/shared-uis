@@ -152,6 +152,7 @@ export const ColorsStatic = {
     socialLinkedin: "rgb(0, 119, 181)",
     socialFacebook: "rgb(24, 119, 242)",
     socialTwitter: "rgb(29, 161, 242)",
+    socialReddit: "rgb(255, 69, 0)",
     socialTiktok: "rgb(0, 0, 0)",
     socialSnapchat: "rgb(255, 252, 0)",
     socialPinterest: "rgb(230, 0, 35)",
@@ -269,6 +270,12 @@ export const ColorsStatic = {
     authPanel: "rgb(16, 32, 54)",
     authPanelDeep: "rgb(8, 20, 38)",
     authPanelMuted: "rgba(255, 255, 255, 0.72)",
+
+    // Misc accent tokens referenced across shared-UI styles.
+    platinum: "rgb(229, 228, 226)",
+    orange: "rgb(232, 122, 0)",
+    pink: "rgb(233, 30, 99)",
+    notificationDot: "rgb(214, 45, 80)",
 }
 
 export default (theme: Theme) => ({

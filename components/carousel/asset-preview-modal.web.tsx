@@ -6,6 +6,8 @@ import { Modal } from "react-native";
 interface AssetPreviewModalProps {
     previewImage: boolean;
     previewImageUrl: string | null;
+    /** When set, the modal shows a full-screen video player instead of the image lightbox. */
+    previewVideoUrl?: string | null;
     setPreviewImage: React.Dispatch<React.SetStateAction<boolean>>;
     theme: Theme;
 }
@@ -25,11 +27,13 @@ interface AssetPreviewModalProps {
 const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
     previewImage,
     previewImageUrl,
+    previewVideoUrl,
     setPreviewImage,
     theme,
 }) => {
     const colors = Colors(theme);
     const [zoomed, setZoomed] = useState(false);
+    const isVideo = !!previewVideoUrl;
 
     const close = useCallback(() => {
         setZoomed(false);
@@ -61,8 +65,8 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
-                    overflow: zoomed ? "auto" : "hidden",
-                    padding: zoomed ? 0 : 24,
+                    overflow: zoomed && !isVideo ? "auto" : "hidden",
+                    padding: zoomed && !isVideo ? 0 : 24,
                     boxSizing: "border-box",
                 }}
             >
@@ -97,30 +101,45 @@ const AssetPreviewModal: React.FC<AssetPreviewModalProps> = ({
                     ✕
                 </button>
 
-                <img
-                    src={previewImageUrl || ""}
-                    alt="Preview"
-                    onClick={(e) => {
-                        e.stopPropagation();
-                        setZoomed((z) => !z);
-                    }}
-                    style={
-                        zoomed
-                            ? {
-                                  maxWidth: "none",
-                                  maxHeight: "none",
-                                  width: "auto",
-                                  height: "auto",
-                                  cursor: "zoom-out",
-                              }
-                            : {
-                                  maxWidth: "100%",
-                                  maxHeight: "100%",
-                                  objectFit: "contain",
-                                  cursor: "zoom-in",
-                              }
-                    }
-                />
+                {isVideo ? (
+                    <video
+                        src={previewVideoUrl || ""}
+                        controls
+                        autoPlay
+                        playsInline
+                        onClick={(e) => e.stopPropagation()}
+                        style={{
+                            maxWidth: "100%",
+                            maxHeight: "100%",
+                            objectFit: "contain",
+                        }}
+                    />
+                ) : (
+                    <img
+                        src={previewImageUrl || ""}
+                        alt="Preview"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setZoomed((z) => !z);
+                        }}
+                        style={
+                            zoomed
+                                ? {
+                                      maxWidth: "none",
+                                      maxHeight: "none",
+                                      width: "auto",
+                                      height: "auto",
+                                      cursor: "zoom-out",
+                                  }
+                                : {
+                                      maxWidth: "100%",
+                                      maxHeight: "100%",
+                                      objectFit: "contain",
+                                      cursor: "zoom-in",
+                                  }
+                        }
+                    />
+                )}
             </div>
         </Modal>
     );
