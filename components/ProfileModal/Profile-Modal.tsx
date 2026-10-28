@@ -1,6 +1,7 @@
 import { IS_MONETIZATION_DONE } from "@/shared-constants/app";
 import { ISocials } from "@/shared-libs/firestore/trendly-pro/models/socials";
 import { IUsers } from "@/shared-libs/firestore/trendly-pro/models/users";
+import { track } from "@/shared-libs/utils/analytics";
 import { Console } from "@/shared-libs/utils/console";
 import { useMyNavigation } from "@/shared-libs/utils/router";
 import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
@@ -170,6 +171,14 @@ const ProfileBottomSheet: React.FC<ProfileBottomSheetProps> = ({
             description:
                 "You can only get the access to influencers social media after you subscribe to a paid plan",
             confirmAction: () => {
+                // shared-uis cannot reach the host app's goToBilling() helper,
+                // so this fires the same rung-2 event directly. Kept in sync by
+                // the UpgradeSource union rather than by convention.
+                track("upgrade_cta_clicked", {
+                    source: "profile_modal",
+                    feature: "influencer_socials",
+                    reason: "plan_locked",
+                });
                 router.push("/billing");
             },
             confirmText: "Upgrade now",

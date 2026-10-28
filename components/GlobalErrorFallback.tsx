@@ -1,3 +1,4 @@
+import { track } from "@/shared-libs/utils/analytics";
 import useBreakpoints from "@/shared-libs/utils/use-breakpoints";
 import Colors from "@/shared-uis/constants/Colors";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -43,6 +44,15 @@ function GlobalErrorFallbackContent({
     );
 
     const handleContactSupport = () => {
+        // intent "error", not "upgrade": this is someone whose app just broke.
+        // It belongs on the same event so support reach-outs are countable in
+        // one place, and on a distinct intent so it never inflates the
+        // monetisation funnel.
+        track("support_contact_clicked", {
+            channel: "email",
+            source: "error_fallback",
+            intent: "error",
+        });
         Linking.openURL(`mailto:${SUPPORT_EMAIL}`).catch(() => { });
     };
 
